@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.stratio</groupId>
+    <artifactId>hermes</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>com.stratio</groupId>
+        <artifactId>parent</artifactId>
+        <version>0.9.0-SNAPSHOT</version>
+    </parent>
+
+    <name>Stratio Hermes</name>
+    <description>A distributed fake data generator based in Akka</description>
+    <inceptionYear>2016</inceptionYear>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/Stratio/hermes/issues</url>
+    </issueManagement>
+
+    <scm>
+        <url>https://github.com/Stratio/hermes</url>
+        <connection>scm:git:git://github.com/Stratio/hermes.git</connection>
+        <developerConnection>scm:git:git@github.com:Stratio/hermes.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <scala.binary.version>2.11</scala.binary.version>
+        <scala.version>2.11.8</scala.version>
+    </properties>
+
+    <developers>
+        <developer>
+            <id>aalfonso</id>
+            <name>Antonio Alfonso</name>
+            <email>aalfonso@stratio.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>arodriguez</id>
+            <name>Alberto Rodriguez</name>
+            <email>arodriguez@stratio.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>adoblas</id>
+            <name>Alicia Doblas</name>
+            <email>adoblas@stratio.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>anistal</id>
+            <name>Alvaro Nistal</name>
+            <email>alvaro.nistal@gmail.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+	    </developer>
+        <developer>
+            <id>eruiz</id>
+            <name>Enrique Ruiz</name>
+            <email>eruiz@stratio.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>jpgilaberte</id>
+            <name>Juan Pedro Gilaberte</name>
+            <email>jpgilaberte@stratio.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.11</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src/main/scala</sourceDirectory>
+        <testSourceDirectory>src/test/scala</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.stratio.hermes.runners.HermesRunner</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*.txt</exclude>
+                        <exclude>**/log4j.properties</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
