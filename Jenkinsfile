@@ -4,7 +4,7 @@ hose {
     EMAIL = 'qa'
     MODULE = 'hermes'
     SLACKTEAM = 'stratiopaas'
-    REPOSITORY = 'Hermes' 
+    REPOSITORY = 'hermes' 
     DEVTIMEOUT = 50
     RELEASETIMEOUT = 40    
     ATTIMEOUT = 240
