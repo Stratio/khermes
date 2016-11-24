@@ -12,9 +12,18 @@ hose {
     DEV = { config ->
 
         doCompile(config)
-        doUT(config)
-        doIT(config)
-        doPackage(config)
-        doDeploy(config)
+        parallel(UT: {
+            doUT(config)
+        }, IT: {
+            doIT(config)
+        }, failFast: config.FAILFAST)
+
+	doPackage(config)
+
+	parallel(QC: {
+            doStaticAnalysis(config)
+        }, DEPLOY: {
+            doDeploy(config)
+        }, failFast: config.FAILFAST)
      }
 }
