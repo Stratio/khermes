@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.runners
+package com.stratio.hermes.helpers
 
-/**
- * Entry point of the application.
- */
-object HermesRunner extends App {
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+import org.scalatest.{FlatSpec, Matchers}
 
-  println(helloWorld("Hermes"))
+@RunWith(classOf[JUnitRunner])
+class RandomHelperTest  extends FlatSpec with Matchers {
 
-  def helloWorld(projectName: String): String = s"Hello $projectName!"
+  "A RandomHelper" should "generates an element from a generic list" in {
+    RandomHelper.randomElementFromAList(List(1, 2, 3)) should not be (None)
+    RandomHelper.randomElementFromAList(List("a", "b", "c")) should not be (None)
+  }
+
+  it should "return nothing when a generic list is empty" in {
+    RandomHelper.randomElementFromAList(List.empty) should be (None)
+  }
 }

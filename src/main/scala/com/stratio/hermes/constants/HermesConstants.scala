@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.runners
+package com.stratio.hermes.constants
 
 /**
- * Entry point of the application.
+ * Global constants used in the application.
  */
-object HermesRunner extends App {
+object HermesConstants {
 
-  println(helloWorld("Hermes"))
+  val ConstantDefaultLocale = "EN"
 
-  def helloWorld(projectName: String): String = s"Hello $projectName!"
 }

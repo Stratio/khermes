@@ -1,0 +1,16 @@
+{
+  "firstNames": [
+    "Gonzalo", "Moisés", "Sebastián", "Oscar", "Ernesto", "Petronila", "Adón", "Marcos", "José", "Elisa", "Iván",
+    "Ángel", "Jonathan", "Samuel", "Fabiola", "Aurelia", "Ireneo", "Toribio", "Santiago", "Aristides", "Agustín",
+    "Jaume", "Celso", "Carolina", "Sergio", "Columbano", "Luis", "Zacarías", "Antonia", "Leandro", "Fabián", "Humberto",
+    "Paula", "Julia", "Ariadna", "Carmen", "Víctor", "Rocío", "Martín", "Baltasar", "Poncio", "Mario", "Aurelio",
+    "Probo", "Fidel", "Manuela", "Sonia", "Constancio", "Matilde", "Vladimiro"
+  ],
+  "lastNames": [
+    "Jiménez", "Martínez", "Gallardo", "Fuentes", "Caballero", "Álvarez", "Ortega", "Vázquez", "Méndez", "Castillo",
+    "Ruiz", "Serrano", "Cano", "Marín", "Garrido", "Vicente", "Hernández", "Gutiérrez", "Benítez", "Cortés", "Pérez",
+    "Muñoz", "Calvo", "Lozano", "Lorenzo", "Castro", "León", "Soto", "Martín", "Moya", "Bravo", "Román", "Peña",
+    "Flores", "Díaz", "Pastor", "Crespo", "Parra", "Ferrer", "Molina", "Montero", "Santos", "Rubio", "Cruz", "Gallego",
+    "Sáez", "Aguilar", "Soler", "Herrero", "Alonso"
+  ]
+}

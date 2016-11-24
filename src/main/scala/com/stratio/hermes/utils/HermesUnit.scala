@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.runners
+package com.stratio.hermes.utils
 
 /**
- * Entry point of the application.
+ * All Hermes objects should extend this trait.
  */
-object HermesRunner extends App {
+trait HermesUnit {
 
-  println(helloWorld("Hermes"))
+  def unitName(): String
 
-  def helloWorld(projectName: String): String = s"Hello $projectName!"
 }

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.runners
+package com.stratio.hermes.implicits
+
+import org.json4s.{DefaultFormats, Formats}
 
 /**
- * Entry point of the application.
+ * Implicit values used in json4s to serialize / unserialize data.
  */
-object HermesRunner extends App {
+trait HermesSerializer {
 
-  println(helloWorld("Hermes"))
-
-  def helloWorld(projectName: String): String = s"Hello $projectName!"
+  implicit val json4sFormats: Formats =  DefaultFormats
 }
+

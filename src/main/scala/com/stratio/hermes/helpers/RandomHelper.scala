@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.runners
+package com.stratio.hermes.helpers
+
+import scala.reflect.ClassTag
+import scala.util.Random
 
 /**
- * Entry point of the application.
+ * Helper to work with randomize data.
  */
-object HermesRunner extends App {
+object RandomHelper {
 
-  println(helloWorld("Hermes"))
-
-  def helloWorld(projectName: String): String = s"Hello $projectName!"
+  /**
+   * Returns a random element from a list.
+   * @param l initial list
+   * @tparam T with the type of the list
+   * @return a random element of the list or None if the list is empty.
+   */
+  def randomElementFromAList[T:ClassTag](l: List[T]): Option[T] = Random.shuffle(l).headOption
 }
