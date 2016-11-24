@@ -24,8 +24,8 @@ import org.scalatest.{FlatSpec, Matchers}
 class RandomHelperTest  extends FlatSpec with Matchers {
 
   "A RandomHelper" should "generates an element from a generic list" in {
-    RandomHelper.randomElementFromAList(List(1, 2, 3)) should not be (None)
-    RandomHelper.randomElementFromAList(List("a", "b", "c")) should not be (None)
+    RandomHelper.randomElementFromAList(List(1,2,3)) should contain oneOf (1,2,3)
+    RandomHelper.randomElementFromAList(List("a","b", "c")) should contain oneOf ("a","b","c")
   }
 
   it should "return nothing when a generic list is empty" in {
