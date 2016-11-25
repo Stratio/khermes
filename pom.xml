@@ -34,6 +34,10 @@
     <properties>
         <scala.binary.version>2.11</scala.binary.version>
         <scala.version>2.11.8</scala.version>
+        <json4s.version>3.5.0</json4s.version>
+        <scalatest.version>3.0.1</scalatest.version>
+        <junit.version>4.8.1</junit.version>
+        <logback-classic.version>1.1.7</logback-classic.version>
     </properties>
 
     <developers>
@@ -90,23 +94,23 @@
     <dependencies>
         <dependency>
             <groupId>org.json4s</groupId>
-            <artifactId>json4s-native_2.11</artifactId>
-            <version>3.5.0</version>
+            <artifactId>json4s-native_${scala.binary.version}</artifactId>
+            <version>${json4s.version}</version>
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.11</artifactId>
-            <version>3.0.1</version>
+            <artifactId>scalatest_${scala.binary.version}</artifactId>
+            <version>${scalatest.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>${junit.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.7</version>
+            <version>${logback-classic.version}</version>
         </dependency>
     </dependencies>
 
