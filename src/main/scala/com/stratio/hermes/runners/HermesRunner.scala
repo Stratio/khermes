@@ -21,7 +21,5 @@ package com.stratio.hermes.runners
  */
 object HermesRunner extends App {
 
-  println(helloWorld("Hermes"))
-
   def helloWorld(projectName: String): String = s"Hello $projectName!"
 }
