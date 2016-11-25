@@ -16,7 +16,6 @@
 
 package com.stratio.hermes.helpers
 
-import scala.reflect.ClassTag
 import scala.util.Random
 
 /**
@@ -30,5 +29,5 @@ object RandomHelper {
    * @tparam T with the type of the list
    * @return a random element of the list or None if the list is empty.
    */
-  def randomElementFromAList[T:ClassTag](l: List[T]): Option[T] = Random.shuffle(l).headOption
+  def randomElementFromAList[T](l: List[T]): Option[T] = Random.shuffle(l).headOption
 }

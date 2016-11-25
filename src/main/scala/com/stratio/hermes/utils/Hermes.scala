@@ -23,6 +23,8 @@ import com.stratio.hermes.models.NameModel
 import org.json4s._
 import org.json4s.native.Serialization.read
 
+import scala.util.Try
+
 /**
  * Hermes util used for to generate random values.
  */
@@ -36,19 +38,20 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
     override def unitName() = "name"
 
     lazy val nameModel =
-      read[NameModel] (getClass.getResourceAsStream(s"/locales/$unitName/$locale.json"))
+      Try(read[NameModel] (getClass.getResourceAsStream(s"/locales/$unitName/$locale.json")))
+        .getOrElse(throw new IllegalStateException(s"Error loading locale: /locales/$unitName/$locale.json"))
 
     /**
      * Example: "Bruce Wayne".
      * @return a full name.
      */
-    def name() : String = s"$firstName $lastName"
+    def fullName() : String = s"$firstName $lastName"
 
     /**
      * Example: "Bruce Lex".
-     * @return a midle name.
+     * @return a middle name.
      */
-    def midleName() : String = s"$firstName $firstName"
+    def middleName() : String = s"$firstName $firstName"
 
     /**
      * Example: "Bruce".

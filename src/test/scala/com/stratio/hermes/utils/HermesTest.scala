@@ -35,17 +35,40 @@ class HermesTest extends FlatSpec with Matchers {
 
   it should "generate valid names: firstName lastName with EN and ES locales" in {
     val hermesEN = Hermes()
-    hermesEN.Name.name should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
+    val fullNameEN = hermesEN.Name.fullName
+    fullNameEN should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
+    hermesEN.Name.nameModel.firstNames should contain (fullNameEN.split(" ")(0))
+    hermesEN.Name.nameModel.lastNames should contain (fullNameEN.split(" ")(1))
 
     val hermesES = Hermes("ES")
-    hermesES.Name.name should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
+    val fullNameES = hermesES.Name.fullName
+    fullNameES should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
+    hermesES.Name.nameModel.firstNames should contain (fullNameES.split(" ")(0))
+    hermesES.Name.nameModel.lastNames should contain (fullNameES.split(" ")(1))
   }
 
-  it should "generate valid midle names: firstName firstName with EN and ES locales" in {
+  it should "generate valid middle names: firstName firstName with EN and ES locales" in {
     val hermesEN = Hermes()
-    hermesEN.Name.midleName should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
+    val middleNameEN = hermesEN.Name.middleName
+    middleNameEN should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
+    hermesEN.Name.nameModel.firstNames should contain (middleNameEN.split(" ")(0))
+    hermesEN.Name.nameModel.firstNames should contain (middleNameEN.split(" ")(1))
 
     val hermesES = Hermes("ES")
-    hermesES.Name.midleName should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
+    val middleNameES = hermesES.Name.middleName
+    middleNameES should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
+    hermesES.Name.nameModel.firstNames should contain (middleNameES.split(" ")(0))
+    hermesES.Name.nameModel.firstNames should contain (middleNameES.split(" ")(1))
+  }
+
+  it should "raise an exception when it gets a firstName/lastName and firstNames/lastNames are empty in the locale" in {
+    val hermes = Hermes("XX")
+    an [NoSuchElementException] should be thrownBy hermes.Name.firstName()
+    an [NoSuchElementException] should be thrownBy hermes.Name.lastName()
+  }
+
+  it should "raise an exception when it tries to load a locale that don't exist" in {
+    val thrown = the [IllegalStateException] thrownBy Hermes("XY").Name.firstName()
+    thrown.getMessage should equal (s"Error loading locale: /locales/name/XY.json")
   }
 }
