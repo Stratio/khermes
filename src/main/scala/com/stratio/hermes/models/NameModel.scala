@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.runners
+package com.stratio.hermes.models
 
 /**
- * Entry point of the application.
+ * All data related with names will be loaded in this class.
+ * @param firstNames with a list of first names.
+ * @param lastNames with a list of last names.
  */
-object HermesRunner extends App {
-
-  println(helloWorld("Hermes"))
-
-  def helloWorld(projectName: String): String = s"Hello $projectName!"
-}
+case class NameModel(firstNames: List[String], lastNames: List[String])

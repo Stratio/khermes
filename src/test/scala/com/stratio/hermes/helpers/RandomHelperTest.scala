@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.runners
+package com.stratio.hermes.helpers
 
 import org.junit.runner.RunWith
-import org.scalatest._
 import org.scalatest.junit.JUnitRunner
+import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class HermesRunnerTest extends FlatSpec with Matchers {
+class RandomHelperTest  extends FlatSpec with Matchers {
 
-  "A HermesRunner" should "return a hello projectName message" in {
+  "A RandomHelper" should "generates an element from a generic list" in {
+    RandomHelper.randomElementFromAList(List(1,2,3)) should contain oneOf (1,2,3)
+    RandomHelper.randomElementFromAList(List("a","b","c")) should contain oneOf ("a","b","c")
+  }
 
-    HermesRunner.helloWorld("Hermes") should be ("Hello Hermes!")
+  it should "return nothing when a generic list is empty" in {
+    RandomHelper.randomElementFromAList(List.empty) should be (None)
   }
 }
