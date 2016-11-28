@@ -63,12 +63,16 @@ class HermesTest extends FlatSpec with Matchers {
 
   it should "raise an exception when it gets a firstName/lastName and firstNames/lastNames are empty in the locale" in {
     val hermes = Hermes("XX")
+    //scalastyle:off
     an [NoSuchElementException] should be thrownBy hermes.Name.firstName()
     an [NoSuchElementException] should be thrownBy hermes.Name.lastName()
+    //scalastyle:on
   }
 
   it should "raise an exception when it tries to load a locale that don't exist" in {
+    //scalastyle:off
     val thrown = the [IllegalStateException] thrownBy Hermes("XY").Name.firstName()
+    //scalastyle:on
     thrown.getMessage should equal (s"Error loading locale: /locales/name/XY.json")
   }
 }

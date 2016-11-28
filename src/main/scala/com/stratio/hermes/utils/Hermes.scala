@@ -35,7 +35,7 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
    */
   object Name extends HermesUnit {
 
-    override def unitName() = "name"
+    override def unitName(): String = "name"
 
     lazy val nameModel =
       Try(read[NameModel] (getClass.getResourceAsStream(s"/locales/$unitName/$locale.json")))
