@@ -18,14 +18,16 @@ package com.stratio.hermes.kafka
 
 import java.util
 import java.util.Properties
-import com.typesafe.config.ConfigFactory
+
+import com.typesafe.config.{ConfigException, ConfigFactory}
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.JavaConverters._
 import scala.io.Source
 import scala.util.Try
-import scala.collection.JavaConverters._
 
 
 @RunWith(classOf[JUnitRunner])
@@ -63,4 +65,9 @@ class KafkaProducerTest extends FlatSpec with Matchers {
     KafkaProducer.close(kafkaProducer)
     consumer.close()
   }
+
+  "A KafkaProducer" should "fail when do not read correctly the configuration" in {
+    a[ConfigException] should be thrownBy KafkaProducer.getInstance(ConfigFactory.parseResources(""))
+  }
+
 }

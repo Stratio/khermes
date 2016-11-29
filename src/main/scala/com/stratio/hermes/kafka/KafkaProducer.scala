@@ -17,13 +17,9 @@ package com.stratio.hermes.kafka
 
 import java.util.Properties
 import java.util.concurrent.Future
-
 import com.typesafe.config.Config
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, RecordMetadata}
 import org.slf4j.LoggerFactory
-
-import scala.util.Try
-
 
 object KafkaProducer {
 
@@ -39,16 +35,13 @@ object KafkaProducer {
     new KafkaProducer(props)
   }
 
-  def send(producer: KafkaProducer[AnyRef, AnyRef], topic: String, message: String): Try[Future[RecordMetadata]] =
-    Try {
+  def send(producer: KafkaProducer[AnyRef, AnyRef], topic: String, message: String): Future[RecordMetadata] = {
       log.info(s"Sending message: [$message] to the topic: $topic")
       producer.send(new ProducerRecord[AnyRef, AnyRef](topic, message))
     }
 
   def close(producer: KafkaProducer[AnyRef, AnyRef]): Unit = {
-    Try {
       log.info("Producer closed.")
       producer.close()
-    }
   }
 }
