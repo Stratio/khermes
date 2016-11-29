@@ -16,10 +16,13 @@
 package com.stratio.hermes.kafka
 
 import java.util.Properties
+import java.util.concurrent.Future
 
 import com.typesafe.config.Config
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, RecordMetadata}
 import org.slf4j.LoggerFactory
+
+import scala.util.Try
 
 
 object KafkaProducer {
@@ -28,28 +31,24 @@ object KafkaProducer {
 
   def getInstance(config: Config): KafkaProducer[AnyRef, AnyRef] = {
     val props: Properties = new Properties()
-    props.put("metadata.broker.list", config.getString("brokerList"))
-    props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-    props.put("bootstrap.servers", config.getString("servers"))
-    props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-    props.put("request.requieres.acks", "1")
+    props.put("metadata.broker.list", config.getString("metadata.broker.list"))
+    props.put("key.serializer", config.getString("key.serializer"))
+    props.put("bootstrap.servers", config.getString("bootstrap.servers"))
+    props.put("value.serializer", config.getString("value.serializer"))
+    props.put("request.requieres.acks", config.getString("request.requieres.acks"))
     new KafkaProducer(props)
   }
 
-  def send(producer: KafkaProducer[AnyRef, AnyRef], topic: String, message: String): Unit = {
-    try {
-      log.info("Sending message : [" + message + "] to the topic: " + topic)
+  def send(producer: KafkaProducer[AnyRef, AnyRef], topic: String, message: String): Try[Future[RecordMetadata]] =
+    Try {
+      log.info(s"Sending message: [$message] to the topic: $topic")
       producer.send(new ProducerRecord[AnyRef, AnyRef](topic, message))
-
-    } catch {
-      case e: Exception =>
-        log.error("Error sending message: [" + message + "]")
-        log.error("Exception: " + e.getMessage)
     }
-  }
 
   def close(producer: KafkaProducer[AnyRef, AnyRef]): Unit = {
-    log.info("Producer closed.")
-    producer.close()
+    Try {
+      log.info("Producer closed.")
+      producer.close()
+    }
   }
 }
