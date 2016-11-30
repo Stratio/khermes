@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.runners
+package com.stratio.hermes.utils
 
-import org.junit.runner.RunWith
-import org.scalatest._
-import org.scalatest.junit.JUnitRunner
+import org.slf4j.LoggerFactory
 
-@RunWith(classOf[JUnitRunner])
-class HermesRunnerTest extends FlatSpec with Matchers {
+/**
+ * If you neeed to use loggin you should extend from this trait.
+ */
+trait HermesLogging {
 
-  "A HermesRunner" should "return a hello projectName message" in {
-
-    HermesRunner.helloWorld("Hermes") should be ("Hello Hermes!")
-  }
+  protected[this] val log = LoggerFactory.getLogger(getClass.getName)
 }
