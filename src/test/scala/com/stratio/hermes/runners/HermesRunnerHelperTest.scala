@@ -16,21 +16,27 @@
 
 package com.stratio.hermes.runners
 
-
+import akka.actor.ActorSystem
+import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit}
 import com.stratio.hermes.helpers.HermesRunnerHelper
-import com.stratio.hermes.utils.HermesLogging
+import com.typesafe.config.ConfigFactory
+import org.junit.runner.RunWith
+import org.scalatest._
+import org.scalatest.junit.JUnitRunner
 
-/**
- * Entry point of the application.
- */
-object HermesRunner extends App with HermesLogging {
+@RunWith(classOf[JUnitRunner])
+class HermesRunnerHelperTest extends TestKit(ActorSystem(
+  "HermesRunnerHelperTest",
+  ConfigFactory.parseString("""
+    akka {
+      loglevel = "WARNING"
+    }
+    """))) with DefaultTimeout with ImplicitSender
+  with WordSpecLike with Matchers with BeforeAndAfterAll {
 
-  import com.stratio.hermes.implicits.HermesImplicits._
-
-  HermesRunnerHelper.welcome
-  HermesRunnerHelper.initAkkaListener
+  "An HermesRunnerHelper" should {
+    "print a welcome message" in {
+      HermesRunnerHelper.welcome
+    }
+  }
 }
-
-
-
-

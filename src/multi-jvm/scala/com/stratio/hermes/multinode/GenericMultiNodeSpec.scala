@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.constants
+package com.stratio.hermes.multinode
+
+import akka.remote.testkit.MultiNodeSpecCallbacks
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 /**
- * Global constants used in the application.
+ * All specs that are executed in different JVM should extend from this trait.
  */
-object HermesConstants {
+trait GenericMultiNodeSpec extends MultiNodeSpecCallbacks
+  with WordSpecLike with Matchers with BeforeAndAfterAll {
 
-  val ConstantDefaultLocale = "EN"
-  val ConstantAkkaClusterName = "hermes"
+  override def beforeAll(): Unit = multiNodeSpecBeforeAll()
+  override def afterAll(): Unit = multiNodeSpecAfterAll()
 }
