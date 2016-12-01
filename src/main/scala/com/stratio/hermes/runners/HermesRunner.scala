@@ -16,7 +16,6 @@
 
 package com.stratio.hermes.runners
 
-
 import com.stratio.hermes.helpers.HermesRunnerHelper
 import com.stratio.hermes.utils.HermesLogging
 
@@ -28,7 +27,3 @@ object HermesRunner extends App with HermesLogging {
   import com.stratio.hermes.implicits.HermesImplicits._
   HermesRunnerHelper.welcome
 }
-
-
-
-

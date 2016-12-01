@@ -47,17 +47,15 @@ class ClusterHermesMultiJvmNode3 extends ClusterHermesSpec
 class ClusterHermesSpec extends MultiNodeSpec(ClusterHermesMultiJvmSpec)
   with GenericMultiNodeSpec with ImplicitSender {
 
-  val GenericTimeout = 20 seconds
-
   import ClusterHermesMultiJvmSpec._
 
-  override def initialParticipants: Int = roles.size
-
+  val GenericTimeout = 20 seconds
   val firstAddress = node(first).address
   val secondAddress = node(second).address
   val thirdAddress = node(third).address
-
   val cluster = Cluster(system)
+
+  override def initialParticipants: Int = roles.size
 
   "An Hermes cluster" must {
     "add a new node and checks that it is joined and up" in {
@@ -65,7 +63,7 @@ class ClusterHermesSpec extends MultiNodeSpec(ClusterHermesMultiJvmSpec)
         cluster.join(firstAddress)
         awaitCond(Cluster(system).state.members.exists(member => member.address == firstAddress && member.status == Up))
       }
-      enterBarrier("1")
+      enterBarrier("cluster-seed")
     }
 
     "add two nodes more and checks that them are joined and up" in  {
@@ -75,7 +73,7 @@ class ClusterHermesSpec extends MultiNodeSpec(ClusterHermesMultiJvmSpec)
       val expected = Set(firstAddress, secondAddress, thirdAddress)
       awaitCond(cluster.state.members.map(_.address) == expected)
       awaitCond(cluster.state.members.forall(_.status == Up))
-      enterBarrier("2")
+      enterBarrier("cluster-nodes")
     }
 
     "shutdown the second node and checks that other nodes should detect it as unreachable" in within (GenericTimeout) {
