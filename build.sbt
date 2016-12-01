@@ -39,7 +39,8 @@ val project = Project(
       "com.typesafe.akka" %% "akka-actor" % akkaVersion,
       "com.typesafe.akka" %% "akka-remote" % akkaVersion,
       "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion,
-      "org.scalatest" %% "scalatest" % "2.2.1" % "test"),
+      "org.scalatest" %% "scalatest" % "2.2.1" % "test",
+      "org.apache.kafka" % "kafka-clients" % "0.10.0.1"),
     // make sure that MultiJvm test are compiled by the default test compilation
     compile in MultiJvm <<= (compile in MultiJvm) triggeredBy (compile in Test),
     // disable parallel tests

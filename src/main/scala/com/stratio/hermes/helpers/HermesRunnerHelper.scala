@@ -29,15 +29,6 @@ import com.typesafe.config.Config
 object HermesRunnerHelper extends HermesLogging {
 
   /**
-   * Initializes the cluster listener (used to show changes in the cluster).
-   * @param config with the configuration.
-   * @param system with the actor system.
-   */
-  def initAkkaListener()(implicit config: Config, system: ActorSystem): Unit = {
-    system.actorOf(Props[ClusterListenerActor], "listener")
-  }
-
-  /**
    * Prints a welcome message with some information about the system.
    * @param system
    */

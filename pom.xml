@@ -127,6 +127,7 @@
             <artifactId>config</artifactId>
             <version>${typesafe.config.version}</version>
         </dependency>
+        <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-cluster_${scala.binary.version}</artifactId>
             <version>${akka-cluster.version}</version>
@@ -146,7 +147,6 @@
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
         <testSourceDirectory>src/test/scala</testSourceDirectory>
-
         <plugins>
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
@@ -186,7 +186,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
