@@ -34,6 +34,9 @@ object KafkaProducer {
     props.put("request.requieres.acks", config.getString("request.requieres.acks"))
     new KafkaProducer(props)
   }
+  def getInstance(props: Properties): KafkaProducer[AnyRef, AnyRef] = {
+    new KafkaProducer(props)
+  }
 
   def send(producer: KafkaProducer[AnyRef, AnyRef], topic: String, message: String): Future[RecordMetadata] = {
       log.info(s"Sending message: [$message] to the topic: $topic")

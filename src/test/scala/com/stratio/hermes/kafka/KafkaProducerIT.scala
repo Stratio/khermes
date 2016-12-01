@@ -58,7 +58,7 @@ class KafkaProducerIT extends FlatSpec with Matchers {
 
   "A KafkaProducer" should "Produce a message and be consumed" in {
 
-    val kafkaProducer = KafkaProducer.getInstance(ConfigFactory.parseProperties(propsProducer))
+    val kafkaProducer = KafkaProducer.getInstance(propsProducer)
     val consumer = new KafkaConsumer(props)
     consumer.subscribe(util.Arrays.asList(TopicName))
     val records1 = consumer.poll(PollTime)
