@@ -18,7 +18,7 @@ hose {
                 ],
      ['KAFKA':  [
                 'image': 'confluent/kafka:0.10.0.0-cp1',
-                'sleep': 100,
+                'sleep': 200,
                 'healthcheck': 9092,
                 'env': ['ZOOKEEPER_HOSTS=%%ZOOKEEPER:2181']]]
 ]
