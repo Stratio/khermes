@@ -31,7 +31,7 @@ import scala.util.Try
 
 
 @RunWith(classOf[JUnitRunner])
-class KafkaProducerTest extends FlatSpec with Matchers {
+class KafkaProducerIT extends FlatSpec with Matchers {
 
   val PollTime = Integer.parseInt(System.getProperty("POLL_TIME", "100"))
   val KafkaHost = System.getProperty("KAFKA_HOST", "localhost")
