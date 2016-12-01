@@ -13,12 +13,12 @@ hose {
  ITSERVICES = [
      ['ZOOKEEPER': [
                 'image': 'stratio/zookeeper:3.4.6'],
-                'sleep': 30,
+                'sleep': 100,
                 'healthcheck': 2181
                 ],
      ['KAFKA':  [
                 'image': 'confluent/kafka:0.10.0.0-cp1',
-                'sleep': 30,
+                'sleep': 100,
                 'healthcheck': 9092,
                 'env': ['ZOOKEEPER_HOSTS=%%ZOOKEEPER:2181']]]
 ]
