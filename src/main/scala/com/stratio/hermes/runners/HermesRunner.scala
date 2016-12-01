@@ -26,9 +26,7 @@ import com.stratio.hermes.utils.HermesLogging
 object HermesRunner extends App with HermesLogging {
 
   import com.stratio.hermes.implicits.HermesImplicits._
-
   HermesRunnerHelper.welcome
-  HermesRunnerHelper.initAkkaListener
 }
 
 

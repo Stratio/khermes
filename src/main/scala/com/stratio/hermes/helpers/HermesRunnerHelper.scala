@@ -18,10 +18,8 @@ package com.stratio.hermes.helpers
 
 import java.util.Date
 
-import akka.actor.{ActorSystem, Props}
-import com.stratio.hermes.actors.ClusterListenerActor
+import akka.actor.ActorSystem
 import com.stratio.hermes.utils.HermesLogging
-import com.typesafe.config.Config
 
 /**
  * Common operations used when Hermes starts.
