@@ -45,12 +45,20 @@ class KafkaProducerIT extends FlatSpec with Matchers {
   props.put("group.id", "0")
   props.put("auto.commit.interval.ms", "1000")
   props.put("session.timeout.ms", "30000")
+
+  val propsProducer = new Properties
+  propsProducer.put("metadata.broker.list", KafkaHost + ":" + KafkaPort)
+  propsProducer.put("key.serializer" , "org.apache.kafka.common.serialization.StringSerializer")
+  propsProducer.put("bootstrap.servers", KafkaHost + ":" + KafkaPort)
+  propsProducer.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+  propsProducer.put("request.requieres.acks", "1")
+
   val ProducerTest = Try(getClass.getResourceAsStream("/fixtures/kafka/producer-fixture.json"))
     .getOrElse(throw new IllegalStateException("Error loading locale: /fixtures/kafka/producer-fixture.json"))
 
   "A KafkaProducer" should "Produce a message and be consumed" in {
 
-    val kafkaProducer = KafkaProducer.getInstance(ConfigFactory.parseResources("kafka.conf"))
+    val kafkaProducer = KafkaProducer.getInstance(ConfigFactory.parseProperties(propsProducer))
     val consumer = new KafkaConsumer(props)
     consumer.subscribe(util.Arrays.asList(TopicName))
     val records1 = consumer.poll(PollTime)
