@@ -25,15 +25,19 @@ object KafkaProducer {
 
   val log = LoggerFactory.getLogger(getClass)
 
-  def getInstance(config: Config): KafkaProducer[AnyRef, AnyRef] = {
+  def getProperties(config: Config): Properties = {
     val props: Properties = new Properties()
     props.put("metadata.broker.list", config.getString("metadata.broker.list"))
     props.put("key.serializer", config.getString("key.serializer"))
     props.put("bootstrap.servers", config.getString("bootstrap.servers"))
     props.put("value.serializer", config.getString("value.serializer"))
     props.put("request.requieres.acks", config.getString("request.requieres.acks"))
-    new KafkaProducer(props)
+    props
   }
+
+  def getInstance(config: Config): KafkaProducer[AnyRef, AnyRef] = getInstance(getProperties(config))
+
+  def getInstance(props: Properties): KafkaProducer[AnyRef, AnyRef] = new KafkaProducer(props)
 
   def send(producer: KafkaProducer[AnyRef, AnyRef], topic: String, message: String): Future[RecordMetadata] = {
       log.info(s"Sending message: [$message] to the topic: $topic")

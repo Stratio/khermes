@@ -31,7 +31,7 @@ import scala.util.Try
 
 
 @RunWith(classOf[JUnitRunner])
-class KafkaProducerTest extends FlatSpec with Matchers {
+class KafkaProducerIT extends FlatSpec with Matchers {
 
   val PollTime = Integer.parseInt(System.getProperty("POLL_TIME", "100"))
   val KafkaHost = System.getProperty("KAFKA_HOST", "localhost")
@@ -45,12 +45,20 @@ class KafkaProducerTest extends FlatSpec with Matchers {
   props.put("group.id", "0")
   props.put("auto.commit.interval.ms", "1000")
   props.put("session.timeout.ms", "30000")
+
+  val propsProducer = new Properties
+  propsProducer.put("metadata.broker.list", KafkaHost + ":" + KafkaPort)
+  propsProducer.put("key.serializer" , "org.apache.kafka.common.serialization.StringSerializer")
+  propsProducer.put("bootstrap.servers", KafkaHost + ":" + KafkaPort)
+  propsProducer.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+  propsProducer.put("request.requieres.acks", "1")
+
   val ProducerTest = Try(getClass.getResourceAsStream("/fixtures/kafka/producer-fixture.json"))
     .getOrElse(throw new IllegalStateException("Error loading locale: /fixtures/kafka/producer-fixture.json"))
 
   "A KafkaProducer" should "Produce a message and be consumed" in {
 
-    val kafkaProducer = KafkaProducer.getInstance(ConfigFactory.parseResources("kafka.conf"))
+    val kafkaProducer = KafkaProducer.getInstance(propsProducer)
     val consumer = new KafkaConsumer(props)
     consumer.subscribe(util.Arrays.asList(TopicName))
     val records1 = consumer.poll(PollTime)
@@ -64,6 +72,12 @@ class KafkaProducerTest extends FlatSpec with Matchers {
     records2.count() shouldEqual 1
     KafkaProducer.close(kafkaProducer)
     consumer.close()
+  }
+
+  "A KafkaProducer" should "load correctly the config from a conf file" in {
+
+    KafkaProducer.getProperties(ConfigFactory.parseResources("kafka.conf")).getProperty("metadata.broker.list") shouldBe "localhost:9092"
+
   }
 
   "A KafkaProducer" should "fail when do not read correctly the configuration" in {
