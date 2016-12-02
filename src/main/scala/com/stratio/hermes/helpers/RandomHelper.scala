@@ -19,15 +19,33 @@ package com.stratio.hermes.helpers
 import scala.util.Random
 
 /**
+<<<<<<< HEAD
  * Helper to work with random data.
  */
 object RandomHelper {
 
   /**
-   * Returns a random element from a list.
-   * @param l initial list
-   * @tparam T with the type of the list
-   * @return a random element of the list or None if the list is empty.
-   */
+    * Returns a random element from a list.
+    *
+    * @param l initial list
+    * @tparam T with the type of the list
+    * @return a random element of the list or None if the list is empty.
+    */
   def randomElementFromAList[T](l: List[T]): Option[T] = Random.shuffle(l).headOption
+
+  /**
+    * Returns length of a Integer element.
+    *
+    * @param n number to calculate length.
+    * @return size of the integer.
+    */
+  def numberOfDigitsFromANumber(n: Int): Int = if (n == 0) 1 else math.log10(math.abs(n)).toInt + 1
+
+  /**
+    * Returns length of a Double element.
+    *
+    * @param n number to calculate length.
+    * @return size of the double.
+    */
+  def numberOfDigitsFromANumber(n: Double): Int = math.abs(n).toString.length - 1
 }

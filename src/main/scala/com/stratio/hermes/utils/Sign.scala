@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.constants
+package com.stratio.hermes.utils
 
-/**
- * Global constants used in the application.
- */
-object HermesConstants {
-
-  val ConstantDefaultLocale = "EN"
-
-  val ConstantAkkaClusterName = "hermes"
-
-  val ConstantDecimalValue = 10
-
+object Sign extends Enumeration{
+  val +,- = Value
 }
+
+//trait Sign {
+//
+//  def pos (i :Int): Int = Math.abs(i)
+//
+//  def neg (i :Int): Int = Math.abs(i) * -1
+//
+//}
+
