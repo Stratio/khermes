@@ -74,6 +74,12 @@ class KafkaProducerIT extends FlatSpec with Matchers {
     consumer.close()
   }
 
+  "A KafkaProducer" should "load correctly the config from a conf file" in {
+
+    KafkaProducer.getProperties(ConfigFactory.parseResources("kafka.conf")).getProperty("metadata.broker.list") shouldBe "localhost:9092"
+
+  }
+
   "A KafkaProducer" should "fail when do not read correctly the configuration" in {
     a[ConfigException] should be thrownBy KafkaProducer.getInstance(ConfigFactory.parseResources(""))
   }
