@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.constants
+package com.stratio.hermes.implicits
+
+import akka.actor.ActorSystem
+import com.stratio.hermes.constants.HermesConstants
+import com.typesafe.config.{Config, ConfigFactory}
 
 /**
- * Global constants used in the application.
+ * General implicits used in the application.
  */
-object HermesConstants {
+object HermesImplicits {
 
-  val ConstantDefaultLocale = "EN"
-  val ConstantAkkaClusterName = "hermes"
+  lazy implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
+  lazy implicit val config: Config = ConfigFactory.load
+  lazy implicit val system: ActorSystem = ActorSystem(HermesConstants.ConstantAkkaClusterName, config)
+
 }

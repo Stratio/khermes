@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.stratio.hermes.kafka
 
 import java.util.Properties
 import java.util.concurrent.Future
+
+import com.stratio.hermes.utils.HermesLogging
 import com.typesafe.config.Config
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, RecordMetadata}
-import org.slf4j.LoggerFactory
 
-object KafkaProducer {
-
-  val log = LoggerFactory.getLogger(getClass)
+object KafkaProducer extends HermesLogging {
 
   def getProperties(config: Config): Properties = {
     val props: Properties = new Properties()
