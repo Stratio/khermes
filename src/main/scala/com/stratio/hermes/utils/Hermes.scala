@@ -111,7 +111,7 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
      * Example: "number(3,Sign.-) -123".
      * @return an Integer positive or negative depending of Sign parameter.
      */
-    def number(n: Int, sign: Sign): Int = {
+    def number(n: Int, sign: NumberSign): Int = {
       if (sign.equals(Positive)) Math.abs(number(n)) else Math.abs(number(n)) * -1
     }
 
@@ -132,7 +132,7 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
      * @param n decimal part size.
      * @return a random double with same integer and decimal part with defined sign.
      */
-    def decimal(n: Int, sign: Sign): Double = (number(n, sign).toString + "." + numberDec(n)).toDouble
+    def decimal(n: Int, sign: NumberSign): Double = (number(n, sign).toString + "." + numberDec(n)).toDouble
 
     /**
      * Example: "decimal(3,1) -> 123.4".
@@ -149,9 +149,10 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
      * @param sign sign positive or negative.
      * @return a random double with defined sign.
      */
-    def decimal(m: Int, n: Int, sign: Sign): Double = (number(m, sign).toString + "." + numberDec(n)).toDouble
+    def decimal(m: Int, n: Int, sign: NumberSign): Double = (number(m, sign).toString + "." + numberDec(n)).toDouble
   }
-
 }
-
+sealed trait NumberSign
+case object Positive extends NumberSign
+case object Negative extends NumberSign
 

@@ -24,7 +24,7 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class HermesTest extends FlatSpec with Matchers {
+class HermesTest extends FlatSpec with Matchers with NumberSign{
 
   "A Hermes" should "generates random firstNames and lastNames with EN and ES locales" in {
     val hermesEN = Hermes()
