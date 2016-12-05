@@ -91,7 +91,7 @@ class HermesTest extends FlatSpec with Matchers {
 
     val hermesNum = Hermes("")
     forAll { (n: Int) =>
-      (n > 0 && n < 32) ==> (RandomHelper.len(hermesNum.NumberGenerator.number(n)) == n)
+      (n > 0 && n < 32) ==> (RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.number(n)) == n)
     }
 
   }
@@ -101,16 +101,16 @@ class HermesTest extends FlatSpec with Matchers {
     val hermesNum = Hermes("")
     //scalastyle:off
     forAll { (n: Int) =>
-      (n > 0 && n < 9) ==> (hermesNum.NumberGenerator.number(n, Sign.+) > 0)
+      (n > 0 && n < 9) ==> (hermesNum.NumberGenerator.number(n, Positive) > 0)
     }
     forAll { (n: Int) =>
-      (n > 0 && n < 9) ==> (hermesNum.NumberGenerator.number(n, Sign.-) < 0)
+      (n > 0 && n < 9) ==> (hermesNum.NumberGenerator.number(n, Negative) < 0)
     }
-    val num: Int = hermesNum.NumberGenerator.number(2, Sign.+)
+    val num: Int = hermesNum.NumberGenerator.number(2, Positive)
     num > 0 shouldBe true
-    RandomHelper.len(num) shouldBe 2
-    val num2: Int = hermesNum.NumberGenerator.number(2, Sign.-)
-    RandomHelper.len(num2) shouldBe 2
+    RandomHelper.numberOfDigitsFromANumber(num) shouldBe 2
+    val num2: Int = hermesNum.NumberGenerator.number(2, Negative)
+    RandomHelper.numberOfDigitsFromANumber(num2) shouldBe 2
     num2 > 0 shouldBe false
     //scalastyle:on
 
@@ -141,14 +141,14 @@ class HermesTest extends FlatSpec with Matchers {
 
     val hermesNum = Hermes("")
     //scalastyle:off
-    RandomHelper.len(hermesNum.NumberGenerator.decimal(2)) shouldBe 4
-    RandomHelper.len(hermesNum.NumberGenerator.decimal(2, 4)) shouldBe 6
-    RandomHelper.len(hermesNum.NumberGenerator.decimal(0, 2)) shouldBe 3
-    RandomHelper.len(hermesNum.NumberGenerator.decimal(2, 0)) shouldBe 3
-    RandomHelper.len(hermesNum.NumberGenerator.decimal(2, Sign.+)) shouldBe 4
-    RandomHelper.len(hermesNum.NumberGenerator.decimal(2, Sign.-)) shouldBe 4
-    RandomHelper.len(hermesNum.NumberGenerator.decimal(2, 1, Sign.+)) shouldBe 3
-    RandomHelper.len(hermesNum.NumberGenerator.decimal(2, 1, Sign.-)) shouldBe 3
+    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2)) shouldBe 4
+    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, 4)) shouldBe 6
+    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(0, 2)) shouldBe 3
+    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, 0)) shouldBe 3
+    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, Positive)) shouldBe 4
+    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, Negative)) shouldBe 4
+    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, 1, Positive)) shouldBe 3
+    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, 1, Negative)) shouldBe 3
     //scalastyle:on
 
   }

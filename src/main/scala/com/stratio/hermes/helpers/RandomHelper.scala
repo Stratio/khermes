@@ -19,7 +19,6 @@ package com.stratio.hermes.helpers
 import scala.util.Random
 
 /**
-<<<<<<< HEAD
  * Helper to work with random data.
  */
 object RandomHelper {

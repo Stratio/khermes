@@ -16,15 +16,7 @@
 
 package com.stratio.hermes.utils
 
-object Sign extends Enumeration{
-  val +,- = Value
-}
-
-//trait Sign {
-//
-//  def pos (i :Int): Int = Math.abs(i)
-//
-//  def neg (i :Int): Int = Math.abs(i) * -1
-//
-//}
+sealed trait Sign
+case object Positive extends Sign
+case object Negative extends Sign
 
