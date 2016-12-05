@@ -16,7 +16,10 @@
 
 package com.stratio.hermes.utils
 
+import java.security.InvalidParameterException
+
 import org.junit.runner.RunWith
+import org.scalacheck.Prop.forAll
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -64,15 +67,88 @@ class HermesTest extends FlatSpec with Matchers {
   it should "raise an exception when it gets a firstName/lastName and firstNames/lastNames are empty in the locale" in {
     val hermes = Hermes("XX")
     //scalastyle:off
-    an [NoSuchElementException] should be thrownBy hermes.Name.firstName()
-    an [NoSuchElementException] should be thrownBy hermes.Name.lastName()
+    an[NoSuchElementException] should be thrownBy hermes.Name.firstName()
+    an[NoSuchElementException] should be thrownBy hermes.Name.lastName()
     //scalastyle:on
   }
 
   it should "raise an exception when it tries to load a locale that don't exist" in {
     //scalastyle:off
-    val thrown = the [IllegalStateException] thrownBy Hermes("XY").Name.firstName()
+    val thrown = the[IllegalStateException] thrownBy Hermes("XY").Name.firstName()
     //scalastyle:on
-    thrown.getMessage should equal (s"Error loading locale: /locales/name/XY.json")
+    thrown.getMessage should equal(s"Error loading locale: /locales/name/XY.json")
   }
+
+  it should "generate a random integer of 0 digit give it 0" in {
+    val hermesNum = Hermes("")
+    hermesNum.Number.number(0) shouldBe 0
+
+  }
+
+  it should "generate a random integer when it passed the number of digit" in {
+    val hermesNum = Hermes("")
+    forAll { (n: Int) =>
+      numberOfDigitsFromANumber(hermesNum.Number.number(n)) == n
+    }
+  }
+
+  it should "generate a random integer when it passed the number of digit and the sign" in {
+    val hermesNum = Hermes("")
+    //scalastyle:off
+    forAll { (n: Int) =>
+      hermesNum.Number.number(n, Positive) > 0
+    }
+    forAll { (n: Int) =>
+      hermesNum.Number.number(n, Negative) < 0
+    }
+    //scalastyle:on
+  }
+
+
+  it should "throw an InvalidParameterException when a negative digit is passed or greater than the VAL_MAX" in {
+    val hermesNum = Hermes("")
+    //scalastyle:off
+    an[InvalidParameterException] should be thrownBy hermesNum.Number.number(-2)
+    an[InvalidParameterException] should be thrownBy hermesNum.Number.number(500)
+    an[InvalidParameterException] should be thrownBy hermesNum.Number.decimal(-2)
+    an[InvalidParameterException] should be thrownBy hermesNum.Number.decimal(2, -2)
+    an[InvalidParameterException] should be thrownBy hermesNum.Number.decimal(2, 11)
+    //scalastyle:on
+  }
+  it should "generate a random decimal of 0 digit give it 0.0" in {
+    val hermesNum = Hermes("")
+    hermesNum.Number.decimal(0) shouldBe 0.0
+    hermesNum.Number.decimal(0, 0) shouldBe 0.0
+  }
+
+  it should "generate a random decimal when it passed the number of digit" in {
+    val hermesNum = Hermes("")
+    //scalastyle:off
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2)) shouldBe 4
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 4)) shouldBe 6
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(0, 2)) shouldBe 3
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 0)) shouldBe 3
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, Positive)) shouldBe 4
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, Negative)) shouldBe 4
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 1, Positive)) shouldBe 3
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 1, Negative)) shouldBe 3
+    //scalastyle:on
+  }
+
+  /**
+    * Returns length of a Integer element.
+    *
+    * @param n number to calculate length.
+    * @return size of the integer.
+    */
+  def numberOfDigitsFromANumber(n: Int): Int = if (n == 0) 1 else math.log10(math.abs(n)).toInt + 1
+
+  /**
+    * Returns length of a Double element.
+    *
+    * @param n number to calculate length.
+    * @return size of the double.
+    */
+  def numberOfDigitsFromANumber(n: Double): Int = math.abs(n).toString.length - 1
+
 }

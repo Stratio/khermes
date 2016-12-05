@@ -22,5 +22,9 @@ package com.stratio.hermes.constants
 object HermesConstants {
 
   val ConstantDefaultLocale = "EN"
+
   val ConstantAkkaClusterName = "hermes"
+
+  val ConstantDecimalValue = 10
+
 }
