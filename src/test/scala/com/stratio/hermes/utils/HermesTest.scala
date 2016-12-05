@@ -101,12 +101,6 @@ class HermesTest extends FlatSpec with Matchers {
     forAll { (n: Int) =>
       hermesNum.Number.number(n, Negative) < 0
     }
-    val num: Int = hermesNum.Number.number(2, Positive)
-    num > 0 shouldBe true
-    numberOfDigitsFromANumber(num) shouldBe 2
-    val num2: Int = hermesNum.Number.number(2, Negative)
-    numberOfDigitsFromANumber(num2) shouldBe 2
-    num2 > 0 shouldBe false
     //scalastyle:on
   }
 
