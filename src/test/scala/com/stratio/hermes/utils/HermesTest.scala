@@ -18,9 +18,8 @@ package com.stratio.hermes.utils
 
 import java.security.InvalidParameterException
 
-import com.stratio.hermes.helpers.RandomHelper
 import org.junit.runner.RunWith
-import org.scalacheck.Prop.{BooleanOperators, forAll}
+import org.scalacheck.Prop.forAll
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -81,76 +80,81 @@ class HermesTest extends FlatSpec with Matchers {
   }
 
   it should "generate a random integer of 0 digit give it 0" in {
-
     val hermesNum = Hermes("")
-    hermesNum.NumberGenerator.number(0) shouldBe 0
+    hermesNum.Number.number(0) shouldBe 0
 
   }
 
   it should "generate a random integer when it passed the number of digit" in {
-
     val hermesNum = Hermes("")
     forAll { (n: Int) =>
-      (n > 0 && n < 32) ==> (RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.number(n)) == n)
+      numberOfDigitsFromANumber(hermesNum.Number.number(n)) == n
     }
-
   }
 
   it should "generate a random integer when it passed the number of digit and the sign" in {
-
     val hermesNum = Hermes("")
     //scalastyle:off
     forAll { (n: Int) =>
-      (n > 0 && n < 9) ==> (hermesNum.NumberGenerator.number(n, Positive) > 0)
+      hermesNum.Number.number(n, Positive) > 0
     }
     forAll { (n: Int) =>
-      (n > 0 && n < 9) ==> (hermesNum.NumberGenerator.number(n, Negative) < 0)
+      hermesNum.Number.number(n, Negative) < 0
     }
-    val num: Int = hermesNum.NumberGenerator.number(2, Positive)
+    val num: Int = hermesNum.Number.number(2, Positive)
     num > 0 shouldBe true
-    RandomHelper.numberOfDigitsFromANumber(num) shouldBe 2
-    val num2: Int = hermesNum.NumberGenerator.number(2, Negative)
-    RandomHelper.numberOfDigitsFromANumber(num2) shouldBe 2
+    numberOfDigitsFromANumber(num) shouldBe 2
+    val num2: Int = hermesNum.Number.number(2, Negative)
+    numberOfDigitsFromANumber(num2) shouldBe 2
     num2 > 0 shouldBe false
     //scalastyle:on
-
   }
 
 
   it should "throw an InvalidParameterException when a negative digit is passed or greater than the VAL_MAX" in {
-
     val hermesNum = Hermes("")
     //scalastyle:off
-    an[InvalidParameterException] should be thrownBy hermesNum.NumberGenerator.number(-2)
-    an[InvalidParameterException] should be thrownBy hermesNum.NumberGenerator.number(500)
-    an[InvalidParameterException] should be thrownBy hermesNum.NumberGenerator.decimal(-2)
-    an[InvalidParameterException] should be thrownBy hermesNum.NumberGenerator.decimal(2, -2)
-    an[InvalidParameterException] should be thrownBy hermesNum.NumberGenerator.decimal(2, 11)
+    an[InvalidParameterException] should be thrownBy hermesNum.Number.number(-2)
+    an[InvalidParameterException] should be thrownBy hermesNum.Number.number(500)
+    an[InvalidParameterException] should be thrownBy hermesNum.Number.decimal(-2)
+    an[InvalidParameterException] should be thrownBy hermesNum.Number.decimal(2, -2)
+    an[InvalidParameterException] should be thrownBy hermesNum.Number.decimal(2, 11)
     //scalastyle:on
-
   }
   it should "generate a random decimal of 0 digit give it 0.0" in {
-
     val hermesNum = Hermes("")
-    hermesNum.NumberGenerator.decimal(0) shouldBe 0.0
-    hermesNum.NumberGenerator.decimal(0, 0) shouldBe 0.0
-
+    hermesNum.Number.decimal(0) shouldBe 0.0
+    hermesNum.Number.decimal(0, 0) shouldBe 0.0
   }
 
   it should "generate a random decimal when it passed the number of digit" in {
-
     val hermesNum = Hermes("")
     //scalastyle:off
-    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2)) shouldBe 4
-    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, 4)) shouldBe 6
-    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(0, 2)) shouldBe 3
-    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, 0)) shouldBe 3
-    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, Positive)) shouldBe 4
-    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, Negative)) shouldBe 4
-    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, 1, Positive)) shouldBe 3
-    RandomHelper.numberOfDigitsFromANumber(hermesNum.NumberGenerator.decimal(2, 1, Negative)) shouldBe 3
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2)) shouldBe 4
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 4)) shouldBe 6
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(0, 2)) shouldBe 3
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 0)) shouldBe 3
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, Positive)) shouldBe 4
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, Negative)) shouldBe 4
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 1, Positive)) shouldBe 3
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 1, Negative)) shouldBe 3
     //scalastyle:on
-
   }
+
+  /**
+    * Returns length of a Integer element.
+    *
+    * @param n number to calculate length.
+    * @return size of the integer.
+    */
+  def numberOfDigitsFromANumber(n: Int): Int = if (n == 0) 1 else math.log10(math.abs(n)).toInt + 1
+
+  /**
+    * Returns length of a Double element.
+    *
+    * @param n number to calculate length.
+    * @return size of the double.
+    */
+  def numberOfDigitsFromANumber(n: Double): Int = math.abs(n).toString.length - 1
 
 }
