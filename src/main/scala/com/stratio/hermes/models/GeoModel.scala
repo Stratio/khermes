@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.constants
+package com.stratio.hermes.models
 
 /**
- * Global constants used in the application.
+ * All data related with geolocations will be loaded in this class.
+ * @param latitude latitude of geolocations.
+ * @param longitude longitude of geolocations.
  */
-object HermesConstants {
-
-  val ConstantDefaultLocale = "ALL"
-
-  val ConstantAkkaClusterName = "hermes"
-
-  val ConstantDecimalValue = 10
-
-}
+case class GeoModel(latitude: Double, longitude: Double)
