@@ -46,5 +46,6 @@ ITPARAMETERS = """
         }, DEPLOY: {
             doDeploy(config)
         }, failFast: config.FAILFAST)
-     }
+        doDocker(config)
+      }
 }
