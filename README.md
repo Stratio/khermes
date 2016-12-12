@@ -37,3 +37,6 @@ decimal(2,negative) #=> -45.89
 decimal(2,4) #=> 45.7568
 
 decimal(3,2,positive) #=> 354.89
+
+###Cluster
+
