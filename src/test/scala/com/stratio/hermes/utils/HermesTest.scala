@@ -17,7 +17,7 @@
 package com.stratio.hermes.utils
 
 import java.security.InvalidParameterException
-
+import java.util.NoSuchElementException
 import org.junit.runner.RunWith
 import org.scalacheck.Prop.forAll
 import org.scalatest.junit.JUnitRunner
@@ -138,13 +138,13 @@ class HermesTest extends FlatSpec with Matchers {
   it should "generate valid locations: ES and US locales" in {
 
     val hermesES = Hermes("ES")
-    hermesES.Geo.geoModel should contain (hermesES.Geo geolocation)
+    hermesES.Geo.geolocationOfGeoModel(hermesES.Geo.geoModel) should contain (hermesES.Geo.geolocation)
 
     val hermesUS = Hermes("US")
-    hermesUS.Geo.geoModel should contain (hermesUS.Geo.geolocation)
+    hermesUS.Geo.geolocationOfGeoModel(hermesUS.Geo.geoModel) should contain (hermesUS.Geo.geolocation)
   }
 
-  it should "raise an exception when it gets a geolocation are empty in the locale" in {
+  it should "raise a NoSuchElementException when the locale is empty" in {
     val hermes = Hermes("XX")
     //scalastyle:off
     an[NoSuchElementException] should be thrownBy hermes.Geo.geolocation
@@ -153,13 +153,21 @@ class HermesTest extends FlatSpec with Matchers {
 
   it should "when you do not specify the locale try to use all the locales" in {
     val hermes = Hermes()
-    hermes.Geo.geoModel should contain (hermes.Geo.geolocation)
+    hermes.Geo.geolocationOfGeoModel(hermes.Geo.geoModel) should contain (hermes.Geo.geolocation)
   }
 
   it should "raise an exception when it gets a geolocation that not exists" in {
     val hermesFR = Hermes("FR")
     //scalastyle:off
-    an[IllegalStateException] should be thrownBy hermesFR.Geo.geolocation
+    an[NoSuchElementException] should be thrownBy hermesFR.Geo.geolocation
+    //scalastyle:on
+  }
+
+  it should "raise an exception when it gets a geolocation that is corrupted" in {
+    val hermesYY = Hermes("YY")
+    //scalastyle:off
+    hermesYY.Geo.parseErrorList(hermesYY.Geo.geoModel).length should be(1)
+    an[NoSuchElementException] should be thrownBy hermesYY.Geo.geolocation
     //scalastyle:on
   }
   /**
