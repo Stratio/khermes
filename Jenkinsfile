@@ -8,7 +8,7 @@ hose {
     DEVTIMEOUT = 50
     RELEASETIMEOUT = 40    
     ATTIMEOUT = 240
-
+    PKGMODULESNAMES = ['hermes']
 
  ITSERVICES = [
      ['ZOOKEEPER': [
