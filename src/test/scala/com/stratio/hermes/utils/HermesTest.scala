@@ -17,7 +17,7 @@
 package com.stratio.hermes.utils
 
 import java.security.InvalidParameterException
-
+import java.util.NoSuchElementException
 import org.junit.runner.RunWith
 import org.scalacheck.Prop.forAll
 import org.scalatest.junit.JUnitRunner
@@ -135,6 +135,48 @@ class HermesTest extends FlatSpec with Matchers {
     //scalastyle:on
   }
 
+  it should "generate valid locations: ES and US locales" in {
+
+    val hermesES = Hermes("ES")
+    hermesES.Geo.geoModelList(hermesES.Geo.geoModel) should contain (hermesES.Geo.geolocation)
+
+    val hermesUS = Hermes("US")
+    hermesUS.Geo.geoModelList(hermesUS.Geo.geoModel) should contain (hermesUS.Geo.geolocation)
+  }
+
+  it should "raise a NoSuchElementException when the locale is empty" in {
+    val hermes = Hermes("XX")
+    //scalastyle:off
+    an[NoSuchElementException] should be thrownBy hermes.Geo.geolocation
+    //scalastyle:on
+  }
+
+  it should "when you do not specify the locale try to use all the locales" in {
+    val hermes = Hermes()
+    hermes.Geo.geoModelList(hermes.Geo.geoModel) should contain (hermes.Geo.geolocation)
+  }
+
+  it should "raise an exception when it gets a geolocation that not exists" in {
+    val hermesFR = Hermes("FR")
+    //scalastyle:off
+    an[NoSuchElementException] should be thrownBy hermesFR.Geo.geolocation
+    //scalastyle:on
+  }
+
+  it should "raise an exception when it gets a geolocation that is corrupted" in {
+    val hermesYY = Hermes("YY")
+    //scalastyle:off
+    hermesYY.Geo.parseErrorList(hermesYY.Geo.geoModel).length should be(1)
+    an[NoSuchElementException] should be thrownBy hermesYY.Geo.geolocation
+    //scalastyle:on
+  }
+
+  it should "raise an exception when it gets a file with at least one record corrupted" in {
+    val hermes = Hermes()
+    //scalastyle:off
+    hermes.Geo.parseErrorList(hermes.Geo.geoModel).length should be(2)
+    //scalastyle:on
+  }
   /**
     * Returns length of a Integer element.
     *

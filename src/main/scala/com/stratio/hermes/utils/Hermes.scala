@@ -16,16 +16,16 @@
 
 package com.stratio.hermes.utils
 
+import java.io.File
 import java.security.InvalidParameterException
-
 import com.stratio.hermes.constants.HermesConstants
+import com.stratio.hermes.helpers.RandomHelper
 import com.stratio.hermes.implicits.HermesSerializer
-import com.stratio.hermes.models.NameModel
+import com.stratio.hermes.models.{GeoModel, NameModel}
 import org.json4s._
 import org.json4s.native.Serialization.read
-import com.stratio.hermes.helpers.RandomHelper
 import scala.language.postfixOps
-import scala.util.{Random, Try}
+import scala.util.{Failure, Random, Success, Try}
 
 /**
  * Hermes util used for to generate random values.
@@ -39,9 +39,17 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
 
     override def unitName(): String = "name"
 
-    lazy val nameModel =
-      Try(read[NameModel](getClass.getResourceAsStream(s"/locales/$unitName/$locale.json")))
+    lazy val nameModel: NameModel = locale match {
+      case HermesConstants.ConstantDefaultLocale =>
+        val listNameModels = new File(getClass.getResource(s"/locales/$unitName").getFile).list().map(x => {
+          read[NameModel](getClass.getResourceAsStream(s"/locales/$unitName/$x"))
+        })
+        val firstNames = listNameModels.flatMap(_.firstNames).toList
+        val lastNames = listNameModels.flatMap(_.lastNames).toList
+        NameModel(firstNames, lastNames)
+      case _ => Try(read[NameModel](getClass.getResourceAsStream(s"/locales/$unitName/$locale.json")))
         .getOrElse(throw new IllegalStateException(s"Error loading locale: /locales/$unitName/$locale.json"))
+    }
 
     /**
      * Example: "Bruce Wayne".
@@ -151,8 +159,49 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
      */
     def decimal(m: Int, n: Int, sign: NumberSign): Double = (number(m, sign).toString + "." + numberDec(n)).toDouble
   }
+
+  /**
+   * Generates random locations.
+   */
+  object Geo extends HermesUnit {
+
+    override def unitName(): String = "geo"
+
+    lazy val geoModel = locale match {
+      case HermesConstants.ConstantDefaultLocale => {
+        val fileNames = new File(getClass.getResource(s"/locales/$unitName").getFile).list()
+        val geoModelAndErrors: Array[Either[String, Seq[GeoModel]]] = for {
+          filename <- fileNames
+        } yield parser(filename)
+        geoModelAndErrors.toList
+      }
+      case localeMatch => List(parser(s"$localeMatch.json"))
+    }
+
+    def parser(s: String): Either[String, Seq[GeoModel]] = {
+      Try(read[List[GeoModel]](getClass.getResourceAsStream(s"/locales/$unitName/$s"))) match {
+        case Success(v) => Right(v)
+        case Failure(e) => Left(e.getMessage)
+      }
+    }
+
+    /**
+     * Example: "geolocation() -> 57.585393,-157.571944".
+     * @return a random geolocation.
+     */
+    def geolocation(): (GeoModel) = {
+      RandomHelper.randomElementFromAList[(GeoModel)](geoModelList(geoModel)).getOrElse(throw new NoSuchElementException)
+    }
+
+    def geoModelList(l: List[Either[String, Seq[GeoModel]]]): List[GeoModel] = {
+      l.filter(_.isRight).flatMap(_.right.toOption.get)
+    }
+
+    def parseErrorList(l: List[Either[String, Seq[GeoModel]]]): List[String] = {
+      l.filter(_.isLeft).map(_.left.toOption.get)
+    }
+  }
 }
 sealed trait NumberSign
 case object Positive extends NumberSign
 case object Negative extends NumberSign
-
