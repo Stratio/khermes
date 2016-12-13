@@ -38,5 +38,9 @@ decimal(2,4) #=> 45.7568
 
 decimal(3,2,positive) #=> 354.89
 
+###Geolocations
+
+geolocation() #=> (27.931886,-15.386586)
+
 ###Cluster
 

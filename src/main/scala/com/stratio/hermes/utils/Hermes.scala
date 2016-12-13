@@ -190,10 +190,10 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
      * @return a random geolocation.
      */
     def geolocation(): (GeoModel) = {
-      RandomHelper.randomElementFromAList[(GeoModel)](geolocationOfGeoModel(geoModel)).getOrElse(throw new NoSuchElementException)
+      RandomHelper.randomElementFromAList[(GeoModel)](geoModelList(geoModel)).getOrElse(throw new NoSuchElementException)
     }
 
-    def geolocationOfGeoModel(l: List[Either[String, Seq[GeoModel]]]): List[GeoModel] = {
+    def geoModelList(l: List[Either[String, Seq[GeoModel]]]): List[GeoModel] = {
       l.filter(_.isRight).flatMap(_.right.toOption.get)
     }
 

@@ -138,10 +138,10 @@ class HermesTest extends FlatSpec with Matchers {
   it should "generate valid locations: ES and US locales" in {
 
     val hermesES = Hermes("ES")
-    hermesES.Geo.geolocationOfGeoModel(hermesES.Geo.geoModel) should contain (hermesES.Geo.geolocation)
+    hermesES.Geo.geoModelList(hermesES.Geo.geoModel) should contain (hermesES.Geo.geolocation)
 
     val hermesUS = Hermes("US")
-    hermesUS.Geo.geolocationOfGeoModel(hermesUS.Geo.geoModel) should contain (hermesUS.Geo.geolocation)
+    hermesUS.Geo.geoModelList(hermesUS.Geo.geoModel) should contain (hermesUS.Geo.geolocation)
   }
 
   it should "raise a NoSuchElementException when the locale is empty" in {
@@ -153,7 +153,7 @@ class HermesTest extends FlatSpec with Matchers {
 
   it should "when you do not specify the locale try to use all the locales" in {
     val hermes = Hermes()
-    hermes.Geo.geolocationOfGeoModel(hermes.Geo.geoModel) should contain (hermes.Geo.geolocation)
+    hermes.Geo.geoModelList(hermes.Geo.geoModel) should contain (hermes.Geo.geolocation)
   }
 
   it should "raise an exception when it gets a geolocation that not exists" in {
@@ -168,6 +168,13 @@ class HermesTest extends FlatSpec with Matchers {
     //scalastyle:off
     hermesYY.Geo.parseErrorList(hermesYY.Geo.geoModel).length should be(1)
     an[NoSuchElementException] should be thrownBy hermesYY.Geo.geolocation
+    //scalastyle:on
+  }
+
+  it should "raise an exception when it gets a file with at least one record corrupted" in {
+    val hermes = Hermes()
+    //scalastyle:off
+    hermes.Geo.parseErrorList(hermes.Geo.geoModel).length should be(2)
     //scalastyle:on
   }
   /**
