@@ -2,4 +2,10 @@
 
 ## 0.1.0 (upcoming)
 
-* First Hermes version
+* Produce messages to kafka using Stratio Hermes with Akka.
+* Geolocation.
+* Hermes can now run in Docker.
+* Generate numbers.
+* Feature/hermes clustering.
+* Create kafka producer.
+* Implementation for random names.
