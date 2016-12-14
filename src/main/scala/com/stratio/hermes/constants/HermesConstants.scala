@@ -26,5 +26,5 @@ object HermesConstants {
   val ConstantAkkaClusterName = "hermes"
 
   val ConstantDecimalValue = 10
-  
+
 }
