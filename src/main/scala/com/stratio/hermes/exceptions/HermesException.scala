@@ -14,19 +14,6 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.constants
+package com.stratio.hermes.exceptions
 
-/**
- * Global constants used in the application.
- */
-object HermesConstants {
-
-  val ConstantDefaultLocale = "ALL"
-
-  val ConstantAkkaClusterName = "hermes"
-
-  val ConstantDecimalValue = 10
-
-  val ConstantScaleBigDecimal = 9
-
-}
+case class HermesException(message: String) extends Exception(message)

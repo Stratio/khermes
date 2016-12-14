@@ -18,13 +18,17 @@ package com.stratio.hermes.utils
 
 import java.io.File
 import java.security.InvalidParameterException
+
 import com.stratio.hermes.constants.HermesConstants
+import com.stratio.hermes.exceptions.HermesException
 import com.stratio.hermes.helpers.RandomHelper
 import com.stratio.hermes.implicits.HermesSerializer
 import com.stratio.hermes.models.{GeoModel, NameModel}
 import org.json4s._
 import org.json4s.native.Serialization.read
+
 import scala.language.postfixOps
+import scala.math.BigDecimal.RoundingMode
 import scala.util.{Failure, Random, Success, Try}
 
 /**
@@ -119,8 +123,10 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
      * Example: "number(3,Sign.-) -123".
      * @return an Integer positive or negative depending of Sign parameter.
      */
-    def number(n: Int, sign: NumberSign): Int = {
-      if (sign.equals(Positive)) Math.abs(number(n)) else Math.abs(number(n)) * -1
+    def number(n: Int, sign: NumberSign): Int = sign match {
+      case Positive => Math.abs(number(n))
+      case Negative => Math.abs(number(n)) * -1
+      case _ => throw new HermesException(s"The sign must be Positive or Negative")
     }
 
     /**
@@ -133,14 +139,14 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
      * @param n decimal part size.
      * @return a random double with same integer and decimal part and random sign.
      */
-    def decimal(n: Int): Double = (number(n).toString + "." + numberDec(n)).toDouble
+    def decimal(n: Int): BigDecimal = setScale(number(n).toString + "." + numberDec(n), n)
 
     /**
      * Example: "decimal(3,Sign.-) -> -123.456".
      * @param n decimal part size.
      * @return a random double with same integer and decimal part with defined sign.
      */
-    def decimal(n: Int, sign: NumberSign): Double = (number(n, sign).toString + "." + numberDec(n)).toDouble
+    def decimal(n: Int, sign: NumberSign): BigDecimal = setScale(number(n, sign).toString + "." + numberDec(n), n)
 
     /**
      * Example: "decimal(3,1) -> 123.4".
@@ -148,7 +154,7 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
      * @param n decimal part size.
      * @return a random double with random sign.
      */
-    def decimal(m: Int, n: Int): Double = (number(m).toString + "." + numberDec(n)).toDouble
+    def decimal(m: Int, n: Int): BigDecimal = setScale(number(m).toString + "." + numberDec(n), n)
 
     /**
      * Example: "decimal(3,2,Sign.-) -> -123.45".
@@ -157,7 +163,11 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
      * @param sign sign positive or negative.
      * @return a random double with defined sign.
      */
-    def decimal(m: Int, n: Int, sign: NumberSign): Double = (number(m, sign).toString + "." + numberDec(n)).toDouble
+    def decimal(m: Int, n: Int, sign: NumberSign): BigDecimal = setScale(number(m, sign).toString + "." + numberDec(n), n)
+
+    def setScale(s: String, n: Int): BigDecimal = {
+      if (n == 0) BigDecimal.valueOf(s.toDouble).setScale(1, RoundingMode.HALF_UP) else BigDecimal.valueOf(s.toDouble).setScale(n, RoundingMode.HALF_UP)
+    }
   }
 
   /**
