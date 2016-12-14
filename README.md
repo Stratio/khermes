@@ -38,7 +38,7 @@ decimal(2,4) #=> 45.7568
 
 decimal(3,2,Positive) #=> 354.89
 
-###Geolocations
+###Geo
 
 geolocation() #=> (27.931886,-15.386586)
 

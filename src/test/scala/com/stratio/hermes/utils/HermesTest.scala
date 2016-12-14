@@ -155,7 +155,7 @@ class HermesTest extends FlatSpec with Matchers {
   it should "raise a NoSuchElementException when the locale is empty" in {
     val hermes = Hermes("XX")
     //scalastyle:off
-    an[NoSuchElementException] should be thrownBy hermes.Geo.geolocation
+    an[HermesException] should be thrownBy hermes.Geo.geolocation
     //scalastyle:on
   }
 
@@ -167,7 +167,7 @@ class HermesTest extends FlatSpec with Matchers {
   it should "raise an exception when it gets a geolocation that not exists" in {
     val hermesFR = Hermes("FR")
     //scalastyle:off
-    an[NoSuchElementException] should be thrownBy hermesFR.Geo.geolocation
+    an[HermesException] should be thrownBy hermesFR.Geo.geolocation
     //scalastyle:on
   }
 
@@ -175,7 +175,7 @@ class HermesTest extends FlatSpec with Matchers {
     val hermesYY = Hermes("YY")
     //scalastyle:off
     hermesYY.Geo.parseErrorList(hermesYY.Geo.geoModel).length should be(1)
-    an[NoSuchElementException] should be thrownBy hermesYY.Geo.geolocation
+    an[HermesException] should be thrownBy hermesYY.Geo.geolocation
     //scalastyle:on
   }
 
