@@ -18,6 +18,7 @@ package com.stratio.hermes.utils
 
 import java.security.InvalidParameterException
 import java.util.NoSuchElementException
+import com.stratio.hermes.exceptions.HermesException
 import org.junit.runner.RunWith
 import org.scalacheck.Prop.forAll
 import org.scalatest.junit.JUnitRunner
@@ -104,7 +105,6 @@ class HermesTest extends FlatSpec with Matchers {
     //scalastyle:on
   }
 
-
   it should "throw an InvalidParameterException when a negative digit is passed or greater than the VAL_MAX" in {
     val hermesNum = Hermes("")
     //scalastyle:off
@@ -127,11 +127,19 @@ class HermesTest extends FlatSpec with Matchers {
     numberOfDigitsFromANumber(hermesNum.Number.decimal(2)) shouldBe 4
     numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 4)) shouldBe 6
     numberOfDigitsFromANumber(hermesNum.Number.decimal(0, 2)) shouldBe 3
-    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 0)) shouldBe 3
-    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, Positive)) shouldBe 4
-    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, Negative)) shouldBe 4
-    numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 1, Positive)) shouldBe 3
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(9, 9)) shouldBe 18
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(9, 0)) shouldBe 10
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(8, Positive)) shouldBe 16
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(7, Negative)) shouldBe 14
+    numberOfDigitsFromANumber(hermesNum.Number.decimal(9, 7, Positive)) shouldBe 16
     numberOfDigitsFromANumber(hermesNum.Number.decimal(2, 1, Negative)) shouldBe 3
+    //scalastyle:on
+  }
+
+  it should "throw an InvalidParameterException when pass an sign that is null" in {
+    val hermesNum = Hermes("")
+    //scalastyle:off
+    an[HermesException] should be thrownBy hermesNum.Number.number(2,null)
     //scalastyle:on
   }
 
@@ -177,20 +185,19 @@ class HermesTest extends FlatSpec with Matchers {
     hermes.Geo.parseErrorList(hermes.Geo.geoModel).length should be(2)
     //scalastyle:on
   }
+
   /**
     * Returns length of a Integer element.
-    *
     * @param n number to calculate length.
     * @return size of the integer.
     */
   def numberOfDigitsFromANumber(n: Int): Int = if (n == 0) 1 else math.log10(math.abs(n)).toInt + 1
 
   /**
-    * Returns length of a Double element.
-    *
+    * Returns length of a BigDecimal element.
     * @param n number to calculate length.
-    * @return size of the double.
+    * @return size of the BigDecimal.
     */
-  def numberOfDigitsFromANumber(n: Double): Int = math.abs(n).toString.length - 1
+  def numberOfDigitsFromANumber(n: BigDecimal): Int = n.abs.toString.length - 1
 
 }
