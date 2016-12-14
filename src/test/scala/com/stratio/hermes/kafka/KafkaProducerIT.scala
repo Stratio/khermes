@@ -37,6 +37,7 @@ class KafkaProducerIT extends FlatSpec with Matchers {
   val KafkaHost = System.getProperty("KAFKA_HOST", "localhost")
   val KafkaPort = System.getProperty("KAFKA_PORT", "9092")
   val TopicName = System.getProperty("TOPIC_NAME", "test")
+
   val props = new Properties
   props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
   props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
@@ -75,13 +76,6 @@ class KafkaProducerIT extends FlatSpec with Matchers {
   }
 
   "A KafkaProducer" should "load correctly the config from a conf file" in {
-
     KafkaProducer.getProperties(ConfigFactory.parseResources("kafka.conf")).getProperty("metadata.broker.list") shouldBe "localhost:9092"
-
   }
-
-  "A KafkaProducer" should "fail when do not read correctly the configuration" in {
-    a[ConfigException] should be thrownBy KafkaProducer.getInstance(ConfigFactory.parseResources(""))
-  }
-
 }

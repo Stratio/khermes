@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.constants
+package com.stratio.hermes.runners
 
-/**
- * Global constants used in the application.
- */
-object HermesConstants {
+import com.stratio.hermes.actors.HermesActorTest
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
-  val ConstantDefaultLocale = "ALL"
-  val ConstantAkkaClusterName = "hermes"
-  val ConstantDecimalValue = 10
+@RunWith(classOf[JUnitRunner])
+class HermesRunnerTest extends HermesActorTest {
+
+  "An HermesRunner" should {
+    "run Hermes without any kind of error" in {
+      HermesRunner.main(Array.empty)
+    }
+  }
 }

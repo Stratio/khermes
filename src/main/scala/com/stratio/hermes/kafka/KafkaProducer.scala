@@ -35,17 +35,14 @@ object KafkaProducer extends HermesLogging {
     props
   }
 
-  def getInstance(config: Config): KafkaProducer[AnyRef, AnyRef] = getInstance(getProperties(config))
-
   def getInstance(props: Properties): KafkaProducer[AnyRef, AnyRef] = new KafkaProducer(props)
 
   def send(producer: KafkaProducer[AnyRef, AnyRef], topic: String, message: String): Future[RecordMetadata] = {
-      log.info(s"Sending message: [$message] to the topic: $topic")
-      producer.send(new ProducerRecord[AnyRef, AnyRef](topic, message))
-    }
+    producer.send(new ProducerRecord[AnyRef, AnyRef](topic, message))
+  }
 
   def close(producer: KafkaProducer[AnyRef, AnyRef]): Unit = {
-      log.info("Producer closed.")
-      producer.close()
+    log.info("Producer closed.")
+    producer.close()
   }
 }

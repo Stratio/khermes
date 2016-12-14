@@ -14,29 +14,22 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.runners
+package com.stratio.hermes.helpers
 
-import akka.actor.ActorSystem
-import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit}
-import com.stratio.hermes.helpers.HermesRunnerHelper
-import com.typesafe.config.ConfigFactory
+import com.stratio.hermes.actors.HermesActorTest
 import org.junit.runner.RunWith
-import org.scalatest._
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class HermesRunnerHelperTest extends TestKit(ActorSystem(
-  "HermesRunnerHelperTest",
-  ConfigFactory.parseString("""
-    akka {
-      loglevel = "WARNING"
-    }
-    """))) with DefaultTimeout with ImplicitSender
-  with WordSpecLike with Matchers with BeforeAndAfterAll {
+class HermesRunnerHelperTest extends HermesActorTest {
 
   "An HermesRunnerHelper" should {
-    "print a welcome message" in {
+    "print a welcome message and start the akka system without errors" in {
       HermesRunnerHelper.welcome
+    }
+
+    "start a worker supervisor without errors" in {
+      HermesRunnerHelper.workerSupervisor
     }
   }
 }
