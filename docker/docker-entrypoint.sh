@@ -2,7 +2,7 @@
 
 DEFAULT_PORT=2551
 if [[ -z  ${PORT} ]]; then
-        export PORT=DEFAULT_PORT
+        export PORT=${DEFAULT_PORT}
 fi
 
 PARAMS="-Dakka.remote.netty.tcp.port=${PORT}"
