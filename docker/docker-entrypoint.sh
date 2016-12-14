@@ -1,7 +1,8 @@
 #!/bin/bash -xe
 
+DEFAULT_PORT=2551
 if [[ -z  ${PORT} ]]; then
-        export PORT=2551
+        export PORT=DEFAULT_PORT
 fi
 
 PARAMS="-Dakka.remote.netty.tcp.port=${PORT}"
