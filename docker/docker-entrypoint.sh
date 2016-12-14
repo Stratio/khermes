@@ -1,14 +1,14 @@
 #!/bin/bash -xe
 
-if [[ -z  ${REMOTE_NETTY_TCP_PORT} ]]; then
-  echo "Error: env variable REMOTE_NETTY_TCP_PORT is not defined." 
+if [[ -z  ${PORT} ]]; then
+        export PORT=2551
 fi
 
-PARAMS="-Dakka.remote.netty.tcp.port=${REMOTE_NETTY_TCP_PORT}"
+PARAMS="-Dakka.remote.netty.tcp.port=${PORT}"
 
 
-if [[ ! -z  ${CLUSTER_SEED_NODES} ]]; then
-  PARAMS="${PARAMS} -Dakka.cluster.seed-nodes.0=${CLUSTER_SEED_NODES}"
+if [[ ! -z  ${SEED} ]]; then
+  PARAMS="${PARAMS} -Dakka.cluster.seed-nodes.0=akka.tcp://hermes@${SEED}"
 fi
 
 echo "Params: ${PARAMS}"
