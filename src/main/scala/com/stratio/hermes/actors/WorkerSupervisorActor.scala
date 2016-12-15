@@ -35,13 +35,6 @@ class WorkerSupervisorActor()(implicit config: Config)
 
   val cluster = Cluster(context.system)
 
-  lazy val propsProducer = new Properties
-  propsProducer.put("metadata.broker.list", config.getString("kafka.metadata.broker.list"))
-  propsProducer.put("bootstrap.servers", config.getString("kafka.bootstrap.servers"))
-  propsProducer.put("key.serializer" , "org.apache.kafka.common.serialization.StringSerializer")
-  propsProducer.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-  propsProducer.put("request.requieres.acks", "1")
-
   override def receive: Receive = {
     case Start =>
       val count = new AtomicInteger(0)
@@ -53,9 +46,9 @@ class WorkerSupervisorActor()(implicit config: Config)
   protected def startThread(threadIndex: Int, count: AtomicInteger, time: Long): Unit = {
     val thread = new Thread(new Runnable {
       override def run(): Unit = {
-        val producer = new KafkaClient
+        val kafkaClient = new KafkaClient
         val hermes = Hermes()
-        produce(producer, hermes, count, time, 1)
+        produce(kafkaClient, hermes, count, time, 1)
       }
 
       def produce(kafkaClient: KafkaClient,
