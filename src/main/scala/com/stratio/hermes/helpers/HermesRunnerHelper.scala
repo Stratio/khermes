@@ -21,6 +21,7 @@ import java.util.Date
 import akka.actor.{Props, ActorSystem}
 import com.stratio.hermes.actors.WorkerSupervisorActor
 import com.stratio.hermes.actors.WorkerSupervisorActor._
+import com.stratio.hermes.constants.HermesConstants
 import com.stratio.hermes.utils.HermesLogging
 import com.typesafe.config.Config
 
@@ -56,7 +57,7 @@ object HermesRunnerHelper extends HermesLogging {
 
     val workerSupervisor = system.actorOf(Props(new WorkerSupervisorActor), "worker-supervisor")
 
-    system.scheduler.scheduleOnce(5 seconds) {
+    system.scheduler.scheduleOnce(HermesConstants.ConstantWorkerSupervisorTimeout seconds) {
       workerSupervisor ! Start
     }
   }

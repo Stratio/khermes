@@ -21,10 +21,10 @@ import java.util.{Date, Properties}
 
 import akka.actor.{Actor, ActorLogging}
 import akka.cluster.Cluster
-import com.stratio.hermes.kafka.KafkaProducer
+import com.stratio.hermes.actors.WorkerSupervisorActor._
+import com.stratio.hermes.kafka.KafkaClient
 import com.stratio.hermes.utils.Hermes
 import com.typesafe.config.Config
-import com.stratio.hermes.actors.WorkerSupervisorActor._
 
 /**
  * Actor that produces messages to kafka. It runs n threads depending of the number of processors of the node.
@@ -46,25 +46,25 @@ class WorkerSupervisorActor()(implicit config: Config)
     case Start =>
       val count = new AtomicInteger(0)
       val initialTime = new Date().getTime
-      (1 to Runtime.getRuntime.availableProcessors).foreach(startThread(_, count, initialTime))
+      (1 to (Math.ceil(Runtime.getRuntime.availableProcessors / 2)).toInt).foreach(startThread(_, count, initialTime))
       sender ! StartOK
   }
 
   protected def startThread(threadIndex: Int, count: AtomicInteger, time: Long): Unit = {
     val thread = new Thread(new Runnable {
       override def run(): Unit = {
-        val producer = KafkaProducer.getInstance(propsProducer)
+        val producer = new KafkaClient
         val hermes = Hermes()
         produce(producer, hermes, count, time, 1)
       }
 
-      def produce(producer: org.apache.kafka.clients.producer.KafkaProducer[AnyRef, AnyRef],
+      def produce(kafkaClient: KafkaClient,
                   hermes: Hermes,
                   count: AtomicInteger,
                   time: Long,
                   index: Int): Unit = {
-        KafkaProducer.send(producer, "testTopic", s"""{"name": "${hermes.Name.fullName}"}""")
-        produce(producer, hermes, count, time, index + 1)
+        kafkaClient.send("testTopic", s"""{"name": "${hermes.Name.fullName}"}""")
+        produce(kafkaClient, hermes, count, time, index + 1)
       }
     })
 

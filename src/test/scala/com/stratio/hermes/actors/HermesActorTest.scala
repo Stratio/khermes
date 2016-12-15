@@ -27,42 +27,11 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
  * Generic class used to test Hermes actors. All tests should be extend this class.
  */
 abstract class HermesActorTest extends TestKit(ActorSystem("ActorTest",
-  ConfigFactory.parseString(HermesActorTest.DefaultConfig)))
+
+  ConfigFactory.load()))
   with DefaultTimeout with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
 
-
-//  lazy implicit val config: Config = ConfigFactory.parseString(HermesActorTest.DefaultConfig)
   lazy implicit val config: Config = HermesImplicits.config
   lazy implicit val executionContext = HermesImplicits.executionContext
-
 }
-
-/**
- * Companion object used to set constants related with configurations to test actors.
- */
-object HermesActorTest {
-
-  val DefaultConfig = """
-                        |akka {
-                        |  cluster.auto-join = off
-                        |  actor.provider = akka.cluster.ClusterActorRefProvider
-                        |  akka.testconductor.barrier-timeout = 4000
-                        |
-                        |  loglevel = "INFO"
-                        |  remote {
-                        |    log-remote-lifecycle-events = off
-                        |    netty.tcp {
-                        |      hostname = "localhost"
-                        |      port = 0
-                        |    }
-                        |  }
-                        |}
-                        |
-                        |kafka {
-                        |  metadata.broker.list = "localhost:9092"
-                        |  bootstrap.servers = "localhost:9092"
-                        |}
-                      """.stripMargin
-}
-

@@ -24,4 +24,5 @@ object HermesConstants {
   val ConstantDefaultLocale = "ALL"
   val ConstantAkkaClusterName = "hermes"
   val ConstantDecimalValue = 10
+  val ConstantWorkerSupervisorTimeout = 5
 }
