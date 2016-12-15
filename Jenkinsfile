@@ -24,9 +24,8 @@ hose {
 ]
 
 ITPARAMETERS = """
-        |    -DKAFKA_HOST=%%KAFKA
-        |    -DKAFKA_PORT=9092
-        |    -DTOPIC_NAME=stratio
+        |    -DkafkaConsumer.bootstrap.servers=%%KAFKA:9092
+        |    -DkafkaProducer.metadata.broker.list=%%KAFKA:9092
         | """
 
 
