@@ -182,7 +182,7 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
         val geoModelAndErrors: List[Either[String, Seq[GeoModel]]] = (for {
           filename <- fileNames
         } yield parser(filename)).toList
-        log.warn(s"${parseErrorList(geoModelAndErrors)}")
+        if (parseErrorList(geoModelAndErrors).nonEmpty) log.warn(s"${parseErrorList(geoModelAndErrors)}")
         geoModelAndErrors
       }
       case localeMatch => List(parser(s"$localeMatch.json"))
@@ -212,11 +212,7 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
       l.filter(_.isLeft).map(_.left.toOption.get)
     }
   }
-
 }
-
 sealed trait NumberSign
-
 case object Positive extends NumberSign
-
 case object Negative extends NumberSign
