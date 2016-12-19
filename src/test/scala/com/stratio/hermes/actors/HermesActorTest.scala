@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.runners
+package com.stratio.hermes.actors
 
 import akka.actor.ActorSystem
-import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit}
-import com.stratio.hermes.helpers.HermesRunnerHelper
-import com.typesafe.config.ConfigFactory
-import org.junit.runner.RunWith
-import org.scalatest._
-import org.scalatest.junit.JUnitRunner
+import akka.testkit.{ImplicitSender, DefaultTimeout, TestKit}
+import com.stratio.hermes.constants.HermesConstants
+import com.stratio.hermes.implicits.HermesImplicits
+import com.typesafe.config.{Config, ConfigFactory}
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
-@RunWith(classOf[JUnitRunner])
-class HermesRunnerHelperTest extends TestKit(ActorSystem(
-  "HermesRunnerHelperTest",
-  ConfigFactory.parseString("""
-    akka {
-      loglevel = "WARNING"
-    }
-    """))) with DefaultTimeout with ImplicitSender
+/**
+ * Generic class used to test Hermes actors. All tests should be extend this class.
+ */
+abstract class HermesActorTest extends TestKit(ActorSystem("ActorTest",
+  ConfigFactory.load()))
+  with DefaultTimeout with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
 
-  "An HermesRunnerHelper" should {
-    "print a welcome message" in {
-      HermesRunnerHelper.welcome
-    }
-  }
+  lazy implicit val config: Config = HermesImplicits.config
+  lazy implicit val executionContext = HermesImplicits.executionContext
 }

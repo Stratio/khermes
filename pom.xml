@@ -147,6 +147,7 @@
             <groupId>org.scalacheck</groupId>
             <artifactId>scalacheck_${scala.binary.version}</artifactId>
             <version>${scalacheck.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

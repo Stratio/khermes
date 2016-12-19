@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.runners
+package com.stratio.hermes.helpers
 
-import com.stratio.hermes.helpers.HermesRunnerHelper
-import com.stratio.hermes.utils.HermesLogging
+import com.stratio.hermes.actors.HermesActorTest
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
-/**
- * Entry point of the application.
- */
-object HermesRunner extends App with HermesLogging {
+@RunWith(classOf[JUnitRunner])
+class HermesRunnerHelperTest extends HermesActorTest {
 
-  import com.stratio.hermes.implicits.HermesImplicits._
-  HermesRunnerHelper.welcome
-  HermesRunnerHelper.workerSupervisor
+  "An HermesRunnerHelper" should {
+    "print a welcome message and start the akka system without errors" in {
+      HermesRunnerHelper.welcome
+    }
+
+    "start a worker supervisor without errors" in {
+      HermesRunnerHelper.workerSupervisor
+    }
+  }
 }

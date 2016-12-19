@@ -18,8 +18,14 @@ package com.stratio.hermes.helpers
 
 import java.util.Date
 
-import akka.actor.ActorSystem
+import akka.actor.{Props, ActorSystem}
+import com.stratio.hermes.actors.WorkerSupervisorActor
+import com.stratio.hermes.actors.WorkerSupervisorActor._
+import com.stratio.hermes.constants.HermesConstants
 import com.stratio.hermes.utils.HermesLogging
+import com.typesafe.config.Config
+
+import scala.concurrent.ExecutionContextExecutor
 
 /**
  * Common operations used when Hermes starts.
@@ -42,4 +48,17 @@ object HermesRunnerHelper extends HermesLogging {
          |> Total memory  : ${Runtime.getRuntime.totalMemory}
          |> Free memory   : ${Runtime.getRuntime.freeMemory}
     """.stripMargin)
+
+
+  def workerSupervisor()(implicit config: Config,
+                         system: ActorSystem,
+                         executionContext: ExecutionContextExecutor): Unit = {
+    import scala.concurrent.duration._
+
+    val workerSupervisor = system.actorOf(Props(new WorkerSupervisorActor), "worker-supervisor")
+
+    system.scheduler.scheduleOnce(HermesConstants.ConstantWorkerSupervisorTimeout seconds) {
+      workerSupervisor ! Start
+    }
+  }
 }
