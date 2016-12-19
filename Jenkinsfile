@@ -25,7 +25,8 @@ hose {
 
 ITPARAMETERS = """
         |    -DkafkaConsumer.bootstrap.servers=%%KAFKA:9092
-        |    -DkafkaProducer.metadata.broker.list=%%KAFKA:9092
+        |    -DkafkaProducer.bootstrap.servers=%%KAFKA:9092
+        |    -Dzk.connectionString=%%ZOOKEEPER:2181
         | """
 
 

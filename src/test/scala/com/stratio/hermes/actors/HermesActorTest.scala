@@ -27,7 +27,6 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
  * Generic class used to test Hermes actors. All tests should be extend this class.
  */
 abstract class HermesActorTest extends TestKit(ActorSystem("ActorTest",
-
   ConfigFactory.load()))
   with DefaultTimeout with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {

@@ -17,48 +17,62 @@
 package com.stratio.hermes.kafka
 
 import java.util
+import java.util.{Properties, UUID}
 
+import com.stratio.hermes.utils.HermesLogging
+import com.typesafe.config.Config
+import kafka.admin.AdminUtils
+import kafka.utils.ZkUtils
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class KafkaClientIT extends FlatSpec with Matchers {
+class KafkaClientIT extends FlatSpec with Matchers with HermesLogging {
 
   val Message = "testMessage"
-  val Topic = s"topicTest"
-  val PollTime = 100
+  val Topic = s"topic-${UUID.randomUUID().toString}"
+  val PollTime = 200
+  val SessionTimeout = 1000
+  val ConnectionTimeout = 1000
+  val IsZkSecurityEnabled = false
+  val Partitions = 1
+  val ReplicationFactor = 1
+  val TimeoutPoll = 100
+  val NumberOfMessages = 3
+  implicit val config = com.stratio.hermes.implicits.HermesImplicits.config
 
-//  "A KafkaProducer" should "parse the configuration correctly" in {
-//    val expectedResult = Map(
-//      "metadata.broker.list" -> "localhost:9092",
-//      "bootstrap.servers" -> "localhost:9092",
-//      "key.serializer" -> "org.apache.kafka.common.serialization.StringSerializer",
-//      "value.serializer" -> "org.apache.kafka.common.serialization.StringSerializer",
-//      "key.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer",
-//      "value.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer",
-//      "group.id" -> "0",
-//      "auto.commit.interval.ms" -> "1000",
-//      "session.timeout.ms" -> "30000",
-//      "request.requieres.acks" -> "1"
-//    )
-//    import collection.JavaConversions._
-//    mapAsScalaMap(kafkaClient.properties) should be (expectedResult)
-//  }
+  "A KafkaProducer" should "parse the configuration of the consumer correctly" in {
+    val kafka = new KafkaClient()
+    Option(kafka.parseProperties("kafkaConsumer").getProperty("bootstrap.servers")) should not be (None)
+  }
+
+  it should "parse the configuration of the producer correctly" in {
+    val kafka = new KafkaClient()
+    kafka.parseProperties("kafkaProducer").getProperty("bootstrap.servers") should not be (None)
+    kafka.parseProperties().getProperty("bootstrap.servers") should not be (None)
+  }
 
   it should "produce and consume messages" in {
-    implicit val config = com.stratio.hermes.implicits.HermesImplicits.config
-    val kafkaClient = new KafkaClient
-    kafkaClient.send(Topic, Message)
+    createTopic(Topic)
+    val kafka = new KafkaClient()
+    kafka.consumer.subscribe(util.Arrays.asList(Topic))
+    kafka.consumer.poll(TimeoutPoll).count() should be (0)
+    (1 to NumberOfMessages).foreach(_ => kafka.send(Topic, Message))
+    kafka.producer.flush()
+    kafka.producer.close()
+    kafka.consumer.poll(TimeoutPoll).count should be (NumberOfMessages)
+    kafka.consumer.commitSync()
+    kafka.consumer.close()
+  }
 
-    val kafkaClient2 = new KafkaClient
-    kafkaClient2.consumer.subscribe(util.Arrays.asList(Topic))
-
-    val consumerRecords = kafkaClient2.consumer.poll(PollTime)
-    consumerRecords.count() should be (1)
-    consumerRecords.iterator().next().value().toString should be (Message)
-
-    kafkaClient.producer.close
-    kafkaClient2.consumer.close
+  def createTopic(topicName: String)(implicit config: Config): Unit = {
+    val connectionString = config.getString("zk.connectionString")
+    val zkUtils = ZkUtils.apply(
+      connectionString,
+      SessionTimeout,
+      ConnectionTimeout,
+      IsZkSecurityEnabled)
+    AdminUtils.createTopic(zkUtils, topicName, Partitions, ReplicationFactor, new Properties())
   }
 }

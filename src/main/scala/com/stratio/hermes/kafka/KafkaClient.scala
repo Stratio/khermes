@@ -30,7 +30,15 @@ import org.apache.kafka.clients.producer.{ProducerRecord, RecordMetadata, KafkaP
  */
 class KafkaClient()(implicit config: Config) extends HermesLogging {
 
-   def parseProperties(path: String = "kafkaProducer"): Properties = {
+  lazy val producer: KafkaProducer[AnyRef, AnyRef] = new KafkaProducer(parseProperties("kafkaProducer"))
+  lazy val consumer: KafkaConsumer[AnyRef, AnyRef] = new KafkaConsumer(parseProperties("kafkaConsumer"))
+
+  /**
+   * Parses Kafka's configuration to a properties object.
+   * @param path that could be the configuration of a kafkaProducer or a kafkaConsumer. (kafkaProducer by default).
+   * @return a parsed properties object.
+   */
+  def parseProperties(path: String = "kafkaProducer"): Properties = {
     assert(config.hasPath(path), s"Not existing $path path in application.conf")
     import scala.collection.JavaConversions._
     val props = new Properties()
@@ -40,9 +48,6 @@ class KafkaClient()(implicit config: Config) extends HermesLogging {
     props.putAll(map)
     props
   }
-
-  lazy val producer: KafkaProducer[AnyRef, AnyRef] = new KafkaProducer(parseProperties("kafkaProducer"))
-  lazy val consumer: KafkaConsumer[AnyRef, AnyRef] = new KafkaConsumer(parseProperties("kafkaConsumer"))
 
   /**
    * Sends a message to a topic.
