@@ -11,6 +11,10 @@ if [[ ! -z  ${SEED} ]]; then
   PARAMS="${PARAMS} -Dakka.cluster.seed-nodes.0=akka.tcp://hermes@${SEED}"
 fi
 
+if [[ ! -z ${HOSTNAME} ]]; then
+  PARAMS="${PARAMS} -Dakka.remote.netty.tcp.hostname=${HOSTNAME}"
+fi
+
 if [[ ! -z  ${KAFKA_BROKER_LIST} ]]; then
   PARAMS="${PARAMS} -Dkafka.metadata.broker.list=${KAFKA_BROKER_LIST}"
 fi
