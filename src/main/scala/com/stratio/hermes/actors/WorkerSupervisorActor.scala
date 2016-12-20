@@ -57,6 +57,7 @@ class WorkerSupervisorActor()(implicit config: Config)
                   count: AtomicInteger,
                   time: Long,
                   index: Int): Unit = {
+
         kafkaClient.send("testTopic", s"""{"name": "${hermes.Name.fullName}"}""")
         if(index % NumberOfMessagesToLog == 0) log.info(s"Produced ${count.addAndGet(NumberOfMessagesToLog)} messages in thread-$threadIndex")
         produce(kafkaClient, hermes, count, time, index + 1)

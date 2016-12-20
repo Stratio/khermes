@@ -25,4 +25,7 @@ object HermesConstants {
   val ConstantAkkaClusterName = "hermes"
   val ConstantDecimalValue = 10
   val ConstantWorkerSupervisorTimeout = 5
+
+  val ConstantGeneratedTemplatesPrefix = "generated-templates"
+  val ConstantGeneratedClassesPrefix = "generated-classes"
 }

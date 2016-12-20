@@ -17,8 +17,7 @@
 package com.stratio.hermes.actors
 
 import akka.actor.ActorSystem
-import akka.testkit.{ImplicitSender, DefaultTimeout, TestKit}
-import com.stratio.hermes.constants.HermesConstants
+import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit}
 import com.stratio.hermes.implicits.HermesImplicits
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
