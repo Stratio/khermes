@@ -19,6 +19,7 @@ if [[ ! -z  ${KAFKA_BOOTSTRAP_SERVERS} ]]; then
   PARAMS="${PARAMS} -DkafkaProducer.bootstrap.servers=${KAFKA_BOOTSTRAP_SERVERS}"
 fi
 
+sleep 10
 echo "Params: ${PARAMS}"
 java -jar ${PARAMS} /hermes.jar
 
