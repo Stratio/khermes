@@ -15,12 +15,8 @@ if [[ ! -z ${HOSTNAME} ]]; then
   PARAMS="${PARAMS} -Dakka.remote.netty.tcp.hostname=${HOSTNAME}"
 fi
 
-if [[ ! -z  ${KAFKA_BROKER_LIST} ]]; then
-  PARAMS="${PARAMS} -Dkafka.metadata.broker.list=${KAFKA_BROKER_LIST}"
-fi
-
 if [[ ! -z  ${KAFKA_BOOTSTRAP_SERVERS} ]]; then
-  PARAMS="${PARAMS} -Dkafka.bootstrap.servers=${KAFKA_BOOTSTRAP_SERVERS}"
+  PARAMS="${PARAMS} -DkafkaProducer.bootstrap.servers=${KAFKA_BOOTSTRAP_SERVERS}"
 fi
 
 echo "Params: ${PARAMS}"
