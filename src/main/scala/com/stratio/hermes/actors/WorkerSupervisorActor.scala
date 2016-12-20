@@ -34,12 +34,13 @@ class WorkerSupervisorActor()(implicit config: Config)
   extends Actor with ActorLogging {
 
   val cluster = Cluster(context.system)
+  val NumberOfMessagesToLog = 100000
 
   override def receive: Receive = {
     case Start =>
       val count = new AtomicInteger(0)
       val initialTime = new Date().getTime
-      (1 to (Math.ceil(Runtime.getRuntime.availableProcessors / 2)).toInt).foreach(startThread(_, count, initialTime))
+      startThread(1, count, initialTime)
       sender ! StartOK
   }
 
@@ -47,7 +48,7 @@ class WorkerSupervisorActor()(implicit config: Config)
     val thread = new Thread(new Runnable {
       override def run(): Unit = {
         val kafkaClient = new KafkaClient
-        val hermes = Hermes()
+        val hermes = Hermes("EN")
         produce(kafkaClient, hermes, count, time, 1)
       }
 
@@ -57,6 +58,7 @@ class WorkerSupervisorActor()(implicit config: Config)
                   time: Long,
                   index: Int): Unit = {
         kafkaClient.send("testTopic", s"""{"name": "${hermes.Name.fullName}"}""")
+        if(index % NumberOfMessagesToLog == 0) log.info(s"Produced ${count.addAndGet(NumberOfMessagesToLog)} messages in thread-$threadIndex")
         produce(kafkaClient, hermes, count, time, index + 1)
       }
     })
