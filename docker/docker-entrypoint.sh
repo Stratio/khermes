@@ -14,7 +14,7 @@ fi
 if [[ ! -z ${HOSTNAME} ]]; then
   PARAMS="${PARAMS} -Dakka.remote.netty.tcp.hostname=${HOSTNAME}"
   sleep 5
-  ping -c2 ${HOSTNAME}
+  ping -c2 ${HOSTNAME} &> /dev/null
 fi
 
 if [[ ! -z  ${KAFKA_BOOTSTRAP_SERVERS} ]]; then
