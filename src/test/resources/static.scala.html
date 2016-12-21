@@ -1,0 +1,11 @@
+@import com.stratio.hermes.utils.Hermes
+@import com.stratio.hermes.utils.Positive
+
+@(hermes: Hermes)
+{
+  "customerId": @(hermes.Number.number(3,Positive)),
+  "customerName": "@(hermes.Name.fullName)",
+  "latitude": @(hermes.Geo.geolocation.latitude),
+  "longitude": @(hermes.Geo.geolocation.longitude),
+  "productIds": [@((1 to 5).map(x => hermes.Number.number(1, Positive)).mkString(","))]
+}

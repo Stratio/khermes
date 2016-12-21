@@ -16,6 +16,7 @@
 
 package com.stratio.hermes.helpers
 
+import java.io.File
 import java.util.Date
 
 import akka.actor.{Props, ActorSystem}
@@ -33,11 +34,12 @@ import scala.concurrent.ExecutionContextExecutor
 object HermesRunnerHelper extends HermesLogging {
 
   /**
-   * Prints a welcome message with some information about the system.
+   * Prints a welcome message with some information about the system and creates necessary paths.
    * @param system
    */
-  def welcome()(implicit system: ActorSystem): Unit =
-    log.info(s"""
+  def welcome(implicit system: ActorSystem, config: Config): Unit = {
+    log.info(
+      s"""
          |╦ ╦┌─┐┬─┐┌┬┐┌─┐┌─┐
          |╠═╣├┤ ├┬┘│││├┤ └─┐
          |╩ ╩└─┘┴└─┴ ┴└─┘└─┘ Powered by Stratio (www.stratio.com)
@@ -48,11 +50,19 @@ object HermesRunnerHelper extends HermesLogging {
          |> Total memory  : ${Runtime.getRuntime.totalMemory}
          |> Free memory   : ${Runtime.getRuntime.freeMemory}
     """.stripMargin)
+  }
 
+  def createPaths(implicit config: Config): Unit = {
+    val templatesFile = new File(config.getString("hermes.templates-path"))
+    if(!templatesFile.exists()) {
+      log.info(s"Creating templates path: ${templatesFile.getAbsolutePath}")
+      templatesFile.mkdirs()
+    }
+  }
 
-  def workerSupervisor()(implicit config: Config,
-                         system: ActorSystem,
-                         executionContext: ExecutionContextExecutor): Unit = {
+  def workerSupervisor(implicit config: Config,
+                       system: ActorSystem,
+                       executionContext: ExecutionContextExecutor): Unit = {
     import scala.concurrent.duration._
 
     val workerSupervisor = system.actorOf(Props(new WorkerSupervisorActor), "worker-supervisor")

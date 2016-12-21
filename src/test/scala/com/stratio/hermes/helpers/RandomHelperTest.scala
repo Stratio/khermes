@@ -22,7 +22,7 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class RandomHelperTest  extends FlatSpec with Matchers with HermesLogging {
+class RandomHelperTest extends FlatSpec with Matchers with HermesLogging {
 
   "A RandomHelper" should "generates an element from a generic list" in {
     RandomHelper.randomElementFromAList(List(1,2,3)) should contain oneOf (1,2,3)
