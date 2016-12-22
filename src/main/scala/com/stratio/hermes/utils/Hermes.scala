@@ -200,6 +200,7 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
      * @return a random geolocation.
      */
     def geolocation(): (GeoModel) = {
+
       RandomHelper.randomElementFromAList[(GeoModel)](geoModelList(geoModel))
         .getOrElse(throw new HermesException(s"Error loading locate /locales/$unitName/$locale.json"))
     }

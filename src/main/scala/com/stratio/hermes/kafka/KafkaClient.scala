@@ -28,10 +28,10 @@ import org.apache.kafka.clients.producer.{ProducerRecord, RecordMetadata, KafkaP
  * Simple client used to send messages to a Kafka broker.
  * @param config with all Kafka configuration.
  */
-class KafkaClient()(implicit config: Config) extends HermesLogging {
+class KafkaClient[K](implicit config: Config) extends HermesLogging {
 
-  lazy val producer: KafkaProducer[AnyRef, AnyRef] = new KafkaProducer(parseProperties("kafkaProducer"))
-  lazy val consumer: KafkaConsumer[AnyRef, AnyRef] = new KafkaConsumer(parseProperties("kafkaConsumer"))
+  lazy val producer: KafkaProducer[String, K] = new KafkaProducer(parseProperties("kafkaProducer"))
+  lazy val consumer: KafkaConsumer[String, K] = new KafkaConsumer(parseProperties("kafkaConsumer"))
 
   /**
    * Parses Kafka's configuration to a properties object.
@@ -55,7 +55,8 @@ class KafkaClient()(implicit config: Config) extends HermesLogging {
    * @param message with the message to send.
    * @return a future with the result of the operation.
    */
-  def send(topic: String, message: String): Future[RecordMetadata] = {
-    producer.send(new ProducerRecord[AnyRef, AnyRef](topic, message))
+  def send(topic: String, message: K): Future[RecordMetadata] = {
+    val a = new ProducerRecord[String, K](topic, message)
+    producer.send(a)
   }
 }
