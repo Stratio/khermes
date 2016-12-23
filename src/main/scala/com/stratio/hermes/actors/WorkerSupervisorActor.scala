@@ -17,14 +17,19 @@
 package com.stratio.hermes.actors
 
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.{Date, Properties}
+import java.util.{Date, UUID}
 
 import akka.actor.{Actor, ActorLogging}
 import akka.cluster.Cluster
 import com.stratio.hermes.actors.WorkerSupervisorActor._
+import com.stratio.hermes.constants.HermesConstants
+import com.stratio.hermes.helpers.TwirlHelper
 import com.stratio.hermes.kafka.KafkaClient
 import com.stratio.hermes.utils.Hermes
 import com.typesafe.config.Config
+import org.apache.avro.Schema
+import play.twirl.api.Txt
+import tech.allegro.schema.json2avro.converter.JsonAvroConverter
 
 /**
  * Actor that produces messages to kafka. It runs n threads depending of the number of processors of the node.
@@ -34,7 +39,13 @@ class WorkerSupervisorActor()(implicit config: Config)
   extends Actor with ActorLogging {
 
   val cluster = Cluster(context.system)
-  val NumberOfMessagesToLog = 100000
+  val NumberOfMessagesToLog = 10
+  val hermes = Hermes("EN")
+  val template = TwirlHelper.template[(Hermes) => Txt](HermesConstants.TwirlTemplate, "templateTest")
+  val converter = new JsonAvroConverter()
+  val schema = new Schema.Parser().parse(HermesConstants.AvroSchema)
+
+  UUID.randomUUID().toString
 
   override def receive: Receive = {
     case Start =>
@@ -47,19 +58,26 @@ class WorkerSupervisorActor()(implicit config: Config)
   protected def startThread(threadIndex: Int, count: AtomicInteger, time: Long): Unit = {
     val thread = new Thread(new Runnable {
       override def run(): Unit = {
-        val kafkaClient = new KafkaClient
-        val hermes = Hermes("EN")
+        val kafkaClient = new KafkaClient[Object]
+        val hermes = Hermes("ES")
         produce(kafkaClient, hermes, count, time, 1)
       }
 
-      def produce(kafkaClient: KafkaClient,
+      def produce(kafkaClient: KafkaClient[Object],
                   hermes: Hermes,
                   count: AtomicInteger,
                   time: Long,
                   index: Int): Unit = {
 
-        kafkaClient.send("testTopic", s"""{"name": "${hermes.Name.fullName}"}""")
-        if(index % NumberOfMessagesToLog == 0) log.info(s"Produced ${count.addAndGet(NumberOfMessagesToLog)} messages in thread-$threadIndex")
+        val json = template.static(hermes).toString()
+        val record = converter.convertToGenericDataRecord(json.getBytes("UTF-8"), schema)
+
+
+        kafkaClient.send("hermesa", record)
+        if(index % NumberOfMessagesToLog == 0) {
+          log.info(s"Produced ${count.addAndGet(NumberOfMessagesToLog)} messages in thread-$threadIndex")
+          Thread.sleep(3000L)
+        }
         produce(kafkaClient, hermes, count, time, index + 1)
       }
     })
