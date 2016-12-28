@@ -44,6 +44,7 @@ class WorkerSupervisorActor()(implicit config: Config)
   val template = TwirlHelper.template[(Hermes) => Txt](HermesConstants.TwirlTemplate, "templateTest")
   val converter = new JsonAvroConverter()
   val schema = new Schema.Parser().parse(HermesConstants.AvroSchema)
+  val topic = config.getString("hermes.topic")
 
   UUID.randomUUID().toString
 
@@ -73,7 +74,7 @@ class WorkerSupervisorActor()(implicit config: Config)
         val record = converter.convertToGenericDataRecord(json.getBytes("UTF-8"), schema)
 
 
-        kafkaClient.send("hermesa", record)
+        kafkaClient.send(topic, record)
         if(index % NumberOfMessagesToLog == 0) {
           log.info(s"Produced ${count.addAndGet(NumberOfMessagesToLog)} messages in thread-$threadIndex")
           Thread.sleep(3000L)
