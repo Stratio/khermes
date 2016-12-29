@@ -21,6 +21,9 @@ if [[ ! -z  ${KAFKA_BOOTSTRAP_SERVERS} ]]; then
   PARAMS="${PARAMS} -DkafkaProducer.bootstrap.servers=${KAFKA_BOOTSTRAP_SERVERS}"
 fi
 
+PARAMS=PARAMS="${PARAMS} -DkafkaProducer.schema.registry.url=${SCHEMA_REGISTRY_URL}"
+PARAMS=PARAMS="${PARAMS} -Dhermes.topic=${TOPIC}"
+
 echo "Params: ${PARAMS}"
 java -jar ${PARAMS} /hermes.jar
 
