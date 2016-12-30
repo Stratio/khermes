@@ -13,16 +13,18 @@ fi
 
 if [[ ! -z ${HOSTNAME} ]]; then
   PARAMS="${PARAMS} -Dakka.remote.netty.tcp.hostname=${HOSTNAME}"
-  sleep 5
-  ping -c2 ${HOSTNAME} &> /dev/null
+  sleep 10
+  #DEMO
+  ping -c10 ${HOSTNAME} 
+  host -t a ${HOSTNAME}
 fi
 
 if [[ ! -z  ${KAFKA_BOOTSTRAP_SERVERS} ]]; then
   PARAMS="${PARAMS} -DkafkaProducer.bootstrap.servers=${KAFKA_BOOTSTRAP_SERVERS}"
 fi
 
-PARAMS=PARAMS="${PARAMS} -DkafkaProducer.schema.registry.url=${SCHEMA_REGISTRY_URL}"
-PARAMS=PARAMS="${PARAMS} -Dhermes.topic=${TOPIC}"
+PARAMS="${PARAMS} -DkafkaProducer.schema.registry.url=${SCHEMA_REGISTRY_URL}"
+PARAMS="${PARAMS} -Dhermes.topic=${TOPIC}"
 
 echo "Params: ${PARAMS}"
 java -jar ${PARAMS} /hermes.jar
