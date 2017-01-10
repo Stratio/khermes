@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.constants
+package com.stratio.hermes.actors
 
-/**
- * Global constants used in the application.
- */
-object HermesConstants {
 
-  val ConstantDefaultLocale = "ALL"
-  val ConstantAkkaClusterName = "hermes"
-  val ConstantDecimalValue = 10
-  val ConstantWorkerSupervisorTimeout = 5
+class ClientActor {
 
-  val ConstantWorkerSupervisorStop = 15
-
-  val ConstantGeneratedTemplatesPrefix = "generated-templates"
-  val ConstantGeneratedClassesPrefix = "generated-classes"
 }
