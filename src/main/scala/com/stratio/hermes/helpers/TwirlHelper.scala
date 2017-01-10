@@ -17,6 +17,7 @@
 package com.stratio.hermes.helpers
 
 import java.io.File
+import java.lang.reflect.Method
 import java.net._
 
 import com.stratio.hermes.constants.HermesConstants
@@ -40,7 +41,6 @@ object TwirlHelper extends HermesLogging {
    * Step 2) The engine generates a scala files to be compiled.
    * Step 3) The engine compiles the scala files generated in the previous step.
    * Step 4) Finally it executes the compiled files interpolating values with the template.
-   *
    * @param template a string with the template.
    * @param templateName the name of the file that will contain the content of the template.
    * @param config with Hermes' configuration.
@@ -143,12 +143,29 @@ object TwirlHelper extends HermesLogging {
    * @tparam T with the type of object to inject in the template.
    */
   class CompiledTemplate[T](className: String, classloader: URLClassLoader) {
-    private def getF(template: Any) = template.getClass.getMethod("f").invoke(template).asInstanceOf[T]
+    var method: Option[Method] = None
+    var declaredField: Option[AnyRef] = None
+
+    private def getF(template: Any) = {
+      if(method.isEmpty) {
+        method = Option(template.getClass.getMethod("f"))
+        method.get.invoke(template).asInstanceOf[T]
+      } else {
+        method.get.invoke(template).asInstanceOf[T]
+      }
+    }
     /**
      * @return the result of a compiled and executed template.
      */
     //scalastyle:off
-    def static: T = getF(classloader.loadClass(className + "$").getDeclaredField("MODULE$").get(null))
+    def static: T = {
+      if(declaredField.isEmpty) {
+        declaredField = Option(classloader.loadClass(className + "$").getDeclaredField("MODULE$").get(null))
+        getF(declaredField.get)
+      } else {
+        getF(declaredField.get)
+      }
+    }
     //scalastyle:on
   }
 }

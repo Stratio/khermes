@@ -31,7 +31,7 @@ import org.apache.kafka.clients.producer.{ProducerRecord, RecordMetadata, KafkaP
 class KafkaClient[K](implicit config: Config) extends HermesLogging {
 
   lazy val producer: KafkaProducer[String, K] = new KafkaProducer(parseProperties("kafkaProducer"))
-  lazy val consumer: KafkaConsumer[String, K] = new KafkaConsumer(parseProperties("kafkaConsumer"))
+//  lazy val consumer: KafkaConsumer[String, K] = new KafkaConsumer(parseProperties("kafkaConsumer"))
 
   /**
    * Parses Kafka's configuration to a properties object.

@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.helpers
+package com.stratio.hermes.actors
 
-import scala.util.Random
 
-/**
- * Helper to work with random data.
- */
-object RandomHelper {
+class ClientActor {
 
-  /**
-   * Returns a random element from a list.
-   * @param list initial list
-   * @tparam T with the type of the list
-   * @return a random element of the list or None if the list is empty.
-   */
-  def randomElementFromAList[T](list: List[T]): Option[T] =
-    if(list.nonEmpty) Option(list(Random.nextInt((list.size -1 -0) + 1) + 0)) else None
 }
