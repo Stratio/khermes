@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 (upcoming)
+## 0.1.0 (January 11, 2017)
 
 * Produce messages to kafka using Stratio Hermes with Akka.
 * Geolocation.

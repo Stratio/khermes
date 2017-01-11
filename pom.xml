@@ -6,7 +6,7 @@
 
     <groupId>com.stratio</groupId>
     <artifactId>hermes</artifactId>
-    <version>0.1.0-RC2-SNAPSHOT</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <parent>
