@@ -21,9 +21,11 @@ import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit}
 import com.stratio.hermes.implicits.HermesImplicits
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+import scala.concurrent.duration._
+import akka.util.Timeout
 
 /**
- * Generic class used to test Hermes actors. All tests should be extend this class.
+ * Generic class used to test Hermes actors. All tests that uses akka should extend this class.
  */
 abstract class HermesActorTest extends TestKit(ActorSystem("ActorTest",
   ConfigFactory.load()))
@@ -32,4 +34,9 @@ abstract class HermesActorTest extends TestKit(ActorSystem("ActorTest",
 
   lazy implicit val config: Config = HermesImplicits.config
   lazy implicit val executionContext = HermesImplicits.executionContext
+  override implicit val timeout = Timeout(5 seconds)
+
+  override def afterAll {
+   system.terminate()
+  }
 }

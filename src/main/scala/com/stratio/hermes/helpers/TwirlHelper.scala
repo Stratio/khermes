@@ -53,8 +53,8 @@ object TwirlHelper extends HermesLogging {
     scala.tools.nsc.io.File(templatePath).writeAll(template)
 
     val sourceDir = new File(templatesPath)
-    val generatedDir = new File(s"$templatesPath/${HermesConstants.ConstantGeneratedTemplatesPrefix}")
-    val generatedClasses = new File(s"$templatesPath/${HermesConstants.ConstantGeneratedClassesPrefix}")
+    val generatedDir = new File(s"$templatesPath/${HermesConstants.GeneratedTemplatesPrefix}")
+    val generatedClasses = new File(s"$templatesPath/${HermesConstants.GeneratedClassesPrefix}")
 
     deleteRecursively(generatedDir)
     deleteRecursively(generatedClasses)

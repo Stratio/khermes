@@ -33,7 +33,7 @@ import scala.util.{Failure, Random, Success, Try}
 /**
  * Hermes util used for to generate random values.
  */
-case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extends HermesSerializer {
+case class Hermes(locale: String = HermesConstants.DefaultLocale) extends HermesSerializer {
 
   /**
    * Generates random names.
@@ -43,7 +43,7 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
     override def unitName(): String = "name"
 
     lazy val nameModel: NameModel = locale match {
-      case HermesConstants.ConstantDefaultLocale =>
+      case HermesConstants.DefaultLocale =>
         val listNameModels = new File(getClass.getResource(s"/locales/$unitName").getFile).list().map(x => {
           read[NameModel](getClass.getResourceAsStream(s"/locales/$unitName/$x"))
         })
@@ -96,8 +96,8 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
       if (n == 0) {
         0
       } else {
-        val first = Random.nextInt(HermesConstants.ConstantDecimalValue - 1) + 1
-        val randSeq = first +: (1 until n).map { _ => Random.nextInt(HermesConstants.ConstantDecimalValue) }
+        val first = Random.nextInt(HermesConstants.DecimalValue - 1) + 1
+        val randSeq = first +: (1 until n).map { _ => Random.nextInt(HermesConstants.DecimalValue) }
         BigInt(randSeq.mkString).toInt * randSign
       }
     }
@@ -112,8 +112,8 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
       if (n == 0) {
         "0"
       } else {
-        val nonZero = Random.nextInt(HermesConstants.ConstantDecimalValue - 1) + 1
-        val randSeq = (1 until n).map { _ => Random.nextInt(HermesConstants.ConstantDecimalValue) } :+ nonZero
+        val nonZero = Random.nextInt(HermesConstants.DecimalValue - 1) + 1
+        val randSeq = (1 until n).map { _ => Random.nextInt(HermesConstants.DecimalValue) } :+ nonZero
         randSeq.mkString
       }
     }
@@ -177,7 +177,7 @@ case class Hermes(locale: String = HermesConstants.ConstantDefaultLocale) extend
     override def unitName(): String = "geo"
 
     lazy val geoModel = locale match {
-      case HermesConstants.ConstantDefaultLocale => {
+      case HermesConstants.DefaultLocale => {
         val fileNames = new File(getClass.getResource(s"/locales/$unitName").getFile).list()
         val geoModelAndErrors: List[Either[String, Seq[GeoModel]]] = (for {
           filename <- fileNames

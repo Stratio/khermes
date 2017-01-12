@@ -16,62 +16,66 @@
 
 package com.stratio.hermes.helpers
 
-import com.stratio.hermes.helpers.HermesConfigHelper._
-import com.typesafe.config.{ConfigFactory, Config}
+import com.stratio.hermes.helpers.HermesConfig._
+import com.stratio.hermes.kafka.KafkaClient
+import com.typesafe.config.ConfigFactory
+
 
 import scala.util.Try
 
-case class HermesConfigHelper(configContent: String, template: String) {
+case class HermesConfig(hermesConfigContent: String,
+                        kafkaConfigContent: String,
+                        template: String,
+                        avroSchema: Option[String] = None) {
 
-  val config = ConfigFactory.parseString(configContent)
+  val hermesConfig = ConfigFactory.parseString(hermesConfigContent)
+  val kafkaConfig = ConfigFactory.parseString(kafkaConfigContent)
 
-  def assertConfig(): Unit = {
+  assertCorrectConfig()
+  kafkaClientInstance().parseProperties()
+
+  protected[this] def assertCorrectConfig(): Unit = {
     def buildErrors(mandatoryFields: Seq[String]): Seq[String] =
       for {
         mandatoryField <- mandatoryFields
-        if Try(config.getAnyRef(mandatoryField)).isFailure
+        if Try(hermesConfig.getAnyRef(mandatoryField)).isFailure && Try(kafkaConfig.getAnyRef(mandatoryField)).isFailure
       } yield(s"$mandatoryField not found in the config.")
 
-    val errors = buildErrors(MandatoryFields) ++ (if(isAvro) buildErrors(AvroMandatoryFields) else Seq.empty)
+    val errors = buildErrors(MandatoryFields) ++ (if(configType == ConfigType.Avro) buildErrors(AvroMandatoryFields) else Seq.empty)
     assert(errors.isEmpty, errors.mkString("\n"))
   }
 
+   def kafkaClientInstance[T](): KafkaClient[T] = {
+    new KafkaClient[T](kafkaConfig)
+  }
+
   def configType(): ConfigType.Value =
-    if(config.getString("kafka.key.serializer") == "io.confluent.kafka.serializers.KafkaAvroSerializer") {
+    if(kafkaConfig.getString("kafka.key.serializer") == "io.confluent.kafka.serializers.KafkaAvroSerializer") {
       ConfigType.Avro
     } else {
       ConfigType.Json
     }
 
-  def isAvro: Boolean = configType() == ConfigType.Avro
+  def topic: String = hermesConfig.getString("hermes.topic")
 
-  def isJson: Boolean = configType() == ConfigType.Json
-
-  def topic: String = config.getString("hermes.topic-name")
-
-  def templateName: String = config.getString("hermes.template-name")
+  def templateName: String = hermesConfig.getString("hermes.template-name")
 
   def templateContent: String = template
 
-  def hermesI18n: String = config.getString("hermes.i18n")
+  def hermesI18n: String = hermesConfig.getString("hermes.i18n")
 
-  def avroSchema: String = config.getString(config.getString("hermes.avro-schema"))
-
-  def kafkaConfig: Config = config.atKey("kakfa")
 }
 
-
-object HermesConfigHelper {
+object HermesConfig {
 
   val MandatoryFields = Seq(
-    "hermes.topic-name",
+    "hermes.topic",
     "hermes.template-name",
     "hermes.i18n",
     "kafka.key.serializer"
   )
 
   val AvroMandatoryFields = Seq(
-    "hermes.avro-schema",
     "kafka.schema.registry.url"
   )
 

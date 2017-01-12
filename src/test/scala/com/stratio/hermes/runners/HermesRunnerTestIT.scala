@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.multinode
+package com.stratio.hermes.runners
 
-import akka.remote.testkit.MultiNodeSpecCallbacks
-import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+import com.stratio.hermes.actors.HermesActorTest
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
-/**
- * All specs that are executed in different JVM should extend from this trait.
- */
-trait GenericMultiNodeSpec extends MultiNodeSpecCallbacks
-  with WordSpecLike with Matchers with BeforeAndAfterAll {
+@RunWith(classOf[JUnitRunner])
+class HermesRunnerTestIT extends HermesActorTest {
 
-  override def beforeAll(): Unit = multiNodeSpecBeforeAll()
-  override def afterAll(): Unit = multiNodeSpecAfterAll()
+  "An HermesRunner" should {
+    "run Hermes without any kind of error" in {
+      HermesRunner.main(Array.empty)
+    }
+  }
 }
