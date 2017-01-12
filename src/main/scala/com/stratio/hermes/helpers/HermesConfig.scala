@@ -16,11 +16,9 @@
 
 package com.stratio.hermes.helpers
 
-import com.stratio.hermes.constants.HermesConstants
 import com.stratio.hermes.helpers.HermesConfig._
 import com.stratio.hermes.kafka.KafkaClient
 import com.typesafe.config.ConfigFactory
-import io.confluent.kafka.serializers.KafkaAvroSerializer
 
 
 import scala.util.Try
@@ -52,7 +50,7 @@ case class HermesConfig(hermesConfigContent: String,
   }
 
   def configType(): ConfigType.Value =
-    if(kafkaConfig.getString("kafka.key.serializer") == HermesConstants.KafkaAvroSerializer) {
+    if(kafkaConfig.getString("kafka.key.serializer") == "io.confluent.kafka.serializers.KafkaAvroSerializer") {
       ConfigType.Avro
     } else {
       ConfigType.Json

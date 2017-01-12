@@ -28,17 +28,16 @@ import org.apache.kafka.clients.producer.{ProducerRecord, RecordMetadata, KafkaP
  * Simple client used to send messages to a Kafka broker.
  * @param config with all Kafka configuration.
  */
-class KafkaClient[K](implicit config: Config) extends HermesLogging {
+class KafkaClient[K](config: Config) extends HermesLogging {
 
-  lazy val producer: KafkaProducer[String, K] = new KafkaProducer(parseProperties("kafkaProducer"))
-//  lazy val consumer: KafkaConsumer[String, K] = new KafkaConsumer(parseProperties("kafkaConsumer"))
+  lazy val producer: KafkaProducer[String, K] = new KafkaProducer(parseProperties())
 
   /**
    * Parses Kafka's configuration to a properties object.
    * @param path that could be the configuration of a kafkaProducer or a kafkaConsumer. (kafkaProducer by default).
    * @return a parsed properties object.
    */
-  def parseProperties(path: String = "kafkaProducer"): Properties = {
+  def parseProperties(path: String = "kafka"): Properties = {
     assert(config.hasPath(path), s"Not existing $path path in application.conf")
     import scala.collection.JavaConversions._
     val props = new Properties()

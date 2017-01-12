@@ -21,13 +21,13 @@ package com.stratio.hermes.constants
  */
 object HermesConstants {
 
-  val ConstantDefaultLocale = "ALL"
-  val ConstantAkkaClusterName = "hermes"
-  val ConstantDecimalValue = 10
-  val ConstantWorkerSupervisorTimeout = 5
+  val DefaultLocale = "ALL"
+  val AkkaClusterName = "hermes"
+  val DecimalValue = 10
+  val WorkerSupervisorTimeout = 5
 
-  val ConstantWorkerSupervisorStop = 15
+  val WorkerSupervisorStop = 15
 
-  val ConstantGeneratedTemplatesPrefix = "generated-templates"
-  val ConstantGeneratedClassesPrefix = "generated-classes"
+  val GeneratedTemplatesPrefix = "generated-templates"
+  val GeneratedClassesPrefix = "generated-classes"
 }
