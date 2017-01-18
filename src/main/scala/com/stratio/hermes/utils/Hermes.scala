@@ -23,6 +23,8 @@ import com.stratio.hermes.exceptions.HermesException
 import com.stratio.hermes.helpers.RandomHelper
 import com.stratio.hermes.implicits.HermesSerializer
 import com.stratio.hermes.models.{GeoModel, NameModel}
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.{DateTime, Seconds}
 import org.json4s._
 import org.json4s.native.Serialization.read
 import scala.collection.immutable.Seq
@@ -202,7 +204,7 @@ case class Hermes(locale: String = HermesConstants.DefaultLocale) extends Hermes
     def geolocation(): (GeoModel) = {
 
       RandomHelper.randomElementFromAList[(GeoModel)](geoModelList(geoModel))
-        .getOrElse(throw new HermesException(s"Error loading locate /locales/$unitName/$locale.json"))
+        .getOrElse(throw HermesException(s"Error loading locate /locales/$unitName/$locale.json"))
     }
 
     def geoModelList(l: List[Either[String, Seq[GeoModel]]]): List[GeoModel] = {
@@ -213,6 +215,28 @@ case class Hermes(locale: String = HermesConstants.DefaultLocale) extends Hermes
       l.filter(_.isLeft).map(_.left.toOption.get)
     }
   }
+
+  /**
+   * Generates random dates.
+   */
+  object Datetime {
+    /**
+     * Example: "dateTime("1970-1-12" ,"2017-1-1") -> 2005-03-01T20:34:30.000+01:00".
+     * @return a random dateTime.
+     */
+    def datetime(from: DateTime, to: DateTime, format: Option[String] = None): String = {
+      assert(to.getMillis > from.getMillis, throw new InvalidParameterException(s"$to must be greater than $from"))
+      val diff = Seconds.secondsBetween(from, to).getSeconds
+      val randomDate = new Random(System.nanoTime)
+      val date: DateTime = from.plusSeconds(randomDate.nextInt(diff.toInt))
+      format match {
+        case Some(stringFormat) => Try(DateTimeFormat.forPattern(stringFormat).print(date)).getOrElse(throw HermesException(s"Invalid DateTimeFormat"))
+        case None => date.toString()
+        case _ => throw HermesException(s"Invalid format")
+      }
+    }
+  }
+
 }
 sealed trait NumberSign
 case object Positive extends NumberSign
