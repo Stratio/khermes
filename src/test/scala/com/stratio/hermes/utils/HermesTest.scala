@@ -206,6 +206,7 @@ class HermesTest extends FlatSpec with Matchers {
     randomDateString shouldBe DateTimeFormat.forPattern(randomDateString.format("yyyy-MM-dd")).print(randomDate)
   }
 
+<<<<<<< 88bfdc830d3a2b463c6e8a80e2907d39396b1313
   it should "generate a random date in a complex format" in {
     val hermes = Hermes()
     val startDate = new DateTime("1970-1-1")
@@ -213,6 +214,15 @@ class HermesTest extends FlatSpec with Matchers {
     val randomDateString = hermes.Datetime.datetime(startDate, endDate,Option("yyyy-MM-dd'T'HH:mm:ss.SSS"))
     val randomDate= DateTime.parse(randomDateString)
     randomDateString shouldBe DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").print(randomDate)
+=======
+  it should "generate a random date in the default format" in {
+    val hermes = Hermes()
+    val startDate = new DateTime("1970-1-1")
+    val endDate = new DateTime("1985-1-1")
+    val randomDateString = hermes.Datetime.datetime(startDate, endDate)
+    val randomDate= DateTime.parse(randomDateString)
+    randomDateString shouldBe DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ").print(randomDate)
+>>>>>>> Add generator of dates.
   }
 
   it should "generate a random date with a bad format" in {
