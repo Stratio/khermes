@@ -56,8 +56,33 @@ case class GeoGenerator(locale: String) extends HermesUnit
       .getOrElse(throw new HermesException(s"Error loading locate /locales/$unitName/$locale.json"))
   }
 
+  /**
+   * Example: "geolocationWithoutCity() -> 28.452717, -13.863761".
+   * @return a random geolocation.
+   */
+  def geolocationWithoutCity(): (Double, Double) = {
+    val geo = geolocation()
+    (geo.longitude, geo.latitude)
+  }
+
+  /**
+   * Example: "city() -> Tenerife".
+   * @return a random city name.
+   */
+  def city(): String = {
+    geolocation.city
+  }
+
   def geoModelList(l: Seq[Either[String, Seq[GeoModel]]]): Seq[GeoModel] = {
     l.filter(_.isRight).flatMap(_.right.get)
+  }
+
+  def geoWithoutCityList(l: List[Either[String, Seq[GeoModel]]]): Seq[(Double,Double)] = {
+    geoModelList(l).map(geomodel => (geomodel.longitude,geomodel.latitude))
+  }
+
+  def cityList(l: List[Either[String, Seq[GeoModel]]]): Seq[String] = {
+    geoModelList(l).map(geomodel => geomodel.city)
   }
 
   /**

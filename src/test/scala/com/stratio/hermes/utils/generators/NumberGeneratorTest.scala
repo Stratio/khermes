@@ -93,6 +93,25 @@ class NumberGeneratorTest extends FlatSpec
     //scalastyle:on
   }
 
+  it should "generate a random integer when it passed the range " in {
+    val hermesNum = Hermes("")
+    forAll { (n: Int, m: Int) =>
+      hermesNum.Number.numberInRange(n, m) <= m && hermesNum.Number.numberInRange(n, m) >= n
+    }
+    //scalastyle:off
+    numberOfDigitsFromANumber(hermesNum.Number.numberInRange(1,9)) shouldBe 1
+    numberOfDigitsFromANumber(hermesNum.Number.numberInRange(99,10)) shouldBe 2
+    numberOfDigitsFromANumber(hermesNum.Number.numberInRange(100,999)) shouldBe 3
+    //scalastyle:on
+  }
+
+  it should "generate a random decimal when it passed the range " in {
+    val hermesNum = Hermes("")
+    forAll { (n: Int, m: Int) =>
+      hermesNum.Number.decimalInRange(n, m) <= m && hermesNum.Number.decimalInRange(n, m) >= n
+    }
+  }
+
 
   /**
    * Returns length of a Integer element.

@@ -115,6 +115,26 @@ class NumberGenerator extends HermesSerializer {
    */
   def decimal(m: Int, n: Int, sign: NumberSign): BigDecimal = setScale(number(m, sign).toString + "." + numberDec(n), n)
 
+  /**
+   * Example: "numberInRange(3,5) 4".
+   * @param m one end of range.
+   * @param n the other end of range.
+   * @return a random BigDecimal.
+   */
+  def numberInRange(m: Int, n: Int): Int = {
+    Random.nextInt((Math.max(m, n) - Math.min(n, m)) + 1) + Math.min(n, m)
+  }
+
+  /**
+   * Example: "decimalInRange(3,4) 3.1446350167374337".
+   * @param m one end of range.
+   * @param n the other end of range.
+   * @return a random BigDecimal.
+   */
+  def decimalInRange(m: Int, n: Int): BigDecimal = {
+    BigDecimal(Random.nextDouble() * (Math.max(m, n) - Math.min(n, m)) + Math.min(n, m))
+  }
+
   def setScale(s: String, n: Int): BigDecimal = {
     if (n == 0) BigDecimal.valueOf(s.toDouble).setScale(1, RoundingMode.HALF_UP) else BigDecimal.valueOf(
       s.toDouble).setScale(n, RoundingMode.HALF_UP)
