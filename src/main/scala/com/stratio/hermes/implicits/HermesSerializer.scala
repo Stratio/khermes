@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.constants
+package com.stratio.hermes.implicits
+
+import org.json4s.{DefaultFormats, Formats}
 
 /**
- * Global constants used in the application.
+ * Implicit values used in json4s to serialize / unserialize data.
  */
-object HermesConstants {
+trait HermesSerializer {
 
-  val DefaultLocale = "ALL"
-  val AkkaClusterName = "hermes"
-  val DecimalValue = 10
-  val SupervisorStart = 5
-  val SupervisorStop = 30
-
-  val GeneratedTemplatesPrefix = "generated-templates"
-  val GeneratedClassesPrefix = "generated-classes"
-  val KafkaAvroSerializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
+  implicit val json4sFormats: Formats =  DefaultFormats
 }
+

@@ -20,9 +20,7 @@ import java.io.File
 import java.util.Date
 
 import akka.actor.{ActorRef, ActorSystem, Props}
-import com.stratio.hermes.actors.HermesSupervisorActor
-import com.stratio.hermes.actors.HermesSupervisorActor.Start
-import com.stratio.hermes.constants.HermesConstants
+import com.stratio.hermes.actors.{HermesClientActor, HermesSupervisorActor}
 import com.stratio.hermes.utils.HermesLogging
 import com.typesafe.config.Config
 
@@ -66,7 +64,7 @@ object HermesRunnerHelper extends HermesLogging {
     """
       |hermes {
       |  templates-path = "/tmp/hermes/templates"
-      |  topic = "chustas"
+      |  topic = "alicia"
       |  template-name = "chustasTemplate"
       |  i18n = "ES"
       |}
@@ -78,7 +76,7 @@ object HermesRunnerHelper extends HermesLogging {
       |
       |@(hermes: Hermes)
       |{
-      |  "name" : "@(hermes.Name.firstName)"
+      |  "name" : "alicia"
       |}
     """.stripMargin
 
@@ -102,6 +100,8 @@ object HermesRunnerHelper extends HermesLogging {
     }
   }
 
+  //scalastyle:off
+
   def workerSupervisor(implicit config: Config,
                        system: ActorSystem,
                        executionContext: ExecutionContextExecutor): ActorRef =
@@ -110,10 +110,8 @@ object HermesRunnerHelper extends HermesLogging {
   def clientActor(hermesSupervisor: ActorRef)(implicit config: Config,
                                               system: ActorSystem,
                                               executionContext: ExecutionContextExecutor): Unit = {
-    import scala.concurrent.duration._
-    system.scheduler.scheduleOnce(HermesConstants.WorkerSupervisorTimeout seconds) {
-      hermesSupervisor ! Start(Seq.empty, HermesConfig(hermesConfigContent, kafkaConfigContent, templateContent))
-    }
 
+    val clientActor = system.actorOf(Props(new HermesClientActor()), "hermes-client")
+    clientActor ! HermesClientActor.Start
   }
 }
