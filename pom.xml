@@ -183,6 +183,11 @@
             <artifactId>kafka-avro-serializer</artifactId>
             <version>3.1.1</version>
         </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.9.7</version>
+        </dependency>
     </dependencies>
 
     <build>
