@@ -13,3 +13,4 @@
 * Feature/hermes clustering.
 * Create kafka producer.
 * Implementation for random names.
+* Generate songs, including artist, album and genre

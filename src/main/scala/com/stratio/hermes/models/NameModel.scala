@@ -21,4 +21,4 @@ package com.stratio.hermes.models
  * @param firstNames with a list of first names.
  * @param lastNames with a list of last names.
  */
-case class NameModel(firstNames: List[String], lastNames: List[String])
+case class NameModel(firstNames: Seq[String], lastNames: Seq[String])

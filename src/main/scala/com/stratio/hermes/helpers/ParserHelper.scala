@@ -16,20 +16,21 @@
 
 package com.stratio.hermes.helpers
 
-import scala.util.Random
+import com.stratio.hermes.helpers.ResourcesHelper.getResource
+import com.stratio.hermes.implicits.HermesSerializer
+import org.json4s.native.Serialization.read
 
-/**
- * Helper to work with random data.
- */
-object RandomHelper {
+import scala.util.{Failure, Success, Try}
 
-  /**
-   * Returns a random element from a list.
-   *
-   * @param list initial list
-   * @tparam T with the type of the list
-   * @return a random element of the list or None if the list is empty.
-   */
-  def randomElementFromAList[T](list: Seq[T]): Option[T] =
-    if (list.nonEmpty) Option(list(Random.nextInt((list.size - 1) + 1))) else None
+object ParserHelper extends HermesSerializer {
+
+  def parse[T](unitName: String, locale: String)(implicit m: Manifest[T]): Either[String, T] = Try(
+    read[T](getResource(unitName, locale))) match {
+    case Success(model) => Right(model)
+    case Failure(e) => Left(s"${e.getMessage}")
+  }
+
+  def parseErrors[T](maybeResources: Seq[Either[String, T]]): Seq[String] = {
+    maybeResources.filter(_.isLeft).map(_.left.get)
+  }
 }
