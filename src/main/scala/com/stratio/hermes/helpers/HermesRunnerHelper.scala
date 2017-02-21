@@ -96,10 +96,9 @@ object HermesRunnerHelper extends HermesLogging {
 
   def createPaths(implicit config: Config): Unit = {
     val templatesFile = new File(config.getString("hermes.templates-path"))
-    if(!templatesFile.exists()) {
-      log.info(s"Creating templates path: ${templatesFile.getAbsolutePath}")
-      templatesFile.mkdirs()
-    }
+    templatesFile.delete()
+    log.info(s"Creating templates path: ${templatesFile.getAbsolutePath}")
+    templatesFile.mkdirs()
   }
 
   def workerSupervisor(implicit config: Config,

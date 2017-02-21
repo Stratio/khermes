@@ -59,6 +59,7 @@ object TwirlHelper extends HermesLogging {
     deleteRecursively(generatedDir)
     deleteRecursively(generatedClasses)
     generatedClasses.mkdirs()
+    generatedDir.mkdirs()
 
     val helper = new CompilerHelper(sourceDir, generatedDir, generatedClasses)
     helper.compile[T](s"$templateName.scala.html", s"html.$templateName", Seq("com.stratio.hermes.utils.Hermes"))
