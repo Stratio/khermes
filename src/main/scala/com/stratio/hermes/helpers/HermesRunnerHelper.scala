@@ -66,8 +66,8 @@ object HermesRunnerHelper extends HermesLogging {
     """
       |hermes {
       |  templates-path = "/tmp/hermes/templates"
-      |  topic = "chustas"
-      |  template-name = "chustasTemplate"
+      |  topic = "template"
+      |  template-name = "tmpTemplate"
       |  i18n = "ES"
       |}
     """.stripMargin

@@ -64,21 +64,20 @@ private class HermesExecutorActor(implicit config: Config) extends Actor with Ac
   val converter = new JsonAvroConverter()
 
   override def receive: Receive = {
-    case HermesExecutorActor.Start(hc) =>
-      val kafkaClient = hc.kafkaClientInstance[Object]()
-      val template = TwirlHelper.template[(Hermes) => Txt](hc.templateContent, hc.templateName)
-      val hermes = Hermes(hc.hermesI18n)
-
-      val parserOption = hc.avroSchema.map(new Parser().parse(_))
+    case HermesExecutorActor.Start(hermesConfig) =>
+      val kafkaClient = hermesConfig.kafkaClientInstance[Object]()
+      val template = TwirlHelper.template[(Hermes) => Txt](hermesConfig.templateContent, hermesConfig.templateName)
+      val hermes = Hermes(hermesConfig.hermesI18n)
+      val parserOption = hermesConfig.avroSchema.map(new Parser().parse(_))
 
       def produce: Unit = {
         val json = template.static(hermes).toString()
-        parserOption match {
-          case None => kafkaClient.send(hc.topic, json)
-          case Some(value) =>
-            val record = converter.convertToGenericDataRecord(json.getBytes("UTF-8"), value)
-            kafkaClient.send(hc.topic, record)
-        }
+
+        parserOption.map(value => {
+          val record = converter.convertToGenericDataRecord(json.getBytes("UTF-8"), value)
+          kafkaClient.send(hermesConfig.topic, record)
+        }).getOrElse(kafkaClient.send(hermesConfig.topic, json))
+
         produce
       }
       produce
