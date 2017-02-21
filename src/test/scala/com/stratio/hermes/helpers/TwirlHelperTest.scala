@@ -21,7 +21,7 @@ import com.stratio.hermes.utils.{Hermes, HermesLogging}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
-import play.twirl.api.{JavaScript, Txt}
+import play.twirl.api.Txt
 
 @RunWith(classOf[JUnitRunner])
 class TwirlHelperTest  extends FlatSpec with Matchers with BeforeAndAfter with HermesLogging  {
