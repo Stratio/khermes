@@ -229,10 +229,6 @@ case class Hermes(locale: String = HermesConstants.DefaultLocale) extends Hermes
       val diff = Seconds.secondsBetween(from, to).getSeconds
       val randomDate = new Random(System.nanoTime)
       val date: DateTime = from.plusSeconds(randomDate.nextInt(diff.toInt))
-
-      //      format.flatMap(pattern => {
-//        Try(DateTimeFormat.forPattern(pattern).print(date)).toOption
-//      }).getOrElse(throw HermesException(s"Invalid DateTimeFormat"))
       format match {
         case Some(stringFormat) => Try(DateTimeFormat.forPattern(stringFormat).print(date)).getOrElse(throw new HermesException(s"Invalid DateTimeFormat"))
         case None => date.toString()
