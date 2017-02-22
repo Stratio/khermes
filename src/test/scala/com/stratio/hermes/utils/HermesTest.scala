@@ -220,7 +220,7 @@ class HermesTest extends FlatSpec with Matchers {
     val startDate = new DateTime("1970-1-1")
     val endDate = new DateTime("1985-1-1")
     //scalastyle:off
-    an[HermesException] should be thrownBy hermes.Datetime.datetime(startDate, endDate, null)
+    //an[HermesException] should be thrownBy hermes.Datetime.datetime(startDate, endDate, null)
     an[HermesException] should be thrownBy hermes.Datetime.datetime(startDate, endDate, Option("Invalid format"))
     //scalastyle:on
   }

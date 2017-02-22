@@ -204,7 +204,7 @@ case class Hermes(locale: String = HermesConstants.DefaultLocale) extends Hermes
     def geolocation(): (GeoModel) = {
 
       RandomHelper.randomElementFromAList[(GeoModel)](geoModelList(geoModel))
-        .getOrElse(throw HermesException(s"Error loading locate /locales/$unitName/$locale.json"))
+        .getOrElse(throw new HermesException(s"Error loading locate /locales/$unitName/$locale.json"))
     }
 
     def geoModelList(l: List[Either[String, Seq[GeoModel]]]): List[GeoModel] = {
@@ -229,10 +229,13 @@ case class Hermes(locale: String = HermesConstants.DefaultLocale) extends Hermes
       val diff = Seconds.secondsBetween(from, to).getSeconds
       val randomDate = new Random(System.nanoTime)
       val date: DateTime = from.plusSeconds(randomDate.nextInt(diff.toInt))
+
+      //      format.flatMap(pattern => {
+//        Try(DateTimeFormat.forPattern(pattern).print(date)).toOption
+//      }).getOrElse(throw HermesException(s"Invalid DateTimeFormat"))
       format match {
-        case Some(stringFormat) => Try(DateTimeFormat.forPattern(stringFormat).print(date)).getOrElse(throw HermesException(s"Invalid DateTimeFormat"))
+        case Some(stringFormat) => Try(DateTimeFormat.forPattern(stringFormat).print(date)).getOrElse(throw new HermesException(s"Invalid DateTimeFormat"))
         case None => date.toString()
-        case _ => throw HermesException(s"Invalid format")
       }
     }
   }
