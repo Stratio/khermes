@@ -18,7 +18,10 @@ package com.stratio.hermes.utils
 
 import java.security.InvalidParameterException
 import java.util.NoSuchElementException
+
 import com.stratio.hermes.exceptions.HermesException
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import org.junit.runner.RunWith
 import org.scalacheck.Prop.forAll
 import org.scalatest.junit.JUnitRunner
@@ -154,9 +157,7 @@ class HermesTest extends FlatSpec with Matchers {
 
   it should "raise a NoSuchElementException when the locale is empty" in {
     val hermes = Hermes("XX")
-    //scalastyle:off
     an[HermesException] should be thrownBy hermes.Geo.geolocation
-    //scalastyle:on
   }
 
   it should "when you do not specify the locale try to use all the locales" in {
@@ -166,23 +167,60 @@ class HermesTest extends FlatSpec with Matchers {
 
   it should "raise an exception when it gets a geolocation that not exists" in {
     val hermesFR = Hermes("FR")
-    //scalastyle:off
     an[HermesException] should be thrownBy hermesFR.Geo.geolocation
-    //scalastyle:on
   }
 
   it should "raise an exception when it gets a geolocation that is corrupted" in {
     val hermesYY = Hermes("YY")
-    //scalastyle:off
     hermesYY.Geo.parseErrorList(hermesYY.Geo.geoModel).length should be(1)
     an[HermesException] should be thrownBy hermesYY.Geo.geolocation
-    //scalastyle:on
   }
 
   it should "raise an exception when it gets a file with at least one record corrupted" in {
     val hermes = Hermes()
-    //scalastyle:off
     hermes.Geo.parseErrorList(hermes.Geo.geoModel).length should be(2)
+  }
+
+  it should "generate a random date between two dates" in {
+    val hermes = Hermes()
+    val startDate = new DateTime("1970-1-1")
+    val endDate = new DateTime("2017-1-1")
+    val randomDateString = hermes.Datetime.datetime(startDate, endDate)
+    val randomDate= DateTime.parse(randomDateString)
+    assert(startDate.compareTo(randomDate) * randomDate.compareTo(endDate) > 0)
+  }
+
+  it should "raise an exception if start Date is greater than end Date" in {
+    val hermes = Hermes()
+    val startDate = new DateTime("2017-1-1")
+    val endDate = new DateTime("1985-1-1")
+    an[InvalidParameterException] should be thrownBy hermes.Datetime.datetime(startDate, endDate, None)
+  }
+
+  it should "generate a random date in a custom format" in {
+    val hermes = Hermes()
+    val startDate = new DateTime("1970-1-1")
+    val endDate = new DateTime("1985-1-1")
+    val randomDateString = hermes.Datetime.datetime(startDate, endDate, Option("yyyy-MM-dd"))
+    val randomDate= DateTime.parse(randomDateString)
+    randomDateString shouldBe DateTimeFormat.forPattern(randomDateString.format("yyyy-MM-dd")).print(randomDate)
+  }
+
+  it should "generate a random date in a complex format" in {
+    val hermes = Hermes()
+    val startDate = new DateTime("1970-1-1")
+    val endDate = new DateTime("1985-1-1")
+    val randomDateString = hermes.Datetime.datetime(startDate, endDate,Option("yyyy-MM-dd'T'HH:mm:ss.SSS"))
+    val randomDate= DateTime.parse(randomDateString)
+    randomDateString shouldBe DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").print(randomDate)
+  }
+
+  it should "generate a random date with a bad format" in {
+    val hermes = Hermes()
+    val startDate = new DateTime("1970-1-1")
+    val endDate = new DateTime("1985-1-1")
+    //scalastyle:off
+    an[HermesException] should be thrownBy hermes.Datetime.datetime(startDate, endDate, Option("Invalid format"))
     //scalastyle:on
   }
 

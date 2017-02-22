@@ -45,6 +45,9 @@
         <akka-cluster.version>2.4.3</akka-cluster.version>
         <scalacheck.version>1.13.4</scalacheck.version>
         <twirl.version>1.3.0</twirl.version>
+        <joda-time.version>2.9.7</joda-time.version>
+        <kafka-avro-serializer.version>3.1.1</kafka-avro-serializer.version>
+        <converter.version>0.2.2</converter.version>
     </properties>
 
     <developers>
@@ -176,12 +179,17 @@
         <dependency>
             <groupId>tech.allegro.schema.json2avro</groupId>
             <artifactId>converter</artifactId>
-            <version>0.2.2</version>
+            <version>${converter.version}</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
-            <version>3.1.1</version>
+            <version>${kafka-avro-serializer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
         </dependency>
     </dependencies>
 
