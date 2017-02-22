@@ -16,4 +16,8 @@
 
 package com.stratio.hermes.exceptions
 
-case class HermesException(message: String) extends Exception(message)
+/**
+ * Generic exception used when Hermes fails.
+ * @param message to set.
+ */
+class HermesException(message: String) extends Exception(message)

@@ -25,9 +25,10 @@ object RandomHelper {
 
   /**
    * Returns a random element from a list.
-   * @param l initial list
+   * @param list initial list
    * @tparam T with the type of the list
    * @return a random element of the list or None if the list is empty.
    */
-  def randomElementFromAList[T](l: List[T]): Option[T] = Random.shuffle(l).headOption
+  def randomElementFromAList[T](list: List[T]): Option[T] =
+    if(list.nonEmpty) Option(list(Random.nextInt((list.size -1 -0) + 1) + 0)) else None
 }

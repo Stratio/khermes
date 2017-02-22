@@ -19,9 +19,9 @@ package com.stratio.hermes.helpers
 import java.io.File
 import java.util.Date
 
-import akka.actor.{Props, ActorSystem}
-import com.stratio.hermes.actors.WorkerSupervisorActor
-import com.stratio.hermes.actors.WorkerSupervisorActor._
+import akka.actor.{ActorRef, ActorSystem, Props}
+import com.stratio.hermes.actors.HermesSupervisorActor
+import com.stratio.hermes.actors.HermesSupervisorActor.Start
 import com.stratio.hermes.constants.HermesConstants
 import com.stratio.hermes.utils.HermesLogging
 import com.typesafe.config.Config
@@ -52,6 +52,48 @@ object HermesRunnerHelper extends HermesLogging {
     """.stripMargin)
   }
 
+  val kafkaConfigContent =
+    """
+      |kafka {
+      |  bootstrap.servers = "localhost:9092"
+      |  acks = "-1"
+      |  key.serializer = "org.apache.kafka.common.serialization.StringSerializer"
+      |  value.serializer = "org.apache.kafka.common.serialization.StringSerializer"
+      |}
+    """.stripMargin
+
+  val hermesConfigContent =
+    """
+      |hermes {
+      |  templates-path = "/tmp/hermes/templates"
+      |  topic = "template"
+      |  template-name = "tmpTemplate"
+      |  i18n = "ES"
+      |}
+    """.stripMargin
+
+  val templateContent =
+    """
+      |@import com.stratio.hermes.utils.Hermes
+      |
+      |@(hermes: Hermes)
+      |{
+      |  "name" : "@(hermes.Name.firstName)"
+      |}
+    """.stripMargin
+
+  val avroContent =
+    """
+      |{
+      |  "type": "record",
+      |  "name": "myrecord",
+      |  "fields":
+      |    [
+      |      {"name": "name", "type":"int"}
+      |    ]
+      |}
+    """.stripMargin
+
   def createPaths(implicit config: Config): Unit = {
     val templatesFile = new File(config.getString("hermes.templates-path"))
     if(!templatesFile.exists()) {
@@ -62,13 +104,16 @@ object HermesRunnerHelper extends HermesLogging {
 
   def workerSupervisor(implicit config: Config,
                        system: ActorSystem,
-                       executionContext: ExecutionContextExecutor): Unit = {
+                       executionContext: ExecutionContextExecutor): ActorRef =
+    system.actorOf(Props(new HermesSupervisorActor()), "hermes-supervisor")
+
+  def clientActor(hermesSupervisor: ActorRef)(implicit config: Config,
+                                              system: ActorSystem,
+                                              executionContext: ExecutionContextExecutor): Unit = {
     import scala.concurrent.duration._
-
-    val workerSupervisor = system.actorOf(Props(new WorkerSupervisorActor), "worker-supervisor")
-
-    system.scheduler.scheduleOnce(HermesConstants.ConstantWorkerSupervisorTimeout seconds) {
-      workerSupervisor ! Start
+    system.scheduler.scheduleOnce(HermesConstants.WorkerSupervisorTimeout seconds) {
+      hermesSupervisor ! Start(Seq.empty, HermesConfig(hermesConfigContent, kafkaConfigContent, templateContent))
     }
+
   }
 }

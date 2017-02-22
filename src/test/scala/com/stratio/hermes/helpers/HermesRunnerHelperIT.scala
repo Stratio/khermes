@@ -21,7 +21,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class HermesRunnerHelperTest extends HermesActorTest {
+class HermesRunnerHelperIT extends HermesActorTest {
 
   "An HermesRunnerHelper" should {
     "print a welcome message and start the akka system without errors" in {

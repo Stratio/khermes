@@ -29,13 +29,12 @@ import scala.collection.JavaConversions._
 object HermesImplicits {
 
   lazy implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
-  implicit val config: Config = ConfigFactory
+  lazy implicit val config: Config = ConfigFactory
     .load(getClass.getClassLoader,
       ConfigResolveOptions.defaults.setAllowUnresolved(true))
-    .withValue("clustering.ip", ConfigValueFactory.fromAnyRef(getHostIP()))
     .resolve
 
-  lazy implicit val system: ActorSystem = ActorSystem(HermesConstants.ConstantAkkaClusterName, config)
+  lazy implicit val system: ActorSystem = ActorSystem(HermesConstants.AkkaClusterName, config)
 
   /**
    * Gets the IP of the current host .

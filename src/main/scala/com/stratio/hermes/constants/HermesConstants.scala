@@ -21,60 +21,14 @@ package com.stratio.hermes.constants
  */
 object HermesConstants {
 
-  val ConstantDefaultLocale = "ALL"
-  val ConstantAkkaClusterName = "hermes"
-  val ConstantDecimalValue = 10
-  val ConstantWorkerSupervisorTimeout = 5
+  val DefaultLocale = "ALL"
+  val AkkaClusterName = "hermes"
+  val DecimalValue = 10
+  val WorkerSupervisorTimeout = 5
+  val WorkerSupervisorStop = 15
 
-  val ConstantGeneratedTemplatesPrefix = "generated-templates"
-  val ConstantGeneratedClassesPrefix = "generated-classes"
+  val GeneratedTemplatesPrefix = "generated-templates"
+  val GeneratedClassesPrefix = "generated-classes"
 
-  val AvroSchema =
-    """
-      |{
-      |  "type": "record",
-      |  "name": "myrecord",
-      |  "fields":
-      |    [
-      |      {
-      |        "name":"id",
-      |        "type":"string"
-      |      },
-      |      {
-      |        "name":"customerId",
-      |        "type":"int"
-      |      },
-      |      {
-      |        "name":"customerName",
-      |        "type": "string"
-      |      },
-      |      {
-      |        "name":"latitude",
-      |        "type": "double"
-      |      },
-      |      {
-      |        "name": "longitude",
-      |        "type": "double"
-      |      }
-      |    ]
-      |}
-    """.stripMargin
-
-  val TwirlTemplate =
-    """
-      |@import com.stratio.hermes.utils.Hermes
-      |@import com.stratio.hermes.utils.Positive
-      |@import java.util.UUID
-      |
-      |@(hermes: Hermes)
-      |{
-      |  "id" : "@(UUID.randomUUID().toString)",
-      |  "customerId": @(hermes.Number.number(1,Positive)),
-      |  "customerName": "@(hermes.Name.fullName)",
-      |  "latitude": @(hermes.Geo.geolocation.latitude),
-      |  "longitude": @(hermes.Geo.geolocation.longitude),
-      |  "productIds": [@((1 to 5).map(x => hermes.Number.number(1, Positive)).mkString(","))]
-      |}
-    """.stripMargin
-
+  val KafkaAvroSerializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
 }
