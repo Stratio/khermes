@@ -1,7 +1,8 @@
 [
-  {"latitude": 39.6335556, "longitude": -86.8138056},
-  {"latitude": 41.9929342, "longitude": -86.1280125},
-  {"latitude": 39.9750278, "longitude": -81.5775833},
-  {"latitude": 44.8436667, "longitude": -87.4215556},
-  {"latitude": 39.7948244, "longitude": -76.6471914}
+  {"longitude":39.6335556,"latitude":-86.8138056,"city":"Greencastle"},
+  {"longitude":41.9929342,"latitude":-86.1280125,"city":"Dowagiac"},
+  {"longitude":39.9750278,"latitude":-81.5775833,"city":"Cambridge"},
+  {"longitude":44.8436667,"latitude":-87.4215556,"city":"Sturgeon Bay"},
+  {"longitude":39.7948244,"latitude":-76.6471914,"city":"Stewartstown"},
+  {"longitude":45.6950000,"latitude":-118.841389,"city":"Pendleton"},
 ]
