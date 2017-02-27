@@ -73,4 +73,16 @@ class DatetimeGeneratorTest extends FlatSpec
     //scalastyle:on
   }
 
+  "time" should "return a valid hour (0:0:0.000 - 23:59:59.999)" in {
+    val hermes = Hermes()
+    val time = hermes.Datetime.time
+    time shouldBe a[String]
+    val timeAsString = time.split(":").toList
+    timeAsString(0).toInt should (be >= 0 and be < 24)
+    timeAsString(1).toInt should (be >= 0 and be < 60)
+    timeAsString(2).split("\\.")(0).toInt should (be >= 0 and be < 60)
+    timeAsString(2).split("\\.")(1).toInt should (be >= 0 and be < 1000)
+
+  }
+
 }
