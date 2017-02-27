@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package com.stratio.hermes.helpers
-
-import scala.util.Random
+package com.stratio.hermes.models
 
 /**
- * Helper to work with random data.
+ * All data related with music will be loaded using this class*
+ * @param song   Name of song
+ * @param artist Name of artist
+ * @param album  Name of album
+ * @param genre  Name of genre
  */
-object RandomHelper {
-
-  /**
-   * Returns a random element from a list.
-   *
-   * @param list initial list
-   * @tparam T with the type of the list
-   * @return a random element of the list or None if the list is empty.
-   */
-  def randomElementFromAList[T](list: Seq[T]): Option[T] =
-    if (list.nonEmpty) Option(list(Random.nextInt((list.size - 1) + 1))) else None
-}
+case class MusicModel(song: String, artist: String, album: String, genre: String)

@@ -20,9 +20,16 @@
 
 @(hermes: Hermes)
 {
-  "customerId": @(hermes.Number.number(3,Positive)),
-  "customerName": "@(hermes.Name.fullName)",
+  "song": @(hermes.Music.playedSong.song),
+  "artist": @(hermes.Music.playedSong.artist),
+  "genre": @(hermes.Music.playedSong.genre),
+  "album": @(hermes.Music.playedSong.album),
+  "playDuration": @(hermes.Number.number(3,Positive)),
+  "rating": @(hermes.Number.rating(5)),
+  "user": "@(hermes.Name.fullName)",
+  "userType": "@(Seq("free", "membership")(Random.nextInt(2)))",
+  "country": "@(hermes.Geo.geolocation.country)",
   "latitude": @(hermes.Geo.geolocation.latitude),
   "longitude": @(hermes.Geo.geolocation.longitude),
-  "productIds": [@((1 to 5).map(x => hermes.Number.number(1, Positive)).mkString(","))]
+  "startTime": @(hermes.Datetime.time)
 }

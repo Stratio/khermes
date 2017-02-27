@@ -16,11 +16,11 @@
 
 package com.stratio.hermes.utils
 
+
 /**
  * All Hermes objects should extend this trait.
  */
 trait HermesUnit {
 
-  def unitName(): String
-
+  def unitName: String
 }
