@@ -20,18 +20,20 @@
 @import scala.util.Random
 
 @(hermes: Hermes)
-{
-  "song": "@(hermes.Music.playedSong.song)",
-  "artist": "@(hermes.Music.playedSong.artist)",
-  "genre": "@(hermes.Music.playedSong.genre)",
-  "album": "@(hermes.Music.playedSong.album)",
-  "playDuration": @(hermes.Number.number(3,Positive)),
-  "rating": @(hermes.Number.rating(5)),
-  "user": "@(hermes.Name.fullName)",
-  "userType": "@(Seq("free", "membership")(Random.nextInt(2)))",
-  "country": "@(hermes.Geo.country)",
-  "latitude": @(hermes.Geo.geolocation.latitude),
-  "longitude": @(hermes.Geo.geolocation.longitude),
-  "startTime": "@(s"${Random.nextInt(24)}:${Random.nextInt(60)}:${Random.nextInt(60)}.${Random.nextInt(1000)}")"
-}
+@defining(hermes.Music.playedSong) { randomSong =>
 
+  {
+    "song": "@(randomSong.song)",
+    "artist": "@(randomSong.artist)",
+    "genre": "@(randomSong.genre)",
+    "album": "@(randomSong.album)",
+    "playDuration": @(hermes.Number.number(3,Positive)),
+    "rating": @(hermes.Number.rating(5)),
+    "user": "@(hermes.Name.fullName)",
+    "userType": "@(Seq("free", "membership")(Random.nextInt(2)))",
+    "country": "@(hermes.Geo.country)",
+    "latitude": @(hermes.Geo.geolocation.latitude),
+    "longitude": @(hermes.Geo.geolocation.longitude),
+    "startTime": "@(s"${Random.nextInt(24)}:${Random.nextInt(60)}:${Random.nextInt(60)}.${Random.nextInt(1000)}")"
+  }
+}
