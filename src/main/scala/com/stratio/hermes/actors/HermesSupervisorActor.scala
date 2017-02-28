@@ -18,32 +18,59 @@ package com.stratio.hermes.actors
 
 import java.util.UUID
 
-import akka.actor.{Actor, ActorLogging, Props}
-import akka.cluster.Cluster
-import com.stratio.hermes.actors.HermesSupervisorActor.{Start, WorkerStatus}
+import akka.actor.{Actor, ActorLogging}
+import akka.cluster.pubsub.{DistributedPubSub, DistributedPubSubMediator}
 import com.stratio.hermes.helpers.{HermesConfig, TwirlHelper}
-import com.stratio.hermes.utils.Hermes
+import com.stratio.hermes.kafka.KafkaClient
+import com.stratio.hermes.utils.{Hermes, HermesLogging}
 import com.typesafe.config.Config
 import org.apache.avro.Schema.Parser
 import play.twirl.api.Txt
 import tech.allegro.schema.json2avro.converter.JsonAvroConverter
 
+import scala.util.Try
+
+/**
+ * Supervisor that will manage a thread that will generate data along the cluster.
+ * @param config with all needed configuration.
+ */
 class HermesSupervisorActor(implicit config: Config) extends Actor with ActorLogging {
 
-  private lazy val workerExecutor = cluster.system.actorOf(Props(new HermesExecutorActor), "hermes-executor")
+  import DistributedPubSubMediator.Subscribe
+  val mediator = DistributedPubSub(context.system).mediator
+  mediator ! Subscribe("content", self)
 
-  val cluster = Cluster(context.system)
+  var hermesExecutor: Option[HermesExecutor] = None
   val id = UUID.randomUUID.toString
 
-  var status = WorkerStatus.Stopped
+  val hermes = Hermes(Try(config.getString("hermes.i18n")).toOption.getOrElse("EN"))
 
   override def receive: Receive = {
-    case Start(ids, hermesConfig) =>
+    case HermesSupervisorActor.Start(ids, hc) =>
+      log.debug("Received start message")
+
       execute(ids, () => {
-        assertStopped
-        workerExecutor ! HermesExecutorActor.Start(hermesConfig)
-        status = WorkerStatus.Started
-        sender() ! WorkerStatus.Started
+        if(hermesExecutor.isEmpty) {
+          hermesExecutor = Option(new HermesExecutor(hc))
+        } else {
+          hermesExecutor.foreach(_.stopExecutor)
+          hermesExecutor = Option(new HermesExecutor(hc))
+        }
+        hermesExecutor.foreach(_.start())
+      })
+
+    case HermesSupervisorActor.Stop(ids) =>
+      log.debug("Received stop message")
+      execute(ids, () => {
+        hermesExecutor.foreach(_.stopExecutor)
+        hermesExecutor = None
+      })
+
+    case HermesSupervisorActor.List(ids) =>
+      log.debug("Received list message")
+      execute(ids, () => {
+          val status = hermesExecutor.map(_.status).getOrElse(false)
+          sender ! s"$id | $status"
       })
   }
 
@@ -51,50 +78,65 @@ class HermesSupervisorActor(implicit config: Config) extends Actor with ActorLog
 
   protected[this] def isAMessageForMe(ids: Seq[String]): Boolean = ids.exists(x => id == x)
 
-  protected[this] def assertStopped(): Unit =
-    assert(status == WorkerStatus.Stopped, "The worker is started. Stop it before start.")
-
   protected[this] def execute(ids: Seq[String], callback: () => Unit): Unit =
     if(ids.nonEmpty && !isAMessageForMe(ids)) log.debug("Is not a message for me!") else callback()
 
 }
 
-private class HermesExecutorActor(implicit config: Config) extends Actor with ActorLogging {
+/**
+ * Thread that will generate data and it is controlled by the supervisor thanks to stopExecutor method.
+ * @param hc with the Hermes' config.
+ * @param config with general configuration.
+ */
+class HermesExecutor(hc: HermesConfig)(implicit config: Config) extends HermesExecutable with HermesLogging {
 
   val converter = new JsonAvroConverter()
+  var running: Boolean = false
 
-  override def receive: Receive = {
-    case HermesExecutorActor.Start(hermesConfig) =>
-      val kafkaClient = hermesConfig.kafkaClientInstance[Object]()
-      val template = TwirlHelper.template[(Hermes) => Txt](hermesConfig.templateContent, hermesConfig.templateName)
-      val hermes = Hermes(hermesConfig.hermesI18n)
-      val parserOption = hermesConfig.avroSchema.map(new Parser().parse(_))
+  override def start(hc: HermesConfig): Unit = run()
 
-      def produce: Unit = {
-        val json = template.static(hermes).toString()
+  override def stopExecutor: Unit = running = false
 
-        parserOption.map(value => {
+  def status: Boolean = running
+
+  override def run(): Unit = {
+    running = true
+    val kafkaClient = new KafkaClient[Object](hc.kafkaConfig)
+    val template = TwirlHelper.template[(Hermes) => Txt](hc.templateContent, hc.templateName)
+    val hermes = Hermes(hc.hermesI18n)
+
+    val parserOption = hc.avroSchema.map(new Parser().parse(_))
+
+    while(running) {
+      val json = template.static(hermes).toString()
+      parserOption match {
+        case None =>
+          kafkaClient.send(hc.topic, json)
+        case Some(value) =>
           val record = converter.convertToGenericDataRecord(json.getBytes("UTF-8"), value)
-          kafkaClient.send(hermesConfig.topic, record)
-        }).getOrElse(kafkaClient.send(hermesConfig.topic, json))
-
-        produce
+          kafkaClient.send(hc.topic, record)
       }
-      produce
+    }
   }
+}
+
+trait HermesExecutable extends Thread {
+
+  def start(hc: HermesConfig)
+  def stopExecutor
+  def status: Boolean
+
 }
 
 object HermesSupervisorActor {
 
   case class Start(workerIds: Seq[String], hermesConfig: HermesConfig)
 
+  case class Stop(workerIds: Seq[String])
+
+  case class List(workerIds: Seq[String])
+
   object WorkerStatus extends Enumeration {
     val Started, Stopped = Value
   }
 }
-
-object HermesExecutorActor {
-
-  case class Start(hc: HermesConfig)
-}
-

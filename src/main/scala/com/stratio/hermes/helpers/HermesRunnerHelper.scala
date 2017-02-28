@@ -20,9 +20,7 @@ import java.io.File
 import java.util.Date
 
 import akka.actor.{ActorRef, ActorSystem, Props}
-import com.stratio.hermes.actors.HermesSupervisorActor
-import com.stratio.hermes.actors.HermesSupervisorActor.Start
-import com.stratio.hermes.constants.HermesConstants
+import com.stratio.hermes.actors.{HermesClientActor, HermesSupervisorActor}
 import com.stratio.hermes.utils.HermesLogging
 import com.typesafe.config.Config
 
@@ -66,8 +64,8 @@ object HermesRunnerHelper extends HermesLogging {
     """
       |hermes {
       |  templates-path = "/tmp/hermes/templates"
-      |  topic = "template"
-      |  template-name = "tmpTemplate"
+      |  topic = "alicia"
+      |  template-name = "chustasTemplate"
       |  i18n = "ES"
       |}
     """.stripMargin
@@ -78,7 +76,7 @@ object HermesRunnerHelper extends HermesLogging {
       |
       |@(hermes: Hermes)
       |{
-      |  "name" : "@(hermes.Name.firstName)"
+      |  "name" : "alicia"
       |}
     """.stripMargin
 
@@ -96,10 +94,13 @@ object HermesRunnerHelper extends HermesLogging {
 
   def createPaths(implicit config: Config): Unit = {
     val templatesFile = new File(config.getString("hermes.templates-path"))
-    templatesFile.delete()
-    log.info(s"Creating templates path: ${templatesFile.getAbsolutePath}")
-    templatesFile.mkdirs()
+    if(!templatesFile.exists()) {
+      log.info(s"Creating templates path: ${templatesFile.getAbsolutePath}")
+      templatesFile.mkdirs()
+    }
   }
+
+  //scalastyle:off
 
   def workerSupervisor(implicit config: Config,
                        system: ActorSystem,
@@ -109,10 +110,8 @@ object HermesRunnerHelper extends HermesLogging {
   def clientActor(hermesSupervisor: ActorRef)(implicit config: Config,
                                               system: ActorSystem,
                                               executionContext: ExecutionContextExecutor): Unit = {
-    import scala.concurrent.duration._
-    system.scheduler.scheduleOnce(HermesConstants.WorkerSupervisorTimeout seconds) {
-      hermesSupervisor ! Start(Seq.empty, HermesConfig(hermesConfigContent, kafkaConfigContent, templateContent))
-    }
 
+    val clientActor = system.actorOf(Props(new HermesClientActor()), "hermes-client")
+    clientActor ! HermesClientActor.Start
   }
 }

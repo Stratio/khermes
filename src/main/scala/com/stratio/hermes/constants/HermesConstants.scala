@@ -24,11 +24,10 @@ object HermesConstants {
   val DefaultLocale = "ALL"
   val AkkaClusterName = "hermes"
   val DecimalValue = 10
-  val WorkerSupervisorTimeout = 5
-  val WorkerSupervisorStop = 15
+  val SupervisorStart = 5
+  val SupervisorStop = 30
 
   val GeneratedTemplatesPrefix = "generated-templates"
   val GeneratedClassesPrefix = "generated-classes"
-
   val KafkaAvroSerializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
 }

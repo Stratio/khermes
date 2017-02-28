@@ -28,5 +28,10 @@ object HermesRunner extends App with HermesLogging {
   HermesRunnerHelper.welcome
   HermesRunnerHelper.createPaths
 
-  HermesRunnerHelper.clientActor(HermesRunnerHelper.workerSupervisor)
+  val hermesSupervisor = HermesRunnerHelper.workerSupervisor
+
+  if(config.getString("hermes.client") == "true") {
+    HermesRunnerHelper.clientActor(hermesSupervisor)
+  }
+
 }

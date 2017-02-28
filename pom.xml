@@ -48,6 +48,7 @@
         <joda-time.version>2.9.7</joda-time.version>
         <kafka-avro-serializer.version>3.1.1</kafka-avro-serializer.version>
         <converter.version>0.2.2</converter.version>
+        <jline.version>2.14.3</jline.version>
     </properties>
 
     <developers>
@@ -150,6 +151,13 @@
             <artifactId>akka-cluster_${scala.binary.version}</artifactId>
             <version>${akka-cluster.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-cluster-tools_${scala.binary.version}</artifactId>
+            <version>${akka-cluster.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-testkit_${scala.binary.version}</artifactId>
@@ -190,6 +198,11 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>${joda-time.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>${jline.version}</version>
         </dependency>
     </dependencies>
 

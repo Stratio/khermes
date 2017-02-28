@@ -52,6 +52,8 @@ class DatetimeGenerator extends HermesSerializer {
    * @return a random time from 00:00:00.000 to 23:59:59.999 (ISO8601)
    */
   def time(): String = {
+    //scalastyle:off
     new LocalTime(Random.nextInt(24), Random.nextInt(60), Random.nextInt(60), Random.nextInt(1000)).toString()
+    //scalastyle:on
   }
 }

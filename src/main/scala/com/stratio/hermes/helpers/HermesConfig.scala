@@ -18,13 +18,18 @@ package com.stratio.hermes.helpers
 
 import com.stratio.hermes.constants.HermesConstants
 import com.stratio.hermes.helpers.HermesConfig._
-import com.stratio.hermes.kafka.KafkaClient
 import com.typesafe.config.ConfigFactory
-import io.confluent.kafka.serializers.KafkaAvroSerializer
-
 
 import scala.util.Try
 
+/**
+ * Class used to load and parse configuration that will be used by the supervisor. Remember that all information
+ * encapsulated should be serializable because will be part as an akka's message.
+ * @param hermesConfigContent with configuration about hermes generator.
+ * @param kafkaConfigContent with kafka's configuration.
+ * @param template to generate.
+ * @param avroSchema in the case that you are using avro serialization.
+ */
 case class HermesConfig(hermesConfigContent: String,
                         kafkaConfigContent: String,
                         template: String,
@@ -34,8 +39,10 @@ case class HermesConfig(hermesConfigContent: String,
   val kafkaConfig = ConfigFactory.parseString(kafkaConfigContent)
 
   assertCorrectConfig()
-  kafkaClientInstance().parseProperties()
 
+  /**
+   * Tries to parse the configuration and checks that the HermesConfig object has all required fields.
+   */
   protected[this] def assertCorrectConfig(): Unit = {
     def buildErrors(mandatoryFields: Seq[String]): Seq[String] =
       for {
@@ -45,10 +52,6 @@ case class HermesConfig(hermesConfigContent: String,
 
     val errors = buildErrors(MandatoryFields) ++ (if(configType == ConfigType.Avro) buildErrors(AvroMandatoryFields) else Seq.empty)
     assert(errors.isEmpty, errors.mkString("\n"))
-  }
-
-   def kafkaClientInstance[T](): KafkaClient[T] = {
-    new KafkaClient[T](kafkaConfig)
   }
 
   def configType(): ConfigType.Value =
