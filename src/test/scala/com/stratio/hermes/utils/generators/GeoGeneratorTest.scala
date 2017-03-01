@@ -56,12 +56,12 @@ class GeoGeneratorTest extends FlatSpec
 
   it should "generate a random city" in {
     val hermes = Hermes()
-    hermes.Geo.cityList(hermes.Geo.geoModel) should contain (hermes.Geo.city)
+    hermes.Geo.cityList(hermes.Geo.geoModel) should contain(hermes.Geo.city)
   }
 
   it should "generate a random geolocation without city" in {
     val hermes = Hermes()
-    hermes.Geo.geoWithoutCityList(hermes.Geo.geoModel) should contain (hermes.Geo.geolocationWithoutCity())
+    hermes.Geo.geoWithoutCityList(hermes.Geo.geoModel) should contain(hermes.Geo.geolocationWithoutCity())
   }
 
   it should "raise an exception when it gets a geolocation that is corrupted" in {

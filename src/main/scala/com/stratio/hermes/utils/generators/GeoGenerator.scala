@@ -47,7 +47,6 @@ case class GeoGenerator(locale: String) extends HermesUnit
 
   /**
    * Example: "geolocation -> 57.585393,-157.571944".
-   *
    * @return a random geolocation.
    */
   def geolocation: GeoModel = {
@@ -77,8 +76,8 @@ case class GeoGenerator(locale: String) extends HermesUnit
     l.filter(_.isRight).flatMap(_.right.get)
   }
 
-  def geoWithoutCityList(l: Seq[Either[String, Seq[GeoModel]]]): Seq[(Double,Double)] = {
-    geoModelList(l).map(geomodel => (geomodel.longitude,geomodel.latitude))
+  def geoWithoutCityList(l: Seq[Either[String, Seq[GeoModel]]]): Seq[(Double, Double)] = {
+    geoModelList(l).map(geomodel => (geomodel.longitude, geomodel.latitude))
   }
 
   def cityList(l: Seq[Either[String, Seq[GeoModel]]]): Seq[String] = {

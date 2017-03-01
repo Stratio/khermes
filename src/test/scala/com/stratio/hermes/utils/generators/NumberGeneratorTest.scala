@@ -99,9 +99,9 @@ class NumberGeneratorTest extends FlatSpec
       hermesNum.Number.numberInRange(n, m) <= m && hermesNum.Number.numberInRange(n, m) >= n
     }
     //scalastyle:off
-    numberOfDigitsFromANumber(hermesNum.Number.numberInRange(1,9)) shouldBe 1
-    numberOfDigitsFromANumber(hermesNum.Number.numberInRange(99,10)) shouldBe 2
-    numberOfDigitsFromANumber(hermesNum.Number.numberInRange(100,999)) shouldBe 3
+    numberOfDigitsFromANumber(hermesNum.Number.numberInRange(1, 9)) shouldBe 1
+    numberOfDigitsFromANumber(hermesNum.Number.numberInRange(99, 10)) shouldBe 2
+    numberOfDigitsFromANumber(hermesNum.Number.numberInRange(100, 999)) shouldBe 3
     //scalastyle:on
   }
 
@@ -115,7 +115,6 @@ class NumberGeneratorTest extends FlatSpec
 
   /**
    * Returns length of a Integer element.
-   *
    * @param n number to calculate length.
    * @return size of the integer.
    */
@@ -123,7 +122,6 @@ class NumberGeneratorTest extends FlatSpec
 
   /**
    * Returns length of a BigDecimal element.
-   *
    * @param n number to calculate length.
    * @return size of the BigDecimal.
    */
