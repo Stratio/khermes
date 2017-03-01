@@ -49,6 +49,7 @@
         <kafka-avro-serializer.version>3.1.1</kafka-avro-serializer.version>
         <converter.version>0.2.2</converter.version>
         <jline.version>2.14.3</jline.version>
+        <joda-converter.version>1.7</joda-converter.version>
     </properties>
 
     <developers>
@@ -198,6 +199,11 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>${joda-time.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.joda</groupId>
+            <artifactId>joda-convert</artifactId>
+            <version>${joda-converter.version}</version>
         </dependency>
         <dependency>
             <groupId>jline</groupId>
