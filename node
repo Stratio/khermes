@@ -1,1 +1,1 @@
-java -jar -Dhermes.client=false -Dakka.remote.hostname=anistal.dev.stratio.com -Dakka.remote.netty.tcp.port=2553 -Dakka.cluster.seed-nodes.0=akka.tcp://hermes@anistal.dev.stratio.com:2552 target/hermes-0.2.0-SNAPSHOT-allinone.jar
+java -jar -Dhermes.client=false -Dakka.remote.hostname=localhost -Dakka.remote.netty.tcp.port=2553 -Dakka.cluster.seed-nodes.0=akka.tcp://hermes@localhost:2552 target/hermes-0.2.0-SNAPSHOT-allinone.jar
