@@ -17,8 +17,9 @@
 package com.stratio.hermes.models
 
 /**
- * All data related with geolocations will be loaded in this class.
- * @param latitude latitude of geolocations.
- * @param longitude longitude of geolocations.
+ * All data related with geolocation will be loaded in this class.
+ * @param latitude latitude of geolocation.
+ * @param longitude longitude of geolocation.
+ * @param city name of city geolocation.
  */
-case class GeoModel(latitude: Double, longitude: Double)
+case class GeoModel(latitude: Double, longitude: Double, city: String)

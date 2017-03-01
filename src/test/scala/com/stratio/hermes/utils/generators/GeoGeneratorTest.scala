@@ -17,10 +17,11 @@
 package com.stratio.hermes.utils.generators
 
 import com.stratio.hermes.exceptions.HermesException
+import com.stratio.hermes.helpers.ParserHelper
 import com.stratio.hermes.utils.Hermes
 import org.junit.runner.RunWith
-import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
+import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
 class GeoGeneratorTest extends FlatSpec
@@ -49,6 +50,29 @@ class GeoGeneratorTest extends FlatSpec
   it should "raise an exception when it gets a geolocation that not exists" in {
     val hermesFR = Hermes("FR")
     an[HermesException] should be thrownBy hermesFR.Geo.geolocation
+    an[HermesException] should be thrownBy hermesFR.Geo.city()
+    an[HermesException] should be thrownBy hermesFR.Geo.geolocationWithoutCity()
+  }
+
+  it should "generate a random city" in {
+    val hermes = Hermes()
+    hermes.Geo.cityList(hermes.Geo.geoModel) should contain(hermes.Geo.city)
+  }
+
+  it should "generate a random geolocation without city" in {
+    val hermes = Hermes()
+    hermes.Geo.geoWithoutCityList(hermes.Geo.geoModel) should contain(hermes.Geo.geolocationWithoutCity())
+  }
+
+  it should "raise an exception when it gets a geolocation that is corrupted" in {
+    val hermesYY = Hermes("YY")
+    ParserHelper.parseErrors(hermesYY.Geo.geoModel).length should be(1)
+    an[HermesException] should be thrownBy hermesYY.Geo.geolocation
+  }
+
+  it should "raise an exception when it gets a file with at least one record corrupted" in {
+    val hermes = Hermes()
+    ParserHelper.parseErrors(hermes.Geo.geoModel).length should be(2)
   }
 
 }
