@@ -52,6 +52,10 @@ case class HermesConsoleHelper(client: HermesClientActor) {
         ls
         parseLines(hermesConfig, kafkaConfig, template)
 
+      case "show config" =>
+        showConfig(hermesConfig,kafkaConfig,template)
+        parseLines(hermesConfig, kafkaConfig, template)
+
       case "clear" =>
         clearScreen
         parseLines(hermesConfig, kafkaConfig, template)
@@ -92,6 +96,19 @@ case class HermesConsoleHelper(client: HermesClientActor) {
     println("Node Id                                Status")
     println("------------------------------------   ------")
     client.ls
+    Thread.sleep(HermesConsoleHelper.TimeoutWhenLsMessage)
+    reader.setPrompt("hermes> ")
+  }
+
+  def showConfig(hermesConfig: Option[String] = None,
+                 kafkaConfig: Option[String] = None,
+                 template: Option[String] = None)={
+    println("Kafka configuration:")
+    println(kafkaConfig.getOrElse("Kafka config is empty"))
+    println("Hermes configuration:")
+    println(hermesConfig.getOrElse("Hermes config is empty"))
+    println("Template:")
+    println(template.getOrElse("Template is empty"))
     Thread.sleep(HermesConsoleHelper.TimeoutWhenLsMessage)
     reader.setPrompt("hermes> ")
   }
