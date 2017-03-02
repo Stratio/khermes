@@ -26,59 +26,66 @@ case class HermesConsoleHelper(client: HermesClientActor) {
   //scalastyle:off
   def parseLines(hermesConfig: Option[String] = None,
                  kafkaConfig: Option[String] = None,
-                 template: Option[String] = None): Unit = {
+                 template: Option[String] = None,
+                 avroConfig: Option[String] = None): Unit = {
     reader.readLine.trim match {
       case "set hermes" =>
-        val config = setConfiguration(hermesConfig, kafkaConfig, template)
-        parseLines(config, kafkaConfig, template)
+        val config = setConfiguration(hermesConfig, kafkaConfig, template, avroConfig)
+        parseLines(config, kafkaConfig, template, avroConfig)
 
       case "set kafka" =>
-        val config = setConfiguration(hermesConfig, kafkaConfig, template)
-        parseLines(hermesConfig, config, template)
+        val config = setConfiguration(hermesConfig, kafkaConfig, template, avroConfig)
+        parseLines(hermesConfig, config, template, avroConfig)
 
       case "set template" =>
-        val config = setConfiguration(hermesConfig, kafkaConfig, template)
-        parseLines(hermesConfig, kafkaConfig, config)
+        val config = setConfiguration(hermesConfig, kafkaConfig, template, avroConfig)
+        parseLines(hermesConfig, kafkaConfig, config, avroConfig)
+
+      case "set avro" =>
+        val config = setConfiguration(hermesConfig, kafkaConfig, template, avroConfig)
+        parseLines(hermesConfig, kafkaConfig, template, config)
+
 
       case value if value.startsWith("start") =>
-        startStop(value, "start", hermesConfig, kafkaConfig, template)
-        parseLines(hermesConfig, kafkaConfig, template)
+        startStop(value, "start", hermesConfig, kafkaConfig, template, avroConfig)
+        parseLines(hermesConfig, kafkaConfig, template, avroConfig)
 
       case value if value.startsWith("stop") =>
-        startStop(value, "stop", hermesConfig, kafkaConfig, template)
-        parseLines(hermesConfig, kafkaConfig, template)
+        startStop(value, "stop", hermesConfig, kafkaConfig, template, avroConfig)
+        parseLines(hermesConfig, kafkaConfig, template, avroConfig)
 
       case "ls" =>
         ls
-        parseLines(hermesConfig, kafkaConfig, template)
+        parseLines(hermesConfig, kafkaConfig, template, avroConfig)
 
       case "show config" =>
-        showConfig(hermesConfig,kafkaConfig,template)
+        showConfig(hermesConfig, kafkaConfig, template)
         parseLines(hermesConfig, kafkaConfig, template)
 
       case "help" =>
         help
-        parseLines(hermesConfig, kafkaConfig, template)
+        parseLines(hermesConfig, kafkaConfig, template, avroConfig)
 
       case "clear" =>
         clearScreen
-        parseLines(hermesConfig, kafkaConfig, template)
+        parseLines(hermesConfig, kafkaConfig, template, avroConfig)
 
       case "exit" | "quit" | "bye" =>
         System.exit(0)
 
       case "" =>
-        parseLines(hermesConfig, kafkaConfig, template)
+        parseLines(hermesConfig, kafkaConfig, template, avroConfig)
 
       case _ =>
         printNotFoundCommand
-        parseLines(hermesConfig, kafkaConfig, template)
+        parseLines(hermesConfig, kafkaConfig, template, avroConfig)
     }
   }
 
   def setConfiguration(hermesConfig: Option[String] = None,
                        kafkaConfig: Option[String] = None,
-                       template: Option[String] = None): Option[String] = {
+                       template: Option[String] = None,
+                       avroConfig: Option[String] = None): Option[String] = {
     println("Press Control + D to finish")
     val parsedBlock = Option(parseBlock())
     reader.setPrompt("hermes> ")
@@ -89,10 +96,11 @@ case class HermesConsoleHelper(client: HermesClientActor) {
                 firstWord: String,
                 hermesConfig: Option[String] = None,
                 kafkaConfig: Option[String] = None,
-                template: Option[String] = None): Unit = {
+                template: Option[String] = None,
+                avroConfig: Option[String] = None): Unit = {
     val ids = line.replace(firstWord, "").trim.split(",").map(_.trim).filter("" != _)
     ids.map(id => println(s"Sending $id start message"))
-    client.start(hermesConfig, kafkaConfig, template, ids)
+    client.start(hermesConfig, kafkaConfig, template, avroConfig, ids)
     reader.setPrompt("hermes> ")
   }
 
@@ -106,7 +114,7 @@ case class HermesConsoleHelper(client: HermesClientActor) {
 
   def showConfig(hermesConfig: Option[String] = None,
                  kafkaConfig: Option[String] = None,
-                 template: Option[String] = None)= {
+                 template: Option[String] = None) = {
     println("Kafka configuration:")
     println(kafkaConfig.getOrElse("Kafka config is empty"))
     println("Hermes configuration:")

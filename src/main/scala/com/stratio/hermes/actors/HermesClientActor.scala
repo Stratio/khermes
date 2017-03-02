@@ -61,6 +61,7 @@ class HermesClientActor(implicit config: Config) extends Actor with ActorLogging
   def start(hermesConfigOption: Option[String],
             kafkaConfigOption: Option[String],
             templateOption: Option[String],
+            avroConfigOption: Option[String],
             nodeIds: Seq[String]): Unit = {
     (for {
       hermesConfig <- hermesConfigOption
@@ -68,7 +69,7 @@ class HermesClientActor(implicit config: Config) extends Actor with ActorLogging
       template <- templateOption
     } yield {
       mediator ! Publish("content",
-        HermesSupervisorActor.Start(nodeIds, HermesConfig(hermesConfig, kafkaConfig, template)))
+        HermesSupervisorActor.Start(nodeIds, HermesConfig(hermesConfig, kafkaConfig, template, avroConfigOption)))
     }).getOrElse({
       //scalastyle:off
       println("Error: To start nodes is necessary to set hermes, kafka and a template configuration.")
