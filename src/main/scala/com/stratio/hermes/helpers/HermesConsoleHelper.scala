@@ -56,6 +56,10 @@ case class HermesConsoleHelper(client: HermesClientActor) {
         showConfig(hermesConfig,kafkaConfig,template)
         parseLines(hermesConfig, kafkaConfig, template)
 
+      case "help" =>
+        help
+        parseLines(hermesConfig, kafkaConfig, template)
+
       case "clear" =>
         clearScreen
         parseLines(hermesConfig, kafkaConfig, template)
@@ -102,14 +106,27 @@ case class HermesConsoleHelper(client: HermesClientActor) {
 
   def showConfig(hermesConfig: Option[String] = None,
                  kafkaConfig: Option[String] = None,
-                 template: Option[String] = None)={
+                 template: Option[String] = None)= {
     println("Kafka configuration:")
     println(kafkaConfig.getOrElse("Kafka config is empty"))
     println("Hermes configuration:")
     println(hermesConfig.getOrElse("Hermes config is empty"))
     println("Template:")
     println(template.getOrElse("Template is empty"))
-    Thread.sleep(HermesConsoleHelper.TimeoutWhenLsMessage)
+  }
+
+  def help: Unit = {
+    println("Hermes client provide the next commands to manage your Hermes cluster:")
+    println("set hermes             Add your Hermes configuration.")
+    println("set kafka              Add your Kafka configuration.")
+    println("set template           Add your template.")
+    println("show config            Show all configurations.")
+    println("ls                     List the nodes with their current status")
+    println("start <Node Id>        Starts event generation in N nodes.")
+    println("stop <Node Id>         Stop event generation in N nodes.")
+    println("clear                  Clean the screen.")
+    println("help                   Show this help.")
+    println("exit | quit | bye      Exit of Hermes Cli.")
     reader.setPrompt("hermes> ")
   }
 

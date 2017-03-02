@@ -46,10 +46,10 @@ case class GeoGenerator(locale: String) extends HermesUnit
   }
 
   /**
-   * Example: "geolocation -> 57.585393,-157.571944".
+   * Example: "geolocation() -> 40.493556, -3.566764, Madrid".
    * @return a random geolocation.
    */
-  def geolocation: GeoModel = {
+  def geolocation(): GeoModel = {
 
     RandomHelper.randomElementFromAList[GeoModel](geoModelList(geoModel))
       .getOrElse(throw new HermesException(s"Error loading locate /locales/$unitName/$locale.json"))
