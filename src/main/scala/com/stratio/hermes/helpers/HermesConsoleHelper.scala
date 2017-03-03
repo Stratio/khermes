@@ -19,7 +19,7 @@ package com.stratio.hermes.helpers
 import com.stratio.hermes.actors.HermesClientActor
 import jline.console.ConsoleReader
 
-case class HermesConsoleHelper(client: HermesClientActor) {
+case class HermesConsoleHelper(client: HermesClientActor){
 
   lazy val reader = createDefaultReader()
 
@@ -45,7 +45,6 @@ case class HermesConsoleHelper(client: HermesClientActor) {
         val config = setConfiguration(hermesConfig, kafkaConfig, template, avroConfig)
         parseLines(hermesConfig, kafkaConfig, template, config)
 
-
       case value if value.startsWith("start") =>
         startStop(value, "start", hermesConfig, kafkaConfig, template, avroConfig)
         parseLines(hermesConfig, kafkaConfig, template, avroConfig)
@@ -59,8 +58,8 @@ case class HermesConsoleHelper(client: HermesClientActor) {
         parseLines(hermesConfig, kafkaConfig, template, avroConfig)
 
       case "show config" =>
-        showConfig(hermesConfig, kafkaConfig, template)
-        parseLines(hermesConfig, kafkaConfig, template)
+        showConfig(hermesConfig, kafkaConfig, template, avroConfig)
+        parseLines(hermesConfig, kafkaConfig, template, avroConfig)
 
       case "help" =>
         help
@@ -114,13 +113,16 @@ case class HermesConsoleHelper(client: HermesClientActor) {
 
   def showConfig(hermesConfig: Option[String] = None,
                  kafkaConfig: Option[String] = None,
-                 template: Option[String] = None) = {
+                 template: Option[String] = None,
+                 avroConfig: Option[String] = None) = {
     println("Kafka configuration:")
     println(kafkaConfig.getOrElse("Kafka config is empty"))
     println("Hermes configuration:")
     println(hermesConfig.getOrElse("Hermes config is empty"))
     println("Template:")
     println(template.getOrElse("Template is empty"))
+    println("Avro configuration:")
+    println(avroConfig.getOrElse("Template is empty"))
   }
 
   def help: Unit = {
@@ -128,6 +130,7 @@ case class HermesConsoleHelper(client: HermesClientActor) {
     println("set hermes             Add your Hermes configuration.")
     println("set kafka              Add your Kafka configuration.")
     println("set template           Add your template.")
+    println("set avro               Add your Avro configuration.")
     println("show config            Show all configurations.")
     println("ls                     List the nodes with their current status")
     println("start <Node Id>        Starts event generation in N nodes.")
