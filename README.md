@@ -73,3 +73,21 @@ playedSong() → ("Despacito (Featuring Daddy Yankee)", "Luis Fonsi, Daddy Yanke
 
 ###Cluster
 
+
+## Docker usage
+
+### Run 
+
+* Seed + client
+
+docker run -dit --name SEED_NAME -e PARAMS="-Dhermes.client=true -Dakka.remote.hostname=SEED_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2552 -Dakka.remote.netty.tcp.hostname=SEED_NAME.DOMAIN -Dakka.cluster.seed-nodes.0=akka.tcp://hermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/hermes:VERSION
+
+* Agent
+
+docker run -dit --name AGENT_NAME -e PARAMS="-Dhermes.client=false -Dakka.remote.hostname=AGENT_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2553 -Dakka.cluster.seed-nodes.0=akka.tcp://hermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/hermes:VERSION
+
+### Connect to client console
+
+docker exec -it NODE_NAME script -q -c "export TERM=xterm && screen -r client"
+
+IMPORTANT: To disconnect from the client interactive console use Ctrl-A + D. If you use Ctrl-C, you will kill the process and khermes will stop running.  
