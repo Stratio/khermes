@@ -29,10 +29,10 @@ case class HermesConsoleHelper(client: HermesClientActor) {
   lazy val reader = createDefaultReader()
 
   parseLines(
-    Option(firstLoad(HermesConstants.HermesConfigNodePath)),
-    Option(firstLoad(HermesConstants.KafkaConfigNodePath)),
-    Option(firstLoad(HermesConstants.TemplateNodePath)),
-    Option(firstLoad(HermesConstants.AvroConfigNodePath))
+    firstLoad(HermesConstants.HermesConfigNodePath),
+    firstLoad(HermesConstants.KafkaConfigNodePath),
+    firstLoad(HermesConstants.TemplateNodePath),
+    firstLoad(HermesConstants.AvroConfigNodePath)
   )
 
   //scalastyle:off
@@ -173,11 +173,12 @@ case class HermesConsoleHelper(client: HermesClientActor) {
     println("Command not found. Type help to list available commands.")
   }
 
-  def firstLoad(path : String): String ={
+  def firstLoad(path: String): Option[String] = {
     Try(hermesConfigDAO.loadConfig(path)) match {
       case Success(config) => print(s"${path.capitalize} configuration loaded successfully.")
-        config
-      case Failure(ex) => s"${path.capitalize} config is empty"
+        Option(config)
+      case Failure(_) => println(s"${path.capitalize} config is empty")
+        None
     }
   }
 

@@ -72,7 +72,10 @@ class HermesClientActor(implicit config: Config) extends Actor with ActorLogging
         HermesSupervisorActor.Start(nodeIds, HermesConfig(hermesConfig, kafkaConfig, template, avroConfigOption)))
     }).getOrElse({
       //scalastyle:off
-      println("Error: To start nodes is necessary to set hermes, kafka and a template configuration.")
+      println(s"Error: To start nodes is necessary to set " +
+        s"${if(hermesConfigOption.isEmpty)"hermes"}, " +
+        s"${if(kafkaConfigOption.isEmpty)"kafka"} " +
+        s"and a ${if(templateOption.isEmpty)"template"} configuration.")
       //scalastyle:on
     })
   }
