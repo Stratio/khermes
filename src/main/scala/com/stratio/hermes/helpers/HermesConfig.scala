@@ -19,6 +19,8 @@ package com.stratio.hermes.helpers
 import com.stratio.hermes.constants.HermesConstants
 import com.stratio.hermes.helpers.HermesConfig._
 import com.typesafe.config.ConfigFactory
+import java.time.Duration
+
 
 import scala.util.Try
 
@@ -68,6 +70,12 @@ case class HermesConfig(hermesConfigContent: String,
   def templateContent: String = template
 
   def hermesI18n: String = hermesConfig.getString("hermes.i18n")
+
+  def timeoutNumberOfEventsOption: Option[Int] = Try(hermesConfig.getInt("hermes.timeout-rules.number-of-events")).toOption
+
+  def timeoutNumberOfEventsDurationOption: Option[Duration] = Try(hermesConfig.getDuration("hermes.timeout-rules.duration")).toOption
+
+  def stopNumberOfEventsOption: Option[Int] = Try(hermesConfig.getInt("hermes.stop-rules.number-of-events")).toOption
 
 }
 

@@ -67,6 +67,15 @@ object HermesRunnerHelper extends HermesLogging {
       |  topic = "alicia"
       |  template-name = "chustasTemplate"
       |  i18n = "ES"
+      |
+      |  timeout-rules {
+      |    number-of-events: 1000
+      |    duration: 2 seconds
+      |  }
+      |
+      |  stop-rules {
+      |    number-of-events: 5000
+      |  }
       |}
     """.stripMargin
 

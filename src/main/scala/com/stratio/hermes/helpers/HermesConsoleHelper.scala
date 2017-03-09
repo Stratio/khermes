@@ -19,7 +19,7 @@ package com.stratio.hermes.helpers
 import com.stratio.hermes.actors.HermesClientActor
 import jline.console.ConsoleReader
 
-case class HermesConsoleHelper(client: HermesClientActor){
+case class HermesConsoleHelper(client: HermesClientActor) {
 
   lazy val reader = createDefaultReader()
 
@@ -100,6 +100,14 @@ case class HermesConsoleHelper(client: HermesClientActor){
     val ids = line.replace(firstWord, "").trim.split(",").map(_.trim).filter("" != _)
     ids.map(id => println(s"Sending $id start message"))
     client.start(hermesConfig, kafkaConfig, template, avroConfig, ids)
+    firstWord match {
+      case "start" =>
+        ids.map(id => println(s"Sending $id start message"))
+        client.start(hermesConfig, kafkaConfig, template, avroConfig, ids)
+      case "stop" =>
+        ids.map(id => println(s"Sending $id stop message"))
+        client.stop(ids)
+    }
     reader.setPrompt("hermes> ")
   }
 
