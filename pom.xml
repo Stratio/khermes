@@ -35,6 +35,7 @@
         <scala.binary.version>2.11</scala.binary.version>
         <scala.version>2.11.8</scala.version>
         <json4s.version>3.5.0</json4s.version>
+        <json4s-jackson.version>3.2.9</json4s-jackson.version>
         <scalatest.version>3.0.1</scalatest.version>
         <junit.version>4.8.1</junit.version>
         <logback-classic.version>1.1.7</logback-classic.version>
@@ -50,6 +51,7 @@
         <converter.version>0.2.2</converter.version>
         <jline.version>2.14.3</jline.version>
         <joda-converter.version>1.7</joda-converter.version>
+        <curator-framework.version>2.9.0</curator-framework.version>
     </properties>
 
     <developers>
@@ -117,6 +119,11 @@
             <version>${json4s.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.json4s</groupId>
+            <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
+            <version>${json4s-jackson.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.binary.version}</artifactId>
             <version>${scalatest.version}</version>
@@ -136,11 +143,11 @@
             <artifactId>kafka_${scala.binary.version}</artifactId>
             <version>${kafka.version}</version>
             <exclusions>
-                <exclusion> 
+                <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>
                 </exclusion>
-            </exclusions> 
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>
@@ -209,6 +216,17 @@
             <groupId>jline</groupId>
             <artifactId>jline</artifactId>
             <version>${jline.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+            <version>${curator-framework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-test</artifactId>
+            <version>${curator-framework.version}</version>
         </dependency>
     </dependencies>
 

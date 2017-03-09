@@ -20,7 +20,9 @@ import java.net.NetworkInterface
 
 import akka.actor.ActorSystem
 import com.stratio.hermes.constants.HermesConstants
-import com.typesafe.config.{ConfigResolveOptions, Config, ConfigFactory, ConfigValueFactory}
+import com.stratio.hermes.dao.ZookeeperConfigDAO
+import com.typesafe.config.{Config, ConfigFactory, ConfigResolveOptions}
+
 import scala.collection.JavaConversions._
 
 /**
@@ -35,6 +37,7 @@ object HermesImplicits {
     .resolve
 
   lazy implicit val system: ActorSystem = ActorSystem(HermesConstants.AkkaClusterName, config)
+  lazy implicit val hermesConfigDAO: ZookeeperConfigDAO = new ZookeeperConfigDAO
 
   /**
    * Gets the IP of the current host .

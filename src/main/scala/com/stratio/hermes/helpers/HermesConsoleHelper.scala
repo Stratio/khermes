@@ -17,11 +17,23 @@
 package com.stratio.hermes.helpers
 
 import com.stratio.hermes.actors.HermesClientActor
+import com.stratio.hermes.constants.HermesConstants
+import com.stratio.hermes.implicits.HermesImplicits.hermesConfigDAO
 import jline.console.ConsoleReader
+
+
+import scala.util.{Success, Failure, Try}
 
 case class HermesConsoleHelper(client: HermesClientActor) {
 
   lazy val reader = createDefaultReader()
+
+  parseLines(
+    Option(firstLoad(HermesConstants.HermesConfigNodePath)),
+    Option(firstLoad(HermesConstants.KafkaConfigNodePath)),
+    Option(firstLoad(HermesConstants.TemplateNodePath)),
+    Option(firstLoad(HermesConstants.AvroConfigNodePath))
+  )
 
   //scalastyle:off
   def parseLines(hermesConfig: Option[String] = None,
@@ -31,18 +43,22 @@ case class HermesConsoleHelper(client: HermesClientActor) {
     reader.readLine.trim match {
       case "set hermes" =>
         val config = setConfiguration(hermesConfig, kafkaConfig, template, avroConfig)
+        hermesConfigDAO.saveConfig(HermesConstants.HermesConfigNodePath, config.get)
         parseLines(config, kafkaConfig, template, avroConfig)
 
       case "set kafka" =>
         val config = setConfiguration(hermesConfig, kafkaConfig, template, avroConfig)
+        hermesConfigDAO.saveConfig(HermesConstants.KafkaConfigNodePath, config.get)
         parseLines(hermesConfig, config, template, avroConfig)
 
       case "set template" =>
         val config = setConfiguration(hermesConfig, kafkaConfig, template, avroConfig)
+        hermesConfigDAO.saveConfig(HermesConstants.TemplateNodePath, config.get)
         parseLines(hermesConfig, kafkaConfig, config, avroConfig)
 
       case "set avro" =>
         val config = setConfiguration(hermesConfig, kafkaConfig, template, avroConfig)
+        hermesConfigDAO.saveConfig(HermesConstants.AvroConfigNodePath, config.get)
         parseLines(hermesConfig, kafkaConfig, template, config)
 
       case value if value.startsWith("start") =>
@@ -155,6 +171,14 @@ case class HermesConsoleHelper(client: HermesClientActor) {
 
   def printNotFoundCommand: Unit = {
     println("Command not found. Type help to list available commands.")
+  }
+
+  def firstLoad(path : String): String ={
+    Try(hermesConfigDAO.loadConfig(path)) match {
+      case Success(config) => print(s"${path.capitalize} configuration loaded successfully.")
+        config
+      case Failure(ex) => s"${path.capitalize} config is empty"
+    }
   }
 
   //scalastyle:on
