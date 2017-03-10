@@ -51,7 +51,7 @@
         <converter.version>0.2.2</converter.version>
         <jline.version>2.14.3</jline.version>
         <joda-converter.version>1.7</joda-converter.version>
-        <curator-framework.version>3.3.0</curator-framework.version>
+        <curator-framework.version>2.9.0</curator-framework.version>
     </properties>
 
     <developers>
