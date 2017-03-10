@@ -100,7 +100,13 @@ docker exec -it NODE_NAME script -q -c "export TERM=xterm && screen -r client"
 
 IMPORTANT: To disconnect from the client interactive console use Ctrl-A + D. If you use Ctrl-C, you will kill the process and khermes will stop running.  
 
-### About dependencies
+### Configuration
 
+Now your configuration will be store in zookeeper.
+Hermes use Curator 3.3.0. If you have that exception:
+
+ `org.apache.zookeeper.server.quorum.flexible.QuorumMaj.<init>(Ljava/util/Map;)V`
+
+is caused because:
 Curator 2.x.x - compatible with both ZooKeeper 3.4.x and ZooKeeper 3.5.x
 Curator 3.x.x - compatible only with ZooKeeper 3.5.x and includes support for new features such as dynamic reconfiguration, etc.
