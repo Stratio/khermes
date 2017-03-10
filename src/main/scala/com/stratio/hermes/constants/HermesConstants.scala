@@ -31,14 +31,13 @@ object HermesConstants {
   val GeneratedClassesPrefix = "generated-classes"
   val KafkaAvroSerializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
 
-  val ZookeeperParentPath= "stratio/hermes"
+  val ZookeeperParentPath= "/stratio/hermes"
   val ZookeeperConnection = "zookeeper.connection"
   val ZookeeperConnectionDefault = "master.mesos:2181"
   val ZookeeperConnectionTimeout = "zookeeper.connectionTimeout"
   val ZookeeperSessionTimeout = "zookeeper.sessionTimeout"
   val ZookeeperRetryAttempts = "zookeeper.retryAttempts"
   val ZookeeperRetryInterval = "zookeeper.retryInterval"
-  val ZookeeperParentNodePath = "zookeeper.parentNodePath"
 
   val KafkaConfigNodePath = "kafka"
   val HermesConfigNodePath = "hermes"

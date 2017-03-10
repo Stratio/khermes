@@ -30,15 +30,14 @@ class ZookeeperConfigDAO extends ConfigDAO[String] {
   lazy val sessionTimeout = config.getInt(HermesConstants.ZookeeperSessionTimeout)
   lazy val retryAttempts = config.getInt(HermesConstants.ZookeeperRetryAttempts)
   lazy val retryInterval = config.getInt(HermesConstants.ZookeeperRetryInterval)
-  lazy val parentNodePath = config.getString(HermesConstants.ZookeeperParentNodePath)
 
   override def saveConfig(path: String, config: String): Unit = Try(
     if (existsConfig(path)) {
       updateConfig(path, config)
     }
     else {
-      curatorFramework.create().creatingParentsIfNeeded().forPath("/" + parentNodePath + path)
-      curatorFramework.setData().forPath("/" + parentNodePath + path, config.getBytes())
+      curatorFramework.create().creatingParentsIfNeeded().forPath(s"${HermesConstants.ZookeeperParentPath}/$path")
+      curatorFramework.setData().forPath(s"${HermesConstants.ZookeeperParentPath}/$path", config.getBytes())
     }
   ) match {
     case Success(ids) => ids.toString
@@ -46,7 +45,7 @@ class ZookeeperConfigDAO extends ConfigDAO[String] {
   }
 
   override def loadConfig(path: String): String = Try(
-    new String(curatorFramework.getData.forPath("/" + parentNodePath + path))
+    new String(curatorFramework.getData.forPath(s"${HermesConstants.ZookeeperParentPath}/$path"))
   )
   match {
     case Success(ids) => ids
@@ -55,37 +54,34 @@ class ZookeeperConfigDAO extends ConfigDAO[String] {
 
   override def existsConfig(path: String): Boolean = {
     //scalastyle:off
-    curatorFramework.checkExists().forPath("/" + parentNodePath + path) != null
+    curatorFramework.checkExists().forPath(s"${HermesConstants.ZookeeperParentPath}/$path") != null
     //scalastyle:on
   }
 
   override def removeConfig(path: String): Unit = {
-    curatorFramework.delete().deletingChildrenIfNeeded().forPath("/" + path)
+    curatorFramework.delete().deletingChildrenIfNeeded().forPath(s"/$path")
   }
 
   override def updateConfig(path: String, config: String): Unit = {
-    curatorFramework.setData().forPath("/" + parentNodePath + path, config.getBytes())
+    curatorFramework.setData().forPath(s"${HermesConstants.ZookeeperParentPath}/$path", config.getBytes())
   }
 
 
   def buildCurator: CuratorFramework = {
-    triedCurator match {
-      case Success(instance) => instance
-      case Failure(_) =>
-        log.error("Impossible to start Zookeeper connection")
-        throw new HermesException("Impossible to start Zookeeper connection")
+    Try {
+      val cf = CuratorFrameworkFactory.builder()
+        .connectString(connectionString)
+        .connectionTimeoutMs(connectionTimeout)
+        .sessionTimeoutMs(sessionTimeout)
+        .retryPolicy(new ExponentialBackoffRetry(retryAttempts, retryInterval))
+        .build()
+      cf.start()
+      log.info(s"Zookeeper connection to ${connectionString} was STARTED.")
+      cf
+    }.getOrElse {
+      log.error("Impossible to start Zookeeper connection")
+      throw new HermesException("Impossible to start Zookeeper connection")
     }
   }
 
-  def triedCurator: Try[CuratorFramework] = Try {
-    val cf = CuratorFrameworkFactory.builder()
-      .connectString(connectionString)
-      .connectionTimeoutMs(connectionTimeout)
-      .sessionTimeoutMs(sessionTimeout)
-      .retryPolicy(new ExponentialBackoffRetry(retryAttempts, retryInterval))
-      .build()
-    cf.start()
-    log.info(s"Zookeeper connection to ${connectionString} was STARTED.")
-    cf
-  }
 }

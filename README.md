@@ -99,3 +99,8 @@ docker run -dit --name AGENT_NAME -e PARAMS="-Dhermes.client=false -Dakka.remote
 docker exec -it NODE_NAME script -q -c "export TERM=xterm && screen -r client"
 
 IMPORTANT: To disconnect from the client interactive console use Ctrl-A + D. If you use Ctrl-C, you will kill the process and khermes will stop running.  
+
+### About dependencies
+
+Curator 2.x.x - compatible with both ZooKeeper 3.4.x and ZooKeeper 3.5.x
+Curator 3.x.x - compatible only with ZooKeeper 3.5.x and includes support for new features such as dynamic reconfiguration, etc.
