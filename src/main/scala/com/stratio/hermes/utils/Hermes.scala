@@ -37,4 +37,6 @@ case class Hermes(locale: String = HermesConstants.DefaultLocale) extends Hermes
 
   object Music extends MusicGenerator(locale)
 
+  object Email extends EmailGenerator(locale)
+
 }

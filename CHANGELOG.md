@@ -2,7 +2,8 @@
 
 ## 0.2.0 (upcoming)
 
-* Pending changelog
+* Generate songs, including artist, album and genre
+* Email generator
 
 ## 0.1.0 (January 11, 2017)
 
@@ -13,4 +14,3 @@
 * Feature/hermes clustering.
 * Create kafka producer.
 * Implementation for random names.
-* Generate songs, including artist, album and genre

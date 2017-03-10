@@ -17,6 +17,8 @@ A distributed fake data generator based in Akka.
 
 - Music(#Music)
 
+- Email(#Email)
+
 ###Name
 
 -------
@@ -70,6 +72,12 @@ time() → 15:30:00.000+01:00
 ________
 
 playedSong() → ("Despacito (Featuring Daddy Yankee)", "Luis Fonsi, Daddy Yankee", "Despacito (Featuring Daddy Yankee)","Latin")
+
+###Email
+________
+
+address("John Doe") -> jdoe@aol.com
+
 
 ###Cluster
 
