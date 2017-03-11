@@ -21,21 +21,22 @@
 @import org.joda.time.DateTime
 
 @(hermes: Hermes)
-@defining(hermes.Music.playedSong) { randomSong =>
+@defining(hermes.Music.playedSong, hermes.Name.fullName, hermes.Geo.geolocation) { case (randomSong, fullname, geo) =>
 
-  {
-    "song": "@(randomSong.song)",
-    "artist": "@(randomSong.artist)",
-    "genre": "@(randomSong.genre)",
-    "album": "@(randomSong.album)",
-    "playDuration": @(hermes.Number.number(3,Positive)),
-    "rating": @(hermes.Number.rating(5)),
-    "user": "@(hermes.Name.fullName)",
-    "userType": "@(Seq("free", "membership")(Random.nextInt(2)))",
-    "country": "@(hermes.Geo.country)",
-    "latitude": @(hermes.Geo.geolocation.latitude),
-    "longitude": @(hermes.Geo.geolocation.longitude),
-    "startTime": "@(s"${Random.nextInt(24)}:${Random.nextInt(60)}:${Random.nextInt(60)}.${Random.nextInt(1000)}")",
-    "artistBirthday" : @(hermes.Datetime.datetime(new DateTime("1970-1-1"),new DateTime("1985-1-1")))
-  }
+    {
+        "song": "@(randomSong.song)",
+        "artist": "@(randomSong.artist)",
+        "genre": "@(randomSong.genre)",
+        "album": "@(randomSong.album)",
+        "playDuration": @(hermes.Number.number(3,Positive)),
+        "rating": @(hermes.Number.rating(5)),
+        "user": "@(fullname)",
+        "email": "@(hermes.Email.address(fullname))",
+        "userType": "@(Seq("free", "membership")(Random.nextInt(2)))",
+        "country": "@(hermes.Geo.country)",
+        "latitude": @(geo.latitude),
+        "longitude": @(geo.longitude),
+        "startTime": "@(s"${Random.nextInt(24)}:${Random.nextInt(60)}:${Random.nextInt(60)}.${Random.nextInt(1000)}")",
+        "artistBirthday" : @(hermes.Datetime.datetime(new DateTime("1970-1-1"),new DateTime("1985-1-1")))
+    }
 }
