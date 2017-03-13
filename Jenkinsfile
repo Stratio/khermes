@@ -2,13 +2,13 @@
 
 hose {
     EMAIL = 'qa'
-    MODULE = 'hermes'
+    MODULE = 'khermes'
     SLACKTEAM = 'stratiopaas'
-    REPOSITORY = 'hermes' 
+    REPOSITORY = 'khermes'
     DEVTIMEOUT = 50
     RELEASETIMEOUT = 40    
     ATTIMEOUT = 240
-    PKGMODULESNAMES = ['hermes']
+    PKGMODULESNAMES = ['khermes']
 
  ITSERVICES = [
      ['ZOOKEEPER': [

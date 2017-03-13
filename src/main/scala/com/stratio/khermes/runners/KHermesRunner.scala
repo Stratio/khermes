@@ -1,0 +1,37 @@
+/*
+ * Copyright (C) 2016 Stratio (http://stratio.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.stratio.khermes.runners
+
+import com.stratio.khermes.helpers.KHermesRunnerHelper
+import com.stratio.khermes.utils.KHermesLogging
+
+/**
+ * Entry point of the application.
+ */
+object KHermesRunner extends App with KHermesLogging {
+
+  import com.stratio.khermes.implicits.KHermesImplicits._
+  KHermesRunnerHelper.welcome
+  KHermesRunnerHelper.createPaths
+
+  val khermesSupervisor = KHermesRunnerHelper.workerSupervisor
+
+  if(config.getString("khermes.client") == "true") {
+    KHermesRunnerHelper.clientActor(khermesSupervisor)
+  }
+
+}
