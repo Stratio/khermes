@@ -18,7 +18,7 @@ package com.stratio.hermes.actors
 
 import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.{DistributedPubSub, DistributedPubSubMediator}
-import com.stratio.hermes.helpers.{HermesConfig, HermesConsoleHelper}
+import com.stratio.hermes.helpers.{HermesConfig, HermesConsoleHelper, HermesClientActorHelper}
 import com.typesafe.config.Config
 
 import scala.concurrent.Future
@@ -72,10 +72,7 @@ class HermesClientActor(implicit config: Config) extends Actor with ActorLogging
         HermesSupervisorActor.Start(nodeIds, HermesConfig(hermesConfig, kafkaConfig, template, avroConfigOption)))
     }).getOrElse({
       //scalastyle:off
-      println(s"Error: To start nodes is necessary to set " +
-        s"${if(hermesConfigOption.isEmpty)"hermes"}, " +
-        s"${if(kafkaConfigOption.isEmpty)"kafka"} " +
-        s"and a ${if(templateOption.isEmpty)"template"} configuration.")
+      println(HermesClientActorHelper.messageFeedback(hermesConfigOption,kafkaConfigOption,templateOption))
       //scalastyle:on
     })
   }

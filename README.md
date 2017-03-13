@@ -103,7 +103,7 @@ IMPORTANT: To disconnect from the client interactive console use Ctrl-A + D. If 
 ### Configuration
 
 Now your configuration will be store in zookeeper.
-Hermes use Curator 3.3.0. If you have that exception:
+Hermes use Curator 2.9.0. If you have that exception:
 
  `org.apache.zookeeper.server.quorum.flexible.QuorumMaj.<init>(Ljava/util/Map;)V`
 

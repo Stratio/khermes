@@ -115,7 +115,6 @@ case class HermesConsoleHelper(client: HermesClientActor) {
                 avroConfig: Option[String] = None): Unit = {
     val ids = line.replace(firstWord, "").trim.split(",").map(_.trim).filter("" != _)
     ids.map(id => println(s"Sending $id start message"))
-    client.start(hermesConfig, kafkaConfig, template, avroConfig, ids)
     firstWord match {
       case "start" =>
         ids.map(id => println(s"Sending $id start message"))
