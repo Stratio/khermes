@@ -20,9 +20,9 @@ import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.{DistributedPubSub, DistributedPubSubMediator}
-import com.stratio.khermes.helpers.{KHermesConfig, TwirlHelper}
+import com.stratio.khermes.helpers.{KhermesConfig, TwirlHelper}
 import com.stratio.khermes.kafka.KafkaClient
-import com.stratio.khermes.utils.{KHermes, KHermesLogging}
+import com.stratio.khermes.utils.{Khermes, KhermesLogging}
 import com.typesafe.config.Config
 import org.apache.avro.Schema.Parser
 import play.twirl.api.Txt
@@ -35,40 +35,40 @@ import scala.util.Try
  * Supervisor that will manage a thread that will generate data along the cluster.
  * @param config with all needed configuration.
  */
-class KHermesSupervisorActor(implicit config: Config) extends Actor with ActorLogging {
+class KhermesSupervisorActor(implicit config: Config) extends Actor with ActorLogging {
 
   import DistributedPubSubMediator.Subscribe
 
   val mediator = DistributedPubSub(context.system).mediator
   mediator ! Subscribe("content", self)
 
-  var khermesExecutor: Option[KKHermesExecutor] = None
+  var khermesExecutor: Option[KhermesExecutor] = None
   val id = UUID.randomUUID.toString
 
-  val khermes = KHermes(Try(config.getString("khermes.i18n")).toOption.getOrElse("EN"))
+  val khermes = Khermes(Try(config.getString("khermes.i18n")).toOption.getOrElse("EN"))
 
   override def receive: Receive = {
-    case KHermesSupervisorActor.Start(ids, hc) =>
+    case KhermesSupervisorActor.Start(ids, hc) =>
       log.debug("Received start message")
 
       execute(ids, () => {
         if (khermesExecutor.isEmpty) {
-          khermesExecutor = Option(new KKHermesExecutor(hc))
+          khermesExecutor = Option(new KhermesExecutor(hc))
         } else {
           khermesExecutor.foreach(_.stopExecutor)
-          khermesExecutor = Option(new KKHermesExecutor(hc))
+          khermesExecutor = Option(new KhermesExecutor(hc))
         }
         khermesExecutor.foreach(_.start())
       })
 
-    case KHermesSupervisorActor.Stop(ids) =>
+    case KhermesSupervisorActor.Stop(ids) =>
       log.debug("Received stop message")
       execute(ids, () => {
         khermesExecutor.foreach(_.stopExecutor)
         khermesExecutor = None
       })
 
-    case KHermesSupervisorActor.List(ids) =>
+    case KhermesSupervisorActor.List(ids) =>
       log.debug("Received list message")
       execute(ids, () => {
         val status = khermesExecutor.map(_.status).getOrElse(false)
@@ -87,7 +87,7 @@ class KHermesSupervisorActor(implicit config: Config) extends Actor with ActorLo
  * @param hc     with the Hermes' configuration.
  * @param config with general configuration.
  */
-class KKHermesExecutor(hc: KHermesConfig)(implicit config: Config) extends KHermesExecutable with KHermesLogging {
+class KhermesExecutor(hc: KhermesConfig)(implicit config: Config) extends KhermesExecutable with KhermesLogging {
 
   val converter = new JsonAvroConverter()
   var running: Boolean = false
@@ -96,7 +96,7 @@ class KKHermesExecutor(hc: KHermesConfig)(implicit config: Config) extends KHerm
    * Starts the thread.
    * @param hc with all configuration needed to start the thread.
    */
-  override def start(hc: KHermesConfig): Unit = run()
+  override def start(hc: KhermesConfig): Unit = run()
 
   override def stopExecutor: Unit = running = false
 
@@ -106,8 +106,8 @@ class KKHermesExecutor(hc: KHermesConfig)(implicit config: Config) extends KHerm
   override def run(): Unit = {
     running = true
     val kafkaClient = new KafkaClient[Object](hc.kafkaConfig)
-    val template = TwirlHelper.template[(KHermes) => Txt](hc.templateContent, hc.templateName)
-    val khermes = KHermes(hc.khermesI18n)
+    val template = TwirlHelper.template[(Khermes) => Txt](hc.templateContent, hc.templateName)
+    val khermes = Khermes(hc.khermesI18n)
 
     val parserOption = hc.avroSchema.map(new Parser().parse(_))
 
@@ -170,18 +170,18 @@ class KKHermesExecutor(hc: KHermesConfig)(implicit config: Config) extends KHerm
   }
 }
 
-trait KHermesExecutable extends Thread {
+trait KhermesExecutable extends Thread {
 
-  def start(hc: KHermesConfig)
+  def start(hc: KhermesConfig)
 
   def stopExecutor
 
   def status: Boolean
 }
 
-object KHermesSupervisorActor {
+object KhermesSupervisorActor {
 
-  case class Start(workerIds: Seq[String], khermesConfig: KHermesConfig)
+  case class Start(workerIds: Seq[String], khermesConfig: KhermesConfig)
 
   case class Stop(workerIds: Seq[String])
 

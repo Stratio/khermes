@@ -16,8 +16,8 @@
 
 package com.stratio.khermes.utils.generators
 
-import com.stratio.khermes.exceptions.KHermesException
-import com.stratio.khermes.utils.KHermes
+import com.stratio.khermes.exceptions.KhermesException
+import com.stratio.khermes.utils.Khermes
 import org.junit.runner.RunWith
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
@@ -26,8 +26,8 @@ import org.scalatest.junit.JUnitRunner
 class EmailGeneratorTest extends FlatSpec
   with Matchers {
 
-  "KHermes" should "generate valid email address from a full name" in {
-    val khermes = KHermes("EN")
+  "Khermes" should "generate valid email address from a full name" in {
+    val khermes = Khermes("EN")
     val address = khermes.Email.address("  John Doe")
     val domain: String = address.split("@")(1)
 
@@ -37,18 +37,18 @@ class EmailGeneratorTest extends FlatSpec
   }
 
 
-  "KHermes" should "fail when no domain exists" in {
-    val khermes = KHermes("XX")
-    an[KHermesException] should be thrownBy khermes.Email.address("sample name")
+  "Khermes" should "fail when no domain exists" in {
+    val khermes = Khermes("XX")
+    an[KhermesException] should be thrownBy khermes.Email.address("sample name")
   }
 
-  "KHermes" should "fail when name is invalid" in {
-    val khermes = KHermes("EN")
-    an[KHermesException] should be thrownBy khermes.Email.address(" ")
+  "Khermes" should "fail when name is invalid" in {
+    val khermes = Khermes("EN")
+    an[KhermesException] should be thrownBy khermes.Email.address(" ")
   }
 
-  "KHermes" should "generate valid email using all locates" in {
-    val khermes = KHermes()
+  "Khermes" should "generate valid email using all locates" in {
+    val khermes = Khermes()
     val address = khermes.Email.address("  John Doe")
     val domain: String = address.split("@")(1)
 

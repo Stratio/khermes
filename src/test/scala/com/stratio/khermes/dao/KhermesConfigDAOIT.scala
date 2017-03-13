@@ -15,22 +15,22 @@
  */
 package com.stratio.khermes.dao
 
-import com.stratio.khermes.exceptions.KHermesException
+import com.stratio.khermes.exceptions.KhermesException
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class KHermesConfigDAOIT extends FlatSpec with Matchers{
+class KhermesConfigDAOIT extends FlatSpec with Matchers{
   val khermesConfigDAO = new ZookeeperConfigDAO
 
-  "An KHermesConfig" should "be save in zookeeper path and could be loaded" in {
+  "An KhermesConfig" should "be save in zookeeper path and could be loaded" in {
     khermesConfigDAO.saveConfig("testZkPath","myConfig")
     val data = khermesConfigDAO.loadConfig("testZkPath")
     khermesConfigDAO.removeConfig("stratio")
     data shouldBe "myConfig"
   }
-  "An KHermesConfig" should "be updated when we save over an existing config" in {
+  "An KhermesConfig" should "be updated when we save over an existing config" in {
     khermesConfigDAO.saveConfig("testZkPath","myConfig")
     khermesConfigDAO.saveConfig("testZkPath","myConfig2")
     val data = khermesConfigDAO.loadConfig("testZkPath")
@@ -38,7 +38,7 @@ class KHermesConfigDAOIT extends FlatSpec with Matchers{
     data shouldBe "myConfig2"
   }
   it should "raise an exception when it save or load a config in a path that does not exists" in {
-    an[KHermesException] should be thrownBy khermesConfigDAO.loadConfig("")
-    an[KHermesException] should be thrownBy khermesConfigDAO.saveConfig("","config")
+    an[KhermesException] should be thrownBy khermesConfigDAO.loadConfig("")
+    an[KhermesException] should be thrownBy khermesConfigDAO.saveConfig("","config")
   }
 }

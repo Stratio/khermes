@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stratio.khermes.helpers
 
-object KHermesClientActorHelper {
-  def messageFeedback(khermesConfigOption: Option[String],
-                      kafkaConfigOption: Option[String],
-                      templateOption: Option[String]): String = {
-    var m = List[String]()
-    if(khermesConfigOption.isEmpty) m = "khermes" :: m
-    if(kafkaConfigOption.isEmpty) m = "kafka" :: m
-    if(templateOption.isEmpty) m = "template" :: m
-    if(m.isEmpty) "Your configuration is OK" else s"Error: To start nodes is necessary to set ${m.mkString(" and ")} configuration."
-  }
+package com.stratio.khermes.utils
 
+import org.slf4j.LoggerFactory
+
+/**
+ * If you neeed to use loggin you should extend from this trait.
+ */
+trait KhermesLogging {
+
+  protected[this] val log = LoggerFactory.getLogger(getClass.getName)
 }

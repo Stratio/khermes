@@ -16,8 +16,8 @@
 
 package com.stratio.khermes.helpers
 
-import com.stratio.khermes.constants.KHermesConstants
-import com.stratio.khermes.helpers.KHermesConfig._
+import com.stratio.khermes.constants.KhermesConstants
+import com.stratio.khermes.helpers.KhermesConfig._
 import com.typesafe.config.ConfigFactory
 import java.time.Duration
 
@@ -32,7 +32,7 @@ import scala.util.Try
  * @param template to generate.
  * @param avroSchema in the case that you are using avro serialization.
  */
-case class KHermesConfig(khermesConfigContent: String,
+case class KhermesConfig(khermesConfigContent: String,
                          kafkaConfigContent: String,
                          template: String,
                          avroSchema: Option[String] = None) {
@@ -43,7 +43,7 @@ case class KHermesConfig(khermesConfigContent: String,
   assertCorrectConfig()
 
   /**
-   * Tries to parse the configuration and checks that the KHermesConfig object has all required fields.
+   * Tries to parse the configuration and checks that the KhermesConfig object has all required fields.
    */
   protected[this] def assertCorrectConfig(): Unit = {
     def buildErrors(mandatoryFields: Seq[String]): Seq[String] =
@@ -57,7 +57,7 @@ case class KHermesConfig(khermesConfigContent: String,
   }
 
   def configType(): ConfigType.Value =
-    if(kafkaConfig.getString("kafka.key.serializer") == KHermesConstants.KafkaAvroSerializer) {
+    if(kafkaConfig.getString("kafka.key.serializer") == KhermesConstants.KafkaAvroSerializer) {
       ConfigType.Avro
     } else {
       ConfigType.Json
@@ -79,7 +79,7 @@ case class KHermesConfig(khermesConfigContent: String,
 
 }
 
-object KHermesConfig {
+object KhermesConfig {
 
   val MandatoryFields = Seq(
     "khermes.topic",

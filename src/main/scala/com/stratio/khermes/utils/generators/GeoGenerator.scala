@@ -16,27 +16,27 @@
 
 package com.stratio.khermes.utils.generators
 
-import com.stratio.khermes.constants.KHermesConstants
-import com.stratio.khermes.exceptions.KHermesException
+import com.stratio.khermes.constants.KhermesConstants
+import com.stratio.khermes.exceptions.KhermesException
 import com.stratio.khermes.helpers.ParserHelper._
 import com.stratio.khermes.helpers.RandomHelper
 import com.stratio.khermes.helpers.ResourcesHelper._
-import com.stratio.khermes.implicits.KHermesSerializer
+import com.stratio.khermes.implicits.KhermesSerializer
 import com.stratio.khermes.models.GeoModel
-import com.stratio.khermes.utils.{KHermesLogging, KHermesUnit}
+import com.stratio.khermes.utils.{KhermesLogging, KhermesUnit}
 
 
 /**
  * Generates random locations.
  */
-case class GeoGenerator(locale: String) extends KHermesUnit
-  with KHermesLogging
-  with KHermesSerializer {
+case class GeoGenerator(locale: String) extends KhermesUnit
+  with KhermesLogging
+  with KhermesSerializer {
 
   override def unitName: String = "geo"
 
   lazy val geoModel = locale match {
-    case KHermesConstants.DefaultLocale => {
+    case KhermesConstants.DefaultLocale => {
       val resources = getResources(unitName)
         .map(parse[Seq[GeoModel]](unitName, _))
       if (parseErrors[Seq[GeoModel]](resources).nonEmpty) log.warn(s"${parseErrors[Seq[GeoModel]](resources)}")
@@ -52,7 +52,7 @@ case class GeoGenerator(locale: String) extends KHermesUnit
   def geolocation(): GeoModel = {
 
     RandomHelper.randomElementFromAList[GeoModel](geoModelList(geoModel))
-      .getOrElse(throw new KHermesException(s"Error loading locate /locales/$unitName/$locale.json"))
+      .getOrElse(throw new KhermesException(s"Error loading locate /locales/$unitName/$locale.json"))
   }
 
   /**

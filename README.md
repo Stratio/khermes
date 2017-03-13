@@ -1,7 +1,6 @@
-# Stratio KHermes
+# Stratio Khermes
 
-[![Coverage Status](https://coveralls.io/repos/github/Stratio/KHermes/badge.svg?branch=master)](https://coveralls.io/github/Stratio/KHermes?branch=master)
-
+[![Coverage Status](https://coveralls.io/repos/github/Stratio/khermes/badge.svg?branch=master)](https://coveralls.io/github/Stratio/khermes?branch=master)
 ## Description
 A distributed fake data generator based in Akka.
 
@@ -103,7 +102,7 @@ IMPORTANT: To disconnect from the client interactive console use Ctrl-A + D. If 
 ### Configuration
 
 Now your configuration will be store in zookeeper.
-KHermes use Curator 2.9.0. If you have that exception:
+Khermes use Curator 2.9.0. If you have that exception:
 
  `org.apache.zookeeper.server.quorum.flexible.QuorumMaj.<init>(Ljava/util/Map;)V`
 

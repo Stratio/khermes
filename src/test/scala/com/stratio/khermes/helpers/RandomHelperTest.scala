@@ -16,13 +16,13 @@
 
 package com.stratio.khermes.helpers
 
-import com.stratio.khermes.utils.KHermesLogging
+import com.stratio.khermes.utils.KhermesLogging
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class RandomHelperTest extends FlatSpec with Matchers with KHermesLogging {
+class RandomHelperTest extends FlatSpec with Matchers with KhermesLogging {
 
   "A RandomHelper" should "generates an element from a generic list" in {
     RandomHelper.randomElementFromAList(List(1,2,3)) should contain oneOf (1,2,3)

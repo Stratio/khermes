@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package com.stratio.khermes.helpers
+package com.stratio.khermes.implicits
 
-import com.stratio.khermes.actors.KHermesActorTest
 import org.junit.runner.RunWith
+import org.scalatest.{Matchers, FlatSpec}
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class KHermesRunnerHelperIT extends KHermesActorTest {
+class KhermesImplicitsTest extends FlatSpec with Matchers {
 
-  "An KHermesRunnerHelper" should {
-    "print a welcome message and start the akka system without errors" in {
-      KHermesRunnerHelper.welcome
-    }
-
-    "start a worker supervisor without errors" in {
-      KHermesRunnerHelper.workerSupervisor
-    }
+  "A KhermesImplicit" should "get a valid IP of a host" in {
+    import com.stratio.khermes.implicits.KhermesImplicits._
+    getHostIP() should fullyMatch regex """.*(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}).*"""
   }
 }

@@ -16,16 +16,16 @@
 
 package com.stratio.khermes.runners
 
-import com.stratio.khermes.actors.KHermesActorTest
+import com.stratio.khermes.actors.KhermesActorTest
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class KHermesRunnerTestIT extends KHermesActorTest {
+class KhermesRunnerTestIT extends KhermesActorTest {
 
-  "An KHermesRunner" should {
-    "run KHermes without any kind of error" in {
-      KHermesRunner.main(Array.empty)
+  "An KhermesRunner" should {
+    "run Khermes without any kind of error" in {
+      KhermesRunner.main(Array.empty)
     }
   }
 }

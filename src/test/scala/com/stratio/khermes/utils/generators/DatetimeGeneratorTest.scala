@@ -18,8 +18,8 @@ package com.stratio.khermes.utils.generators
 
 import java.security.InvalidParameterException
 
-import com.stratio.khermes.exceptions.KHermesException
-import com.stratio.khermes.utils.KHermes
+import com.stratio.khermes.exceptions.KhermesException
+import com.stratio.khermes.utils.Khermes
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.junit.runner.RunWith
@@ -31,7 +31,7 @@ class DatetimeGeneratorTest extends FlatSpec
   with Matchers {
 
   it should "generate a random date between two dates" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     val startDate = new DateTime("1970-1-1")
     val endDate = new DateTime("2017-1-1")
     val randomDateString = khermes.Datetime.datetime(startDate, endDate)
@@ -40,14 +40,14 @@ class DatetimeGeneratorTest extends FlatSpec
   }
 
   it should "raise an exception if start Date is greater than end Date" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     val startDate = new DateTime("2017-1-1")
     val endDate = new DateTime("1985-1-1")
     an[InvalidParameterException] should be thrownBy khermes.Datetime.datetime(startDate, endDate, None)
   }
 
   it should "generate a random date in a custom format" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     val startDate = new DateTime("1970-1-1")
     val endDate = new DateTime("1985-1-1")
     val randomDateString = khermes.Datetime.datetime(startDate, endDate, Option("yyyy-MM-dd"))
@@ -56,7 +56,7 @@ class DatetimeGeneratorTest extends FlatSpec
   }
 
   it should "generate a random date in a complex format" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     val startDate = new DateTime("1970-1-1")
     val endDate = new DateTime("1985-1-1")
     val randomDateString = khermes.Datetime.datetime(startDate, endDate, Option("yyyy-MM-dd'T'HH:mm:ss.SSS"))
@@ -65,16 +65,16 @@ class DatetimeGeneratorTest extends FlatSpec
   }
 
   it should "generate a random date with a bad format" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     val startDate = new DateTime("1970-1-1")
     val endDate = new DateTime("1985-1-1")
     //scalastyle:off
-    an[KHermesException] should be thrownBy khermes.Datetime.datetime(startDate, endDate, Option("Invalid format"))
+    an[KhermesException] should be thrownBy khermes.Datetime.datetime(startDate, endDate, Option("Invalid format"))
     //scalastyle:on
   }
 
   "time" should "return a valid hour (0:0:0.000 - 23:59:59.999)" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     val time = khermes.Datetime.time
     time shouldBe a[String]
     val timeAsString = time.split(":").toList

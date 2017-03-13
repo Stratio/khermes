@@ -16,13 +16,13 @@
 
 package com.stratio.khermes.helpers
 
-import com.stratio.khermes.utils.KHermesLogging
+import com.stratio.khermes.utils.KhermesLogging
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class KHermesConfigTest  extends FlatSpec with Matchers with BeforeAndAfter with KHermesLogging  {
+class KhermesConfigTest  extends FlatSpec with Matchers with BeforeAndAfter with KhermesLogging  {
 
   val khermesConfig =
     """
@@ -55,7 +55,7 @@ class KHermesConfigTest  extends FlatSpec with Matchers with BeforeAndAfter with
       |}
     """.stripMargin
 
-  val wrongKHermesConfig =
+  val wrongKhermesConfig =
     """
       |khermes {
       |  templates-path = "/some/test/path"
@@ -76,9 +76,9 @@ class KHermesConfigTest  extends FlatSpec with Matchers with BeforeAndAfter with
 
   val template =
     """
-      |@import com.stratio.khermes.utils.KHermes
+      |@import com.stratio.khermes.utils.Khermes
       |
-      |@(khermes: KHermes)
+      |@(khermes: Khermes)
       |{
       |  "name" : "@(khermes.Name.firstName)"
       |}
@@ -96,33 +96,33 @@ class KHermesConfigTest  extends FlatSpec with Matchers with BeforeAndAfter with
       |}
     """.stripMargin
 
-  "An KHermesConfig" should "parse a correct config when serializer is Json" in {
-    val hc = KHermesConfig(khermesConfig, jsonKafkaConfig, template)
+  "An KhermesConfig" should "parse a correct config when serializer is Json" in {
+    val hc = KhermesConfig(khermesConfig, jsonKafkaConfig, template)
     checkCommonFields(hc)
-    hc.configType should be(KHermesConfig.ConfigType.Json)
+    hc.configType should be(KhermesConfig.ConfigType.Json)
     hc.avroSchema should be(None)
   }
 
   it should "parse a correct config when the serializer is Avro" in {
-    val hc = KHermesConfig(khermesConfig, avroKafkaConfig, template, Option(avroSchema))
+    val hc = KhermesConfig(khermesConfig, avroKafkaConfig, template, Option(avroSchema))
     checkCommonFields(hc)
-    hc.configType should be(KHermesConfig.ConfigType.Avro)
+    hc.configType should be(KhermesConfig.ConfigType.Avro)
     hc.avroSchema should be(Option(avroSchema))
   }
 
   it should "throw an error when a mandatory field is not supplied when the serializer is JSON" in {
     a[AssertionError] should be thrownBy {
-      KHermesConfig(wrongKHermesConfig, jsonKafkaConfig, template)
+      KhermesConfig(wrongKhermesConfig, jsonKafkaConfig, template)
     }
   }
 
   it should "throw an error when a mandatory field is not supplied when the serializer is Avro" in {
     a[AssertionError] should be thrownBy {
-      KHermesConfig(khermesConfig, wrongKafkaConfig, template)
+      KhermesConfig(khermesConfig, wrongKafkaConfig, template)
     }
   }
 
-  private[this] def checkCommonFields(hc: KHermesConfig): Unit = {
+  private[this] def checkCommonFields(hc: KhermesConfig): Unit = {
     hc.khermesI18n should be("EN")
     hc.templateContent should be(template)
     hc.templateName should be("someTemplate")

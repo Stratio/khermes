@@ -16,23 +16,23 @@
 
 package com.stratio.khermes.utils.generators
 
-import com.stratio.khermes.constants.KHermesConstants
-import com.stratio.khermes.exceptions.KHermesException
+import com.stratio.khermes.constants.KhermesConstants
+import com.stratio.khermes.exceptions.KhermesException
 import com.stratio.khermes.helpers.ParserHelper._
 import com.stratio.khermes.helpers.RandomHelper
 import com.stratio.khermes.helpers.ResourcesHelper._
-import com.stratio.khermes.implicits.KHermesSerializer
+import com.stratio.khermes.implicits.KhermesSerializer
 import com.stratio.khermes.models.MusicModel
-import com.stratio.khermes.utils.{KHermesLogging, KHermesUnit}
+import com.stratio.khermes.utils.{KhermesLogging, KhermesUnit}
 
-case class MusicGenerator(locale: String) extends KHermesUnit
-  with KHermesSerializer
-  with KHermesLogging {
+case class MusicGenerator(locale: String) extends KhermesUnit
+  with KhermesSerializer
+  with KhermesLogging {
 
   override def unitName: String = "music"
 
   lazy val musicModel = locale match {
-    case KHermesConstants.DefaultLocale => {
+    case KhermesConstants.DefaultLocale => {
       val resources = getResources(unitName)
         .map(parse[Seq[MusicModel]](unitName, _))
       if (parseErrors[Seq[MusicModel]](resources).nonEmpty) log.warn(s"${parseErrors[Seq[MusicModel]](resources)}")
@@ -47,5 +47,5 @@ case class MusicGenerator(locale: String) extends KHermesUnit
 
   def playedSong: MusicModel =
     RandomHelper.randomElementFromAList[MusicModel](getMusic(musicModel)).getOrElse(
-      throw new KHermesException(s"Error loading locate /locales/$unitName/$locale.json"))
+      throw new KhermesException(s"Error loading locate /locales/$unitName/$locale.json"))
 }

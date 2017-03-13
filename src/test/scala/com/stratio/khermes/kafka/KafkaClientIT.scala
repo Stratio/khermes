@@ -18,13 +18,13 @@ package com.stratio.khermes.kafka
 
 import java.util.UUID
 
-import com.stratio.khermes.utils.KHermesLogging
+import com.stratio.khermes.utils.KhermesLogging
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class KafkaClientIT extends FlatSpec with Matchers with KHermesLogging {
+class KafkaClientIT extends FlatSpec with Matchers with KhermesLogging {
 
   val Message = "testMessage"
   val Topic = s"topic-${UUID.randomUUID().toString}"
@@ -38,7 +38,7 @@ class KafkaClientIT extends FlatSpec with Matchers with KHermesLogging {
   val NumberOfMessages = 3
   val ConnectionString = "localhost:2181"
 
-  val config = com.stratio.khermes.implicits.KHermesImplicits.config
+  val config = com.stratio.khermes.implicits.KhermesImplicits.config
 
   "A KafkaClient" should "parse the configuration" in {
     val kafka = new KafkaClient[Object](config)

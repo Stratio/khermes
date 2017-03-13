@@ -16,12 +16,11 @@
 
 package com.stratio.khermes.utils
 
-import org.slf4j.LoggerFactory
 
 /**
- * If you neeed to use loggin you should extend from this trait.
+ * All Khermes objects should extend this trait.
  */
-trait KHermesLogging {
+trait KhermesUnit {
 
-  protected[this] val log = LoggerFactory.getLogger(getClass.getName)
+  def unitName: String
 }

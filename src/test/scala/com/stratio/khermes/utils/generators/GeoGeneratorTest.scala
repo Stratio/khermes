@@ -16,9 +16,9 @@
 
 package com.stratio.khermes.utils.generators
 
-import com.stratio.khermes.exceptions.KHermesException
+import com.stratio.khermes.exceptions.KhermesException
 import com.stratio.khermes.helpers.ParserHelper
-import com.stratio.khermes.utils.KHermes
+import com.stratio.khermes.utils.Khermes
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
@@ -30,48 +30,48 @@ class GeoGeneratorTest extends FlatSpec
 
   it should "generate valid locations: ES and US locales" in {
 
-    val khermesES = KHermes("ES")
+    val khermesES = Khermes("ES")
     khermesES.Geo.geoModelList(khermesES.Geo.geoModel) should contain(khermesES.Geo.geolocation)
 
-    val khermesUS = KHermes("US")
+    val khermesUS = Khermes("US")
     khermesUS.Geo.geoModelList(khermesUS.Geo.geoModel) should contain(khermesUS.Geo.geolocation)
   }
 
   it should "raise a NoSuchElementException when the locale is empty" in {
-    val khermes = KHermes("XX")
-    an[KHermesException] should be thrownBy khermes.Geo.geolocation
+    val khermes = Khermes("XX")
+    an[KhermesException] should be thrownBy khermes.Geo.geolocation
   }
 
   it should "when you do not specify the locale try to use all the locales" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     khermes.Geo.geoModelList(khermes.Geo.geoModel) should contain(khermes.Geo.geolocation)
   }
 
   it should "raise an exception when it gets a geolocation that not exists" in {
-    val khermesFR = KHermes("FR")
-    an[KHermesException] should be thrownBy khermesFR.Geo.geolocation
-    an[KHermesException] should be thrownBy khermesFR.Geo.city()
-    an[KHermesException] should be thrownBy khermesFR.Geo.geolocationWithoutCity()
+    val khermesFR = Khermes("FR")
+    an[KhermesException] should be thrownBy khermesFR.Geo.geolocation
+    an[KhermesException] should be thrownBy khermesFR.Geo.city()
+    an[KhermesException] should be thrownBy khermesFR.Geo.geolocationWithoutCity()
   }
 
   it should "generate a random city" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     khermes.Geo.cityList(khermes.Geo.geoModel) should contain(khermes.Geo.city)
   }
 
   it should "generate a random geolocation without city" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     khermes.Geo.geoWithoutCityList(khermes.Geo.geoModel) should contain(khermes.Geo.geolocationWithoutCity())
   }
 
   it should "raise an exception when it gets a geolocation that is corrupted" in {
-    val khermesYY = KHermes("YY")
+    val khermesYY = Khermes("YY")
     ParserHelper.parseErrors(khermesYY.Geo.geoModel).length should be(1)
-    an[KHermesException] should be thrownBy khermesYY.Geo.geolocation
+    an[KhermesException] should be thrownBy khermesYY.Geo.geolocation
   }
 
   it should "raise an exception when it gets a file with at least one record corrupted" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     ParserHelper.parseErrors(khermes.Geo.geoModel).length should be(2)
   }
 

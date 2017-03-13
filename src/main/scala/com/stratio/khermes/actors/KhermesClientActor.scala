@@ -18,7 +18,7 @@ package com.stratio.khermes.actors
 
 import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.{DistributedPubSub, DistributedPubSubMediator}
-import com.stratio.khermes.helpers.{KHermesClientActorHelper, KHermesConfig, KHermesConsoleHelper, KHermesConsoleHelper$}
+import com.stratio.khermes.helpers.{KhermesClientActorHelper, KhermesConfig, KhermesConsoleHelper}
 import com.typesafe.config.Config
 
 import scala.concurrent.Future
@@ -27,15 +27,15 @@ import scala.concurrent.Future
  * This actor starts a client with an interactive shell to throw commands through the cluster.
  * @param config with passed configuration
  */
-class KHermesClientActor(implicit config: Config) extends Actor with ActorLogging {
+class KhermesClientActor(implicit config: Config) extends Actor with ActorLogging {
 
   import DistributedPubSubMediator.Publish
   val mediator = DistributedPubSub(context.system).mediator
 
   override def receive: Receive = {
-    case KHermesClientActor.Start =>
+    case KhermesClientActor.Start =>
       import scala.concurrent.ExecutionContext.Implicits.global
-      Future(new KHermesConsoleHelper(this).parseLines())
+      Future(new KhermesConsoleHelper(this).parseLines())
 
     case message =>
       //scalastyle:off
@@ -47,12 +47,12 @@ class KHermesClientActor(implicit config: Config) extends Actor with ActorLoggin
    * Sends to the cluster a list message.
    */
   def ls: Unit = {
-    mediator ! Publish("content", KHermesSupervisorActor.List(Seq.empty))
+    mediator ! Publish("content", KhermesSupervisorActor.List(Seq.empty))
   }
 
   /**
    * Starts event generation in N nodes.
-   * @param khermesConfigOption with KHermes' configuration.
+   * @param khermesConfigOption with Khermes' configuration.
    * @param kafkaConfigOption with Kafka's configuration.
    * @param templateOption with the template
    * @param nodeIds with the ids that should be start the generation.
@@ -69,10 +69,10 @@ class KHermesClientActor(implicit config: Config) extends Actor with ActorLoggin
       template <- templateOption
     } yield {
       mediator ! Publish("content",
-        KHermesSupervisorActor.Start(nodeIds, KHermesConfig(khermesConfig, kafkaConfig, template, avroConfigOption)))
+        KhermesSupervisorActor.Start(nodeIds, KhermesConfig(khermesConfig, kafkaConfig, template, avroConfigOption)))
     }).getOrElse({
       //scalastyle:off
-      println(KHermesClientActorHelper.messageFeedback(khermesConfigOption,kafkaConfigOption,templateOption))
+      println(KhermesClientActorHelper.messageFeedback(khermesConfigOption,kafkaConfigOption,templateOption))
       //scalastyle:on
     })
   }
@@ -84,12 +84,12 @@ class KHermesClientActor(implicit config: Config) extends Actor with ActorLoggin
    *                If this Seq is empty it will try to start all of them.
    */
   def stop(nodeIds: Seq[String]): Unit =
-    mediator ! Publish("content", KHermesSupervisorActor.Stop(nodeIds))
+    mediator ! Publish("content", KhermesSupervisorActor.Stop(nodeIds))
 
 }
 
 
-object KHermesClientActor {
+object KhermesClientActor {
 
   case object Start
 }

@@ -14,24 +14,10 @@
  * limitations under the License.
  */
 
-package com.stratio.khermes.runners
-
-import com.stratio.khermes.helpers.KHermesRunnerHelper
-import com.stratio.khermes.utils.KHermesLogging
+package com.stratio.khermes.exceptions
 
 /**
- * Entry point of the application.
+ * Generic exception used when -kHermes fails.
+ * @param message to set.
  */
-object KHermesRunner extends App with KHermesLogging {
-
-  import com.stratio.khermes.implicits.KHermesImplicits._
-  KHermesRunnerHelper.welcome
-  KHermesRunnerHelper.createPaths
-
-  val khermesSupervisor = KHermesRunnerHelper.workerSupervisor
-
-  if(config.getString("khermes.client") == "true") {
-    KHermesRunnerHelper.clientActor(khermesSupervisor)
-  }
-
-}
+class KhermesException(message: String) extends Exception(message)

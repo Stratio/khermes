@@ -20,8 +20,8 @@ import java.io.File
 import java.lang.reflect.Method
 import java.net._
 
-import com.stratio.khermes.constants.KHermesConstants
-import com.stratio.khermes.utils.KHermesLogging
+import com.stratio.khermes.constants.KhermesConstants
+import com.stratio.khermes.utils.KhermesLogging
 import com.typesafe.config.Config
 import play.twirl.compiler.{GeneratedSource, TwirlCompiler}
 
@@ -33,17 +33,17 @@ import scala.tools.nsc.{Global, Settings}
 /**
  * Helper used to parse and compile templates using Twirl.
  */
-object TwirlHelper extends KHermesLogging {
+object TwirlHelper extends KhermesLogging {
 
   /**
    * Compiles and executes a template with Twirl. It follows the next steps:
-   * Step 1) A string that represents the template is saved in KHermes' templates path.
+   * Step 1) A string that represents the template is saved in Khermes' templates path.
    * Step 2) The engine generates a scala files to be compiled.
    * Step 3) The engine compiles the scala files generated in the previous step.
    * Step 4) Finally it executes the compiled files interpolating values with the template.
    * @param template a string with the template.
    * @param templateName the name of the file that will contain the content of the template.
-   * @param config with KHermes' configuration.
+   * @param config with Khermes' configuration.
    * @tparam T with the type of object to inject in the template.
    * @return a compiled and executed template.
    */
@@ -53,8 +53,8 @@ object TwirlHelper extends KHermesLogging {
     scala.tools.nsc.io.File(templatePath).writeAll(template)
 
     val sourceDir = new File(templatesPath)
-    val generatedDir = new File(s"$templatesPath/${KHermesConstants.GeneratedTemplatesPrefix}")
-    val generatedClasses = new File(s"$templatesPath/${KHermesConstants.GeneratedClassesPrefix}")
+    val generatedDir = new File(s"$templatesPath/${KhermesConstants.GeneratedTemplatesPrefix}")
+    val generatedClasses = new File(s"$templatesPath/${KhermesConstants.GeneratedClassesPrefix}")
 
     deleteRecursively(generatedDir)
     deleteRecursively(generatedClasses)
@@ -62,7 +62,7 @@ object TwirlHelper extends KHermesLogging {
     generatedDir.mkdirs()
 
     val helper = new CompilerHelper(sourceDir, generatedDir, generatedClasses)
-    helper.compile[T](s"$templateName.scala.html", s"html.$templateName", Seq("com.stratio.khermes.utils.KHermes"))
+    helper.compile[T](s"$templateName.scala.html", s"html.$templateName", Seq("com.stratio.khermes.utils.Khermes"))
   }
 
   /**

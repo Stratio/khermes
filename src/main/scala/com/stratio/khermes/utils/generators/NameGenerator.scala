@@ -16,25 +16,25 @@
 
 package com.stratio.khermes.utils.generators
 
-import com.stratio.khermes.constants.KHermesConstants
+import com.stratio.khermes.constants.KhermesConstants
 import com.stratio.khermes.helpers.ParserHelper._
 import com.stratio.khermes.helpers.RandomHelper
 import com.stratio.khermes.helpers.ResourcesHelper._
-import com.stratio.khermes.implicits.KHermesSerializer
+import com.stratio.khermes.implicits.KhermesSerializer
 import com.stratio.khermes.models.NameModel
-import com.stratio.khermes.utils.{KHermesLogging, KHermesUnit}
+import com.stratio.khermes.utils.{KhermesLogging, KhermesUnit}
 
 /**
  * Generates random names.
  */
-case class NameGenerator(locale: String) extends KHermesUnit
-  with KHermesSerializer
-  with KHermesLogging {
+case class NameGenerator(locale: String) extends KhermesUnit
+  with KhermesSerializer
+  with KhermesLogging {
 
   override def unitName: String = "name"
 
   lazy val nameModel = locale match {
-    case KHermesConstants.DefaultLocale =>
+    case KhermesConstants.DefaultLocale =>
       val resources = getResources(unitName)
         .map(parse[NameModel](unitName, _))
       if (parseErrors[NameModel](resources).nonEmpty) log.warn(s"${parseErrors[NameModel](resources)}")

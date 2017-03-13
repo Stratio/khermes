@@ -16,16 +16,16 @@
 
 package com.stratio.khermes.utils
 
-import com.stratio.khermes.constants.KHermesConstants
-import com.stratio.khermes.implicits.KHermesSerializer
+import com.stratio.khermes.constants.KhermesConstants
+import com.stratio.khermes.implicits.KhermesSerializer
 import com.stratio.khermes.utils.generators._
 
 import scala.language.postfixOps
 
 /**
- * KHermes util used for to generate random values.
+ * Khermes util used for to generate random values.
  */
-case class KHermes(locale: String = KHermesConstants.DefaultLocale) extends KHermesSerializer {
+case class Khermes(locale: String = KhermesConstants.DefaultLocale) extends KhermesSerializer {
 
   object Name extends NameGenerator(locale)
 

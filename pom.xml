@@ -15,7 +15,7 @@
         <version>0.9.0</version>
     </parent>
 
-    <name>Stratio KHermes</name>
+    <name>Stratio Khermes</name>
     <description>A distributed fake data generator based in Akka</description>
     <inceptionYear>2016</inceptionYear>
 
@@ -264,7 +264,7 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
-                                        <Main-Class>com.stratio.khermes.runners.KHermesRunner</Main-Class>
+                                        <Main-Class>com.stratio.khermes.runners.KhermesRunner</Main-Class>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>

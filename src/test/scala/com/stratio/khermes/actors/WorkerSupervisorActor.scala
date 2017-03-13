@@ -17,17 +17,17 @@
 package com.stratio.khermes.actors
 
 import akka.actor.Props
-import com.stratio.khermes.actors.KHermesSupervisorActor.{Start, WorkerStatus}
-import com.stratio.khermes.helpers.KHermesConfig
+import com.stratio.khermes.actors.KhermesSupervisorActor.{Start, WorkerStatus}
+import com.stratio.khermes.helpers.KhermesConfig
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 import scala.concurrent.duration._
 
 @RunWith(classOf[JUnitRunner])
-class WorkerSupervisorActor extends KHermesActorTest {
+class WorkerSupervisorActor extends KhermesActorTest {
 
-  val khermesSupervisor = system.actorOf(Props(new KHermesSupervisorActor()), "khermes-supervisor")
+  val khermesSupervisor = system.actorOf(Props(new KhermesSupervisorActor()), "khermes-supervisor")
 
   val kafkaConfigContent =
     """
@@ -51,9 +51,9 @@ class WorkerSupervisorActor extends KHermesActorTest {
 
   val templateContent =
     """
-      |@import com.stratio.khermes.utils.KHermes
+      |@import com.stratio.khermes.utils.Khermes
       |
-      |@(khermes: KHermes)
+      |@(khermes: Khermes)
       |{
       |  "name" : "@(khermes.Name.firstName)"
       |}
@@ -74,7 +74,7 @@ class WorkerSupervisorActor extends KHermesActorTest {
   "An WorkerSupervisorActor" should {
     "Start n threads of working kafka producers" in {
       within(5 seconds) {
-        khermesSupervisor ! Start(Seq.empty, KHermesConfig(khermesConfigContent, kafkaConfigContent, templateContent))
+        khermesSupervisor ! Start(Seq.empty, KhermesConfig(khermesConfigContent, kafkaConfigContent, templateContent))
         expectMsg(WorkerStatus.Started)
       }
     }

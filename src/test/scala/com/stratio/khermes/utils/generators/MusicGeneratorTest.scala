@@ -16,9 +16,9 @@
 
 package com.stratio.khermes.utils.generators
 
-import com.stratio.khermes.exceptions.KHermesException
+import com.stratio.khermes.exceptions.KhermesException
 import com.stratio.khermes.models.MusicModel
-import com.stratio.khermes.utils.KHermes
+import com.stratio.khermes.utils.Khermes
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
@@ -28,27 +28,27 @@ class MusicGeneratorTest extends FlatSpec
   with Matchers {
 
 
-  "A KHermes" should "should generate valid music: with EN and ES locales" in {
-    val khermesEN = KHermes("EN")
+  "A Khermes" should "should generate valid music: with EN and ES locales" in {
+    val khermesEN = Khermes("EN")
     khermesEN.Music.getMusic(khermesEN.Music.musicModel) should contain(khermesEN.Music.playedSong)
 
-    val khermesES = KHermes("ES")
+    val khermesES = Khermes("ES")
     khermesES.Music.getMusic(khermesES.Music.musicModel) should contain(khermesES.Music.playedSong)
   }
 
   it should "raise a NoSuchElementException when the music locale is empty" in {
-    val khermes = KHermes("XX")
-    an[KHermesException] should be thrownBy khermes.Music.playedSong
+    val khermes = Khermes("XX")
+    an[KhermesException] should be thrownBy khermes.Music.playedSong
   }
 
   it should "when you do not specify any locale try to use all the locales" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     khermes.Music.getMusic(khermes.Music.musicModel) should contain(khermes.Music.playedSong)
   }
 
   it should "raise an exception when it gets a song that not exists" in {
-    val khermesFR = KHermes("FR")
-    an[KHermesException] should be thrownBy khermesFR.Music.playedSong
+    val khermesFR = Khermes("FR")
+    an[KhermesException] should be thrownBy khermesFR.Music.playedSong
   }
 
   "getMusic" should "return a seq with one music model" in {

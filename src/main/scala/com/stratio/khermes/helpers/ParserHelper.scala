@@ -17,12 +17,12 @@
 package com.stratio.khermes.helpers
 
 import com.stratio.khermes.helpers.ResourcesHelper.getResource
-import com.stratio.khermes.implicits.KHermesSerializer
+import com.stratio.khermes.implicits.KhermesSerializer
 import org.json4s.native.Serialization.read
 
 import scala.util.{Failure, Success, Try}
 
-object ParserHelper extends KHermesSerializer {
+object ParserHelper extends KhermesSerializer {
 
   def parse[T](unitName: String, locale: String)(implicit m: Manifest[T]): Either[String, T] = Try(
     read[T](getResource(unitName, locale))) match {

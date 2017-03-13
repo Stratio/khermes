@@ -18,20 +18,20 @@ package com.stratio.khermes.helpers
 
 import java.io.{File, InputStream}
 
-import com.stratio.khermes.exceptions.KHermesException
-import com.stratio.khermes.implicits.KHermesSerializer
+import com.stratio.khermes.exceptions.KhermesException
+import com.stratio.khermes.implicits.KhermesSerializer
 
 import scala.util.{Failure, Success, Try}
 
-object ResourcesHelper extends KHermesSerializer {
+object ResourcesHelper extends KhermesSerializer {
 
   def getResources(name: String): Seq[String] = Try(
     new File(getClass.getResource(s"/locales/$name").getFile)) match {
     case Success(resources) => resources.list().toSeq
-    case Failure(_) => throw new KHermesException(s"Error loading invalid name /locales/$name")
+    case Failure(_) => throw new KhermesException(s"Error loading invalid name /locales/$name")
   }
 
   def getResource(name: String, file: String): InputStream = Option(
     getClass.getResourceAsStream(s"/locales/$name/$file")).getOrElse(
-    throw new KHermesException(s"Error loading invalid resource /locales/$name/$file"))
+    throw new KhermesException(s"Error loading invalid resource /locales/$name/$file"))
 }

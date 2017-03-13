@@ -20,22 +20,22 @@ import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class KHermesClientActorHelperTest extends FlatSpec
+class KhermesClientActorHelperTest extends FlatSpec
   with Matchers{
   it should "give a message with configuration empties" in {
-    val khermes = KHermesClientActorHelper
+    val khermes = KhermesClientActorHelper
     khermes.messageFeedback(None,None,None) shouldBe "Error: To start nodes is necessary to set template and kafka and khermes configuration."
   }
   it should "give a message with kafka and template configuration" in {
-    val khermes = KHermesClientActorHelper
+    val khermes = KhermesClientActorHelper
     khermes.messageFeedback(Option("khermes"),None,None) shouldBe "Error: To start nodes is necessary to set template and kafka configuration."
   }
   it should "give a message with template configuration" in {
-    val khermes = KHermesClientActorHelper
+    val khermes = KhermesClientActorHelper
     khermes.messageFeedback(Option("khermes"),Option("kafka"),None) shouldBe "Error: To start nodes is necessary to set template configuration."
   }
   it should "do not give a message because the configurations are OK" in {
-    val khermes = KHermesClientActorHelper
+    val khermes = KhermesClientActorHelper
     khermes.messageFeedback(Option("khermes"),Option("kafka"), Option("template")) shouldBe "Your configuration is OK"
 }
 

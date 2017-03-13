@@ -18,8 +18,8 @@ package com.stratio.khermes.utils.generators
 
 import java.security.InvalidParameterException
 
-import com.stratio.khermes.exceptions.KHermesException
-import com.stratio.khermes.utils.KHermes
+import com.stratio.khermes.exceptions.KhermesException
+import com.stratio.khermes.utils.Khermes
 import org.junit.runner.RunWith
 import org.scalacheck.Prop.forAll
 import org.scalatest.junit.JUnitRunner
@@ -31,20 +31,20 @@ class NumberGeneratorTest extends FlatSpec
 
 
   it should "generate a random integer of 0 digit give it 0" in {
-    val khermesNum = KHermes("")
+    val khermesNum = Khermes("")
     khermesNum.Number.number(0) shouldBe 0
 
   }
 
   it should "generate a random integer when it passed the number of digit" in {
-    val khermesNum = KHermes("")
+    val khermesNum = Khermes("")
     forAll { (n: Int) =>
       numberOfDigitsFromANumber(khermesNum.Number.number(n)) == n
     }
   }
 
   it should "generate a random integer when it passed the number of digit and the sign" in {
-    val khermesNum = KHermes("")
+    val khermesNum = Khermes("")
     //scalastyle:off
     forAll { (n: Int) =>
       khermesNum.Number.number(n, Positive) > 0
@@ -56,7 +56,7 @@ class NumberGeneratorTest extends FlatSpec
   }
 
   it should "throw an InvalidParameterException when a negative digit is passed or greater than the VAL_MAX" in {
-    val khermesNum = KHermes("")
+    val khermesNum = Khermes("")
     //scalastyle:off
     an[InvalidParameterException] should be thrownBy khermesNum.Number.number(-2)
     an[InvalidParameterException] should be thrownBy khermesNum.Number.number(500)
@@ -66,13 +66,13 @@ class NumberGeneratorTest extends FlatSpec
     //scalastyle:on
   }
   it should "generate a random decimal of 0 digit give it 0.0" in {
-    val khermesNum = KHermes("")
+    val khermesNum = Khermes("")
     khermesNum.Number.decimal(0) shouldBe 0.0
     khermesNum.Number.decimal(0, 0) shouldBe 0.0
   }
 
   it should "generate a random decimal when it passed the number of digit" in {
-    val khermesNum = KHermes("")
+    val khermesNum = Khermes("")
     //scalastyle:off
     numberOfDigitsFromANumber(khermesNum.Number.decimal(2)) shouldBe 4
     numberOfDigitsFromANumber(khermesNum.Number.decimal(2, 4)) shouldBe 6
@@ -87,14 +87,14 @@ class NumberGeneratorTest extends FlatSpec
   }
 
   it should "throw an InvalidParameterException when pass an sign that is null" in {
-    val khermesNum = KHermes("")
+    val khermesNum = Khermes("")
     //scalastyle:off
-    an[KHermesException] should be thrownBy khermesNum.Number.number(2, null)
+    an[KhermesException] should be thrownBy khermesNum.Number.number(2, null)
     //scalastyle:on
   }
 
   it should "generate a random integer when it passed the range " in {
-    val khermesNum = KHermes("")
+    val khermesNum = Khermes("")
     forAll { (n: Int, m: Int) =>
       khermesNum.Number.numberInRange(n, m) <= m && khermesNum.Number.numberInRange(n, m) >= n
     }
@@ -106,7 +106,7 @@ class NumberGeneratorTest extends FlatSpec
   }
 
   it should "generate a random decimal when it passed the range " in {
-    val khermesNum = KHermes("")
+    val khermesNum = Khermes("")
     forAll { (n: Int, m: Int) =>
       khermesNum.Number.decimalInRange(n, m) <= m && khermesNum.Number.decimalInRange(n, m) >= n
     }

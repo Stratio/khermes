@@ -19,7 +19,7 @@ package com.stratio.khermes.implicits
 import java.net.NetworkInterface
 
 import akka.actor.ActorSystem
-import com.stratio.khermes.constants.KHermesConstants
+import com.stratio.khermes.constants.KhermesConstants
 import com.stratio.khermes.dao.ZookeeperConfigDAO
 import com.typesafe.config.{Config, ConfigFactory, ConfigResolveOptions}
 
@@ -28,7 +28,7 @@ import scala.collection.JavaConversions._
 /**
  * General implicits used in the application.
  */
-object KHermesImplicits {
+object KhermesImplicits {
 
   lazy implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
   lazy implicit val config: Config = ConfigFactory
@@ -36,7 +36,7 @@ object KHermesImplicits {
       ConfigResolveOptions.defaults.setAllowUnresolved(true))
     .resolve
 
-  lazy implicit val system: ActorSystem = ActorSystem(KHermesConstants.AkkaClusterName, config)
+  lazy implicit val system: ActorSystem = ActorSystem(KhermesConstants.AkkaClusterName, config)
   lazy implicit val khermesConfigDAO: ZookeeperConfigDAO = new ZookeeperConfigDAO
 
   /**

@@ -16,15 +16,13 @@
 
 package com.stratio.khermes.implicits
 
-import org.junit.runner.RunWith
-import org.scalatest.{Matchers, FlatSpec}
-import org.scalatest.junit.JUnitRunner
+import org.json4s.{DefaultFormats, Formats}
 
-@RunWith(classOf[JUnitRunner])
-class KHermesImplicitsTest extends FlatSpec with Matchers {
+/**
+ * Implicit values used in json4s to serialize / unserialize data.
+ */
+trait KhermesSerializer {
 
-  "A KHermesImplicit" should "get a valid IP of a host" in {
-    import com.stratio.khermes.implicits.KHermesImplicits._
-    getHostIP() should fullyMatch regex """.*(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}).*"""
-  }
+  implicit val json4sFormats: Formats =  DefaultFormats
 }
+

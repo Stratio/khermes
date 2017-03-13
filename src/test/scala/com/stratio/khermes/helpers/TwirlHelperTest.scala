@@ -17,19 +17,19 @@
 package com.stratio.khermes.helpers
 
 import com.stratio.khermes.helpers.TwirlHelper.CompilationError
-import com.stratio.khermes.utils.{KHermes, KHermesLogging}
+import com.stratio.khermes.utils.{Khermes, KhermesLogging}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 import play.twirl.api.Txt
 
 @RunWith(classOf[JUnitRunner])
-class TwirlHelperTest  extends FlatSpec with Matchers with BeforeAndAfter with KHermesLogging  {
+class TwirlHelperTest  extends FlatSpec with Matchers with BeforeAndAfter with KhermesLogging  {
 
-  implicit val config = com.stratio.khermes.implicits.KHermesImplicits.config
+  implicit val config = com.stratio.khermes.implicits.KhermesImplicits.config
 
   before {
-    KHermesRunnerHelper.createPaths
+    KhermesRunnerHelper.createPaths
   }
 
   "A TwirlHelper" should "compile a simple template without object injection" in {
@@ -51,13 +51,13 @@ class TwirlHelperTest  extends FlatSpec with Matchers with BeforeAndAfter with K
   it should "compile a template and inject an khermes helper" in {
     val template =
       """
-        |@(khermes: KHermes)
+        |@(khermes: Khermes)
         |Hello @(khermes.Name.firstName)
       """.stripMargin
 
-    val khermes = new KHermes("EN")
+    val khermes = new Khermes("EN")
 
-    val result = cleanContent(TwirlHelper.template[(KHermes) => Txt](template, "templateTest").static(khermes).toString())
+    val result = cleanContent(TwirlHelper.template[(Khermes) => Txt](template, "templateTest").static(khermes).toString())
     result should fullyMatch regex """Hello [a-zA-Z]+"""
   }
 

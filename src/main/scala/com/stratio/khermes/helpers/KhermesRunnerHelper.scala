@@ -20,16 +20,16 @@ import java.io.File
 import java.util.Date
 
 import akka.actor.{ActorRef, ActorSystem, Props}
-import com.stratio.khermes.actors.{KHermesClientActor, KHermesSupervisorActor}
-import com.stratio.khermes.utils.KHermesLogging
+import com.stratio.khermes.actors.{KhermesClientActor, KhermesSupervisorActor}
+import com.stratio.khermes.utils.KhermesLogging
 import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContextExecutor
 
 /**
- * Common operations used when KHermes starts.
+ * Common operations used when Khermes starts.
  */
-object KHermesRunnerHelper extends KHermesLogging {
+object KhermesRunnerHelper extends KhermesLogging {
 
   /**
    * Prints a welcome message with some information about the system and creates necessary paths.
@@ -81,9 +81,9 @@ object KHermesRunnerHelper extends KHermesLogging {
 
   val templateContent =
     """
-      |@import com.stratio.khermes.utils.KHermes
+      |@import com.stratio.khermes.utils.Khermes
       |
-      |@(khermes: KHermes)
+      |@(khermes: Khermes)
       |{
       |  "name" : "alicia"
       |}
@@ -114,13 +114,13 @@ object KHermesRunnerHelper extends KHermesLogging {
   def workerSupervisor(implicit config: Config,
                        system: ActorSystem,
                        executionContext: ExecutionContextExecutor): ActorRef =
-    system.actorOf(Props(new KHermesSupervisorActor()), "khermes-supervisor")
+    system.actorOf(Props(new KhermesSupervisorActor()), "khermes-supervisor")
 
   def clientActor(khermesSupervisor: ActorRef)(implicit config: Config,
                                                system: ActorSystem,
                                                executionContext: ExecutionContextExecutor): Unit = {
 
-    val clientActor = system.actorOf(Props(new KHermesClientActor()), "khermes-client")
-    clientActor ! KHermesClientActor.Start
+    val clientActor = system.actorOf(Props(new KhermesClientActor()), "khermes-client")
+    clientActor ! KhermesClientActor.Start
   }
 }

@@ -18,8 +18,8 @@ package com.stratio.khermes.utils.generators
 
 import java.security.InvalidParameterException
 
-import com.stratio.khermes.exceptions.KHermesException
-import com.stratio.khermes.implicits.KHermesSerializer
+import com.stratio.khermes.exceptions.KhermesException
+import com.stratio.khermes.implicits.KhermesSerializer
 import org.joda.time.{DateTime, LocalTime, Seconds}
 import org.joda.time.format.DateTimeFormat
 
@@ -28,7 +28,7 @@ import scala.util.{Random, Try}
 /**
  * Generates random dates.
  */
-class DatetimeGenerator extends KHermesSerializer {
+class DatetimeGenerator extends KhermesSerializer {
   /**
    * Example: "dateTime("1970-1-12" ,"2017-1-1") -> 2005-03-01T20:34:30.000+01:00".
    *
@@ -41,7 +41,7 @@ class DatetimeGenerator extends KHermesSerializer {
     val date: DateTime = from.plusSeconds(randomDate.nextInt(diff.toInt))
     format match {
       case Some(stringFormat) => Try(DateTimeFormat.forPattern(stringFormat).print(date)).getOrElse(
-        throw new KHermesException(s"Invalid DateTimeFormat"))
+        throw new KhermesException(s"Invalid DateTimeFormat"))
       case None => date.toString()
     }
   }

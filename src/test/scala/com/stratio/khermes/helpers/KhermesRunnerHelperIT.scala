@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package com.stratio.khermes.implicits
+package com.stratio.khermes.helpers
 
-import org.json4s.{DefaultFormats, Formats}
+import com.stratio.khermes.actors.KhermesActorTest
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
-/**
- * Implicit values used in json4s to serialize / unserialize data.
- */
-trait KHermesSerializer {
+@RunWith(classOf[JUnitRunner])
+class KhermesRunnerHelperIT extends KhermesActorTest {
 
-  implicit val json4sFormats: Formats =  DefaultFormats
+  "An KhermesRunnerHelper" should {
+    "print a welcome message and start the akka system without errors" in {
+      KhermesRunnerHelper.welcome
+    }
+
+    "start a worker supervisor without errors" in {
+      KhermesRunnerHelper.workerSupervisor
+    }
+  }
 }
-

@@ -16,23 +16,23 @@
 
 package com.stratio.khermes.utils.generators
 
-import com.stratio.khermes.constants.KHermesConstants
-import com.stratio.khermes.exceptions.KHermesException
+import com.stratio.khermes.constants.KhermesConstants
+import com.stratio.khermes.exceptions.KhermesException
 import com.stratio.khermes.helpers.ParserHelper._
 import com.stratio.khermes.helpers.{RandomHelper, ResourcesHelper}
-import com.stratio.khermes.implicits.KHermesSerializer
-import com.stratio.khermes.utils.{KHermesLogging, KHermesUnit}
+import com.stratio.khermes.implicits.KhermesSerializer
+import com.stratio.khermes.utils.{KhermesLogging, KhermesUnit}
 
 import scala.util.Try
 
-case class EmailGenerator(locale: String) extends KHermesUnit
-  with KHermesSerializer
-  with KHermesLogging {
+case class EmailGenerator(locale: String) extends KhermesUnit
+  with KhermesSerializer
+  with KhermesLogging {
 
   override def unitName: String = "email"
 
   lazy val emailModel = locale match {
-    case KHermesConstants.DefaultLocale =>
+    case KhermesConstants.DefaultLocale =>
       val resources = ResourcesHelper.getResources(unitName)
         .map(parse[Seq[String]](unitName, _))
       val maybeErrors = parseErrors[Seq[String]](resources)
@@ -58,20 +58,20 @@ case class EmailGenerator(locale: String) extends KHermesUnit
    */
   def address(fullname: String): String = {
     val domain = RandomHelper.randomElementFromAList[String](domains(emailModel)).getOrElse(
-      throw new KHermesException(s"Error loading locate /locales/$unitName/$locale.json"))
+      throw new KhermesException(s"Error loading locate /locales/$unitName/$locale.json"))
     s"${getInitial(fullname)}${getSurname(fullname)}@$domain"
   }
 
   private def getInitial(fullname: String) = {
-    Try(getName(fullname).charAt(0)).getOrElse(throw new KHermesException(s"Error parsing a no valid name"))
+    Try(getName(fullname).charAt(0)).getOrElse(throw new KhermesException(s"Error parsing a no valid name"))
   }
 
   def getName(fullName: String): String =
     Try(fullName.trim.split(" ")(0)).getOrElse(
-      throw new KHermesException(s"Error extracting the name value")).toLowerCase
+      throw new KhermesException(s"Error extracting the name value")).toLowerCase
 
   def getSurname(fullName: String): String =
     Try(fullName.trim.split(" ")(1)).getOrElse(
-      throw new KHermesException(s"Error extracting the surname value")).toLowerCase
+      throw new KhermesException(s"Error extracting the surname value")).toLowerCase
 }
 

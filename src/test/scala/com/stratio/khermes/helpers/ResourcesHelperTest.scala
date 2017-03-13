@@ -18,7 +18,7 @@ package com.stratio.khermes.helpers
 
 import java.io.InputStream
 
-import com.stratio.khermes.exceptions.KHermesException
+import com.stratio.khermes.exceptions.KhermesException
 import com.stratio.khermes.helpers.ResourcesHelper._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -34,7 +34,7 @@ class ResourcesHelperTest extends FlatSpec
   }
 
   "getResources" should "return an exception when path does not exist" in {
-    intercept[KHermesException] {
+    intercept[KhermesException] {
       getResources("no-valid")
     }
   }
@@ -44,7 +44,7 @@ class ResourcesHelperTest extends FlatSpec
   }
 
   "getResource" should "return an exception when the resource does not exist" in {
-    intercept[KHermesException] {
+    intercept[KhermesException] {
       getResource("no-valid-name", "EN.json")
     }
   }

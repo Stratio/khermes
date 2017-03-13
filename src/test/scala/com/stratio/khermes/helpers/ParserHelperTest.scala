@@ -16,10 +16,10 @@
 
 package com.stratio.khermes.helpers
 
-import com.stratio.khermes.exceptions.KHermesException
+import com.stratio.khermes.exceptions.KhermesException
 import com.stratio.khermes.helpers.ParserHelper._
 import com.stratio.khermes.models.MusicModel
-import com.stratio.khermes.utils.KHermes
+import com.stratio.khermes.utils.Khermes
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{EitherValues, FlatSpec, Matchers}
@@ -39,13 +39,13 @@ class ParserHelperTest extends FlatSpec
   }
 
   it should "raise an exception when it gets a song that is corrupted" in {
-    val khermesYY = KHermes("YY")
+    val khermesYY = Khermes("YY")
     parseErrors(khermesYY.Music.musicModel).length should be(1)
-    an[KHermesException] should be thrownBy khermesYY.Music.playedSong
+    an[KhermesException] should be thrownBy khermesYY.Music.playedSong
   }
 
   it should "raise an exception when it gets a file with at least one song corrupted" in {
-    val khermes = KHermes()
+    val khermes = Khermes()
     parseErrors(khermes.Music.musicModel).length should be(2)
   }
 }

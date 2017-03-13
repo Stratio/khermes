@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package com.stratio.khermes.utils
+package com.stratio.khermes.runners
 
+import com.stratio.khermes.helpers.KhermesRunnerHelper
+import com.stratio.khermes.utils.KhermesLogging
 
 /**
- * All KHermes objects should extend this trait.
+ * Entry point of the application.
  */
-trait KHermesUnit {
+object KhermesRunner extends App with KhermesLogging {
 
-  def unitName: String
+  import com.stratio.khermes.implicits.KhermesImplicits._
+  KhermesRunnerHelper.welcome
+  KhermesRunnerHelper.createPaths
+
+  val khermesSupervisor = KhermesRunnerHelper.workerSupervisor
+
+  if(config.getString("khermes.client") == "true") {
+    KhermesRunnerHelper.clientActor(khermesSupervisor)
+  }
+
 }

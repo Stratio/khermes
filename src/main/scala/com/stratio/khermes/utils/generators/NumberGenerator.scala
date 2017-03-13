@@ -18,9 +18,9 @@ package com.stratio.khermes.utils.generators
 
 import java.security.InvalidParameterException
 
-import com.stratio.khermes.constants.KHermesConstants
-import com.stratio.khermes.exceptions.KHermesException
-import com.stratio.khermes.implicits.KHermesSerializer
+import com.stratio.khermes.constants.KhermesConstants
+import com.stratio.khermes.exceptions.KhermesException
+import com.stratio.khermes.implicits.KhermesSerializer
 
 import scala.math.BigDecimal.RoundingMode
 import scala.util.Random
@@ -28,7 +28,7 @@ import scala.util.Random
 /**
  * Generates random numbers.
  */
-class NumberGenerator extends KHermesSerializer {
+class NumberGenerator extends KhermesSerializer {
 
   /**
    * Example: "number(3) 123".
@@ -40,8 +40,8 @@ class NumberGenerator extends KHermesSerializer {
     if (n == 0) {
       0
     } else {
-      val first = Random.nextInt(KHermesConstants.DecimalValue - 1) + 1
-      val randSeq = first +: (1 until n).map { _ => Random.nextInt(KHermesConstants.DecimalValue) }
+      val first = Random.nextInt(KhermesConstants.DecimalValue - 1) + 1
+      val randSeq = first +: (1 until n).map { _ => Random.nextInt(KhermesConstants.DecimalValue) }
       BigInt(randSeq.mkString).toInt * randSign
     }
   }
@@ -56,8 +56,8 @@ class NumberGenerator extends KHermesSerializer {
     if (n == 0) {
       "0"
     } else {
-      val nonZero = Random.nextInt(KHermesConstants.DecimalValue - 1) + 1
-      val randSeq = (1 until n).map { _ => Random.nextInt(KHermesConstants.DecimalValue) } :+ nonZero
+      val nonZero = Random.nextInt(KhermesConstants.DecimalValue - 1) + 1
+      val randSeq = (1 until n).map { _ => Random.nextInt(KhermesConstants.DecimalValue) } :+ nonZero
       randSeq.mkString
     }
   }
@@ -69,7 +69,7 @@ class NumberGenerator extends KHermesSerializer {
   def number(n: Int, sign: NumberSign): Int = sign match {
     case Positive => Math.abs(number(n))
     case Negative => Math.abs(number(n)) * -1
-    case _ => throw new KHermesException(s"The sign must be Positive or Negative")
+    case _ => throw new KhermesException(s"The sign must be Positive or Negative")
   }
 
   /**

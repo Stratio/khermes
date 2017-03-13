@@ -15,10 +15,10 @@
     limitations under the License.
 
 -->
-@import com.stratio.khermes.utils.KHermes
+@import com.stratio.khermes.utils.Khermes
 @import com.stratio.khermes.utils.Positive
 
-@(khermes: KHermes)
+@(khermes: Khermes)
 {
   "customerId": @(khermes.Number.number(3,Positive)),
   "customerName": "@(khermes.Name.fullName)",

@@ -19,7 +19,7 @@ package com.stratio.khermes.constants
 /**
  * Global constants used in the application.
  */
-object KHermesConstants {
+object KhermesConstants {
 
   val DefaultLocale = "ALL"
   val AkkaClusterName = "khermes"
@@ -40,7 +40,7 @@ object KHermesConstants {
   val ZookeeperRetryInterval = "zookeeper.retryInterval"
 
   val KafkaConfigNodePath = "kafka"
-  val KHermesConfigNodePath = "khermes"
+  val KhermesConfigNodePath = "khermes"
   val TemplateNodePath = "template"
   val AvroConfigNodePath = "avro"
 }

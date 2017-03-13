@@ -18,7 +18,7 @@ package com.stratio.khermes.utils.generators
 
 import java.util.NoSuchElementException
 
-import com.stratio.khermes.utils.KHermes
+import com.stratio.khermes.utils.Khermes
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
@@ -28,24 +28,24 @@ class NameGeneratorTest extends FlatSpec
   with Matchers {
 
 
-  "A KHermes" should "generates random firstNames and lastNames with EN and ES locales" in {
-    val khermesEN = KHermes()
+  "A Khermes" should "generates random firstNames and lastNames with EN and ES locales" in {
+    val khermesEN = Khermes()
     khermesEN.Name.firstNames(khermesEN.Name.nameModel) should contain(khermesEN.Name.firstName)
     khermesEN.Name.lastNames(khermesEN.Name.nameModel) should contain(khermesEN.Name.lastName)
 
-    val khermesES = KHermes("ES")
+    val khermesES = Khermes("ES")
     khermesES.Name.firstNames(khermesEN.Name.nameModel) should contain(khermesES.Name.firstName)
     khermesES.Name.lastNames(khermesEN.Name.nameModel) should contain(khermesES.Name.lastName)
   }
 
   it should "generate valid names: firstName lastName with EN and ES locales" in {
-    val khermesEN = KHermes()
+    val khermesEN = Khermes()
     val fullNameEN = khermesEN.Name.fullName
     fullNameEN should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
     khermesEN.Name.firstNames(khermesEN.Name.nameModel) should contain(fullNameEN.split(" ")(0))
     khermesEN.Name.lastNames(khermesEN.Name.nameModel) should contain(fullNameEN.split(" ")(1))
 
-    val khermesES = KHermes("ES")
+    val khermesES = Khermes("ES")
     val fullNameES = khermesES.Name.fullName
     fullNameES should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
     khermesES.Name.firstNames(khermesEN.Name.nameModel) should contain(fullNameES.split(" ")(0))
@@ -53,13 +53,13 @@ class NameGeneratorTest extends FlatSpec
   }
 
   it should "generate valid middle names: firstName firstName with EN and ES locales" in {
-    val khermesEN = KHermes()
+    val khermesEN = Khermes()
     val middleNameEN = khermesEN.Name.middleName
     middleNameEN should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
     khermesEN.Name.firstNames(khermesEN.Name.nameModel) should contain(middleNameEN.split(" ")(0))
     khermesEN.Name.firstNames(khermesEN.Name.nameModel) should contain(middleNameEN.split(" ")(1))
 
-    val khermesES = KHermes("ES")
+    val khermesES = Khermes("ES")
     val middleNameES = khermesES.Name.middleName
     middleNameES should fullyMatch regex """[a-zA-Z]+ [a-zA-Z]+"""
     khermesES.Name.firstNames(khermesEN.Name.nameModel) should contain(middleNameES.split(" ")(0))
@@ -67,7 +67,7 @@ class NameGeneratorTest extends FlatSpec
   }
 
   it should "raise an exception when it gets a firstName/lastName and firstNames/lastNames are empty in the locale" in {
-    val khermes = KHermes("XX")
+    val khermes = Khermes("XX")
     //scalastyle:off
     an[NoSuchElementException] should be thrownBy khermes.Name.firstName()
     an[NoSuchElementException] should be thrownBy khermes.Name.lastName()
@@ -76,7 +76,7 @@ class NameGeneratorTest extends FlatSpec
 
   it should "raise an exception when it tries to load a locale that don't exist" in {
     //scalastyle:off
-    val model = KHermes("XY").Name.nameModel
+    val model = Khermes("XY").Name.nameModel
     //scalastyle:on
     model.map(_.left.get should equal(s"Error loading invalid resource /locales/name/XY.json"))
   }

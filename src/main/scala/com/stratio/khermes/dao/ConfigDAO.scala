@@ -15,13 +15,13 @@
  */
 package com.stratio.khermes.dao
 
-import com.stratio.khermes.utils.KHermesLogging
+import com.stratio.khermes.utils.KhermesLogging
 
 /**
- * Base DAO to manage configuration resources in KHermes.
+ * Base DAO to manage configuration resources in Khermes.
  * @tparam T
  */
-trait ConfigDAO[T] extends KHermesLogging {
+trait ConfigDAO[T] extends KhermesLogging {
   /**
    * Save the configuration in your persistence system.
    * @param entity Path where you are going to store your configuration.

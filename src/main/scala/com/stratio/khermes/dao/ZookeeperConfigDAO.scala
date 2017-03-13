@@ -15,46 +15,46 @@
  */
 package com.stratio.khermes.dao
 
-import com.stratio.khermes.constants.KHermesConstants
-import com.stratio.khermes.exceptions.KHermesException
+import com.stratio.khermes.constants.KhermesConstants
+import com.stratio.khermes.exceptions.KhermesException
 import org.apache.curator.framework.{CuratorFramework, CuratorFrameworkFactory}
 import org.apache.curator.retry.ExponentialBackoffRetry
 
 import scala.util.{Failure, Success, Try}
 
 class ZookeeperConfigDAO extends ConfigDAO[String] {
-  val config = com.stratio.khermes.implicits.KHermesImplicits.config
+  val config = com.stratio.khermes.implicits.KhermesImplicits.config
   lazy val curatorFramework: CuratorFramework = buildCurator
-  lazy val connectionString = Try(config.getString(KHermesConstants.ZookeeperConnection)).getOrElse(KHermesConstants.ZookeeperConnectionDefault)
-  lazy val connectionTimeout = config.getInt(KHermesConstants.ZookeeperConnectionTimeout)
-  lazy val sessionTimeout = config.getInt(KHermesConstants.ZookeeperSessionTimeout)
-  lazy val retryAttempts = config.getInt(KHermesConstants.ZookeeperRetryAttempts)
-  lazy val retryInterval = config.getInt(KHermesConstants.ZookeeperRetryInterval)
+  lazy val connectionString = Try(config.getString(KhermesConstants.ZookeeperConnection)).getOrElse(KhermesConstants.ZookeeperConnectionDefault)
+  lazy val connectionTimeout = config.getInt(KhermesConstants.ZookeeperConnectionTimeout)
+  lazy val sessionTimeout = config.getInt(KhermesConstants.ZookeeperSessionTimeout)
+  lazy val retryAttempts = config.getInt(KhermesConstants.ZookeeperRetryAttempts)
+  lazy val retryInterval = config.getInt(KhermesConstants.ZookeeperRetryInterval)
 
   override def saveConfig(path: String, config: String): Unit = Try(
     if (existsConfig(path)) {
       updateConfig(path, config)
     }
     else {
-      curatorFramework.create().creatingParentsIfNeeded().forPath(s"${KHermesConstants.ZookeeperParentPath}/$path")
-      curatorFramework.setData().forPath(s"${KHermesConstants.ZookeeperParentPath}/$path", config.getBytes())
+      curatorFramework.create().creatingParentsIfNeeded().forPath(s"${KhermesConstants.ZookeeperParentPath}/$path")
+      curatorFramework.setData().forPath(s"${KhermesConstants.ZookeeperParentPath}/$path", config.getBytes())
     }
   ) match {
     case Success(ids) => ids.toString
-    case Failure(e) => throw new KHermesException(e.getMessage)
+    case Failure(e) => throw new KhermesException(e.getMessage)
   }
 
   override def loadConfig(path: String): String = Try(
-    new String(curatorFramework.getData.forPath(s"${KHermesConstants.ZookeeperParentPath}/$path"))
+    new String(curatorFramework.getData.forPath(s"${KhermesConstants.ZookeeperParentPath}/$path"))
   )
   match {
     case Success(ids) => ids
-    case Failure(e) => throw new KHermesException(e.getMessage)
+    case Failure(e) => throw new KhermesException(e.getMessage)
   }
 
   override def existsConfig(path: String): Boolean = {
     //scalastyle:off
-    curatorFramework.checkExists().forPath(s"${KHermesConstants.ZookeeperParentPath}/$path") != null
+    curatorFramework.checkExists().forPath(s"${KhermesConstants.ZookeeperParentPath}/$path") != null
     //scalastyle:on
   }
 
@@ -63,7 +63,7 @@ class ZookeeperConfigDAO extends ConfigDAO[String] {
   }
 
   override def updateConfig(path: String, config: String): Unit = {
-    curatorFramework.setData().forPath(s"${KHermesConstants.ZookeeperParentPath}/$path", config.getBytes())
+    curatorFramework.setData().forPath(s"${KhermesConstants.ZookeeperParentPath}/$path", config.getBytes())
   }
 
 
@@ -80,7 +80,7 @@ class ZookeeperConfigDAO extends ConfigDAO[String] {
       cf
     }.getOrElse {
       log.error("Impossible to start Zookeeper connection")
-      throw new KHermesException("Impossible to start Zookeeper connection")
+      throw new KhermesException("Impossible to start Zookeeper connection")
     }
   }
 
