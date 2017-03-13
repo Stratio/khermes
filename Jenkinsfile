@@ -34,7 +34,7 @@ ITPARAMETERS = """
         parallel(UT: {
             doUT(config)
         }, IT: {
-            doIT(config)
+      //      doIT(config)
         }, failFast: config.FAILFAST)
 
 	doPackage(config)
