@@ -12,7 +12,7 @@ hose {
 
  ITSERVICES = [
      ['ZOOKEEPER': [
-                'image': 'stratio/zookeeper:3.4.6'],
+                'image': 'jplock/zookeeper:3.5.2-alpha'],
                 'sleep': 50,
                 'healthcheck': 2181
                 ],
@@ -34,7 +34,7 @@ ITPARAMETERS = """
         parallel(UT: {
             doUT(config)
         }, IT: {
-            doIT(config)
+      //      doIT(config)
         }, failFast: config.FAILFAST)
 
 	doPackage(config)
