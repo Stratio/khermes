@@ -12,7 +12,7 @@ hose {
 
  ITSERVICES = [
      ['ZOOKEEPER': [
-                'image': 'qa.stratio.com/jplock/zookeeper:3.5.2-alpha'],
+                'image': 'jplock/zookeeper:3.5.2-alpha'],
                 'sleep': 50,
                 'healthcheck': 2181
                 ],
