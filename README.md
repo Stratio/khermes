@@ -1,7 +1,6 @@
-# Stratio Hermes
+# Stratio Khermes
 
-[![Coverage Status](https://coveralls.io/repos/github/Stratio/Hermes/badge.svg?branch=master)](https://coveralls.io/github/Stratio/Hermes?branch=master)
-
+[![Coverage Status](https://coveralls.io/repos/github/Stratio/khermes/badge.svg?branch=master)](https://coveralls.io/github/Stratio/khermes?branch=master)
 ## Description
 A distributed fake data generator based in Akka.
 
@@ -88,11 +87,11 @@ address("John Doe") -> jdoe@aol.com
 
 * Seed + client
 
-docker run -dit --name SEED_NAME -e PARAMS="-Dhermes.client=true -Dakka.remote.hostname=SEED_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2552 -Dakka.remote.netty.tcp.hostname=SEED_NAME.DOMAIN -Dakka.cluster.seed-nodes.0=akka.tcp://hermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/hermes:VERSION
+docker run -dit --name SEED_NAME -e PARAMS="-Dkhermes.client=true -Dakka.remote.hostname=SEED_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2552 -Dakka.remote.netty.tcp.hostname=SEED_NAME.DOMAIN -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/khermes:VERSION
 
 * Agent
 
-docker run -dit --name AGENT_NAME -e PARAMS="-Dhermes.client=false -Dakka.remote.hostname=AGENT_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2553 -Dakka.cluster.seed-nodes.0=akka.tcp://hermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/hermes:VERSION
+docker run -dit --name AGENT_NAME -e PARAMS="-Dkhermes.client=false -Dakka.remote.hostname=AGENT_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2553 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/khermes:VERSION
 
 ### Connect to client console
 
@@ -103,7 +102,7 @@ IMPORTANT: To disconnect from the client interactive console use Ctrl-A + D. If 
 ### Configuration
 
 Now your configuration will be store in zookeeper.
-Hermes use Curator 2.9.0. If you have that exception:
+Khermes use Curator 2.9.0. If you have that exception:
 
  `org.apache.zookeeper.server.quorum.flexible.QuorumMaj.<init>(Ljava/util/Map;)V`
 

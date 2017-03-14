@@ -5,7 +5,7 @@ if [[ -z ${PARAMS} ]]; then
     exit 1
 fi
 
-client=$(echo $PARAMS | grep hermes.client=true || true)
+client=$(echo $PARAMS | grep khermes.client=true || true)
 echo "Params: ${PARAMS}"
 
 if [[ ! -z ${MARATHON_APP_LABEL_DCOS_PACKAGE_NAME} ]]; then
@@ -15,9 +15,9 @@ if [[ ! -z ${MARATHON_APP_LABEL_DCOS_PACKAGE_NAME} ]]; then
 fi
 
 if [[ -z ${client} ]]; then
-    java -jar ${PARAMS} /hermes.jar
+    java -jar ${PARAMS} /khermes.jar
 else
-    screen -S client -d -m java -jar ${PARAMS} /hermes.jar
+    screen -S client -d -m java -jar ${PARAMS} /khermes.jar
 fi
 
-tail -F /var/log/sds/hermes/hermes.log
+tail -F /var/log/sds/khermes/khermes.log

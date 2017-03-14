@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.stratio</groupId>
-    <artifactId>hermes</artifactId>
+    <artifactId>khermes</artifactId>
     <version>0.2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -15,19 +15,19 @@
         <version>0.9.0</version>
     </parent>
 
-    <name>Stratio Hermes</name>
+    <name>Stratio Khermes</name>
     <description>A distributed fake data generator based in Akka</description>
     <inceptionYear>2016</inceptionYear>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/Stratio/hermes/issues</url>
+        <url>https://github.com/Stratio/khermes/issues</url>
     </issueManagement>
 
     <scm>
-        <url>https://github.com/stratio/hermes</url>
-        <connection>scm:git:git://github.com/stratio/hermes.git</connection>
-        <developerConnection>scm:git:git@github.com:stratio/hermes.git</developerConnection>
+        <url>https://github.com/stratio/khermes</url>
+        <connection>scm:git:git://github.com/stratio/khermes.git</connection>
+        <developerConnection>scm:git:git@github.com:stratio/khermes.git</developerConnection>
         <tag>master</tag>
     </scm>
 
@@ -264,7 +264,7 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
-                                        <Main-Class>com.stratio.hermes.runners.HermesRunner</Main-Class>
+                                        <Main-Class>com.stratio.khermes.runners.KhermesRunner</Main-Class>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>

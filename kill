@@ -1,1 +1,1 @@
-ps aux | grep hermes | grep -v grep | awk '{print $2}' | xargs kill -9
+ps aux | grep khermes | grep -v grep | awk '{print $2}' | xargs kill -9

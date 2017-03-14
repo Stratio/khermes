@@ -15,15 +15,15 @@
     limitations under the License.
 
 -->
-@import com.stratio.hermes.utils.Hermes
-@import com.stratio.hermes.utils.Positive
+@import com.stratio.khermes.utils.Khermes
+@import com.stratio.khermes.utils.Positive
 
-@(hermes: Hermes)
+@(khermes: Khermes)
 {
-  "customerId": @(hermes.Number.number(3,Positive)),
-  "customerName": "@(hermes.Name.fullName)",
-  "latitude": @(hermes.Geo.geolocation.latitude),
-  "longitude": @(hermes.Geo.geolocation.longitude),
-  "productIds": [@((1 to 5).map(x => hermes.Number.number(1, Positive)).mkString(","))]
+  "customerId": @(khermes.Number.number(3,Positive)),
+  "customerName": "@(khermes.Name.fullName)",
+  "latitude": @(khermes.Geo.geolocation.latitude),
+  "longitude": @(khermes.Geo.geolocation.longitude),
+  "productIds": [@((1 to 5).map(x => khermes.Number.number(1, Positive)).mkString(","))]
 
 }
