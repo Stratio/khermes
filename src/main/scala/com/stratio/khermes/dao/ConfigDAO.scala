@@ -15,13 +15,13 @@
  */
 package com.stratio.khermes.dao
 
-import com.stratio.khermes.utils.KhermesLogging
+import com.typesafe.scalalogging.LazyLogging
 
 /**
  * Base DAO to manage configuration resources in Khermes.
  * @tparam T
  */
-trait ConfigDAO[T] extends KhermesLogging {
+trait ConfigDAO[T] extends LazyLogging {
   /**
    * Save the configuration in your persistence system.
    * @param entity Path where you are going to store your configuration.

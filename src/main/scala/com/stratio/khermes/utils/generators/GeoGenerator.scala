@@ -23,14 +23,15 @@ import com.stratio.khermes.helpers.RandomHelper
 import com.stratio.khermes.helpers.ResourcesHelper._
 import com.stratio.khermes.implicits.KhermesSerializer
 import com.stratio.khermes.models.GeoModel
-import com.stratio.khermes.utils.{KhermesLogging, KhermesUnit}
+import com.stratio.khermes.utils.KhermesUnit
+import com.typesafe.scalalogging.LazyLogging
 
 
 /**
  * Generates random locations.
  */
 case class GeoGenerator(locale: String) extends KhermesUnit
-  with KhermesLogging
+  with LazyLogging
   with KhermesSerializer {
 
   override def unitName: String = "geo"
@@ -39,7 +40,7 @@ case class GeoGenerator(locale: String) extends KhermesUnit
     case KhermesConstants.DefaultLocale => {
       val resources = getResources(unitName)
         .map(parse[Seq[GeoModel]](unitName, _))
-      if (parseErrors[Seq[GeoModel]](resources).nonEmpty) log.warn(s"${parseErrors[Seq[GeoModel]](resources)}")
+      if (parseErrors[Seq[GeoModel]](resources).nonEmpty) logger.warn(s"${parseErrors[Seq[GeoModel]](resources)}")
       resources
     }
     case localeMatch => Seq(parse[Seq[GeoModel]](unitName, s"$localeMatch.json"))

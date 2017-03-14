@@ -22,8 +22,9 @@ import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.{DistributedPubSub, DistributedPubSubMediator}
 import com.stratio.khermes.helpers.{KhermesConfig, TwirlHelper}
 import com.stratio.khermes.kafka.KafkaClient
-import com.stratio.khermes.utils.{Khermes, KhermesLogging}
+import com.stratio.khermes.utils.Khermes
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.avro.Schema.Parser
 import play.twirl.api.Txt
 import tech.allegro.schema.json2avro.converter.JsonAvroConverter
@@ -87,7 +88,8 @@ class KhermesSupervisorActor(implicit config: Config) extends Actor with ActorLo
  * @param hc     with the Hermes' configuration.
  * @param config with general configuration.
  */
-class KhermesExecutor(hc: KhermesConfig)(implicit config: Config) extends KhermesExecutable with KhermesLogging {
+class KhermesExecutor(hc: KhermesConfig)(implicit config: Config) extends KhermesExecutable
+  with LazyLogging {
 
   val converter = new JsonAvroConverter()
   var running: Boolean = false
@@ -130,9 +132,10 @@ class KhermesExecutor(hc: KhermesConfig)(implicit config: Config) extends Kherme
         timeoutNumberOfEventsDuration <- timeoutNumberOfEventsDurationOption
         if (numberOfEvents % timeoutNumberOfEvents == 0)
       } yield ({
-        log.debug(s"Sleeping executor thread $timeoutNumberOfEventsDuration")
+        logger.debug(s"Sleeping executor thread $timeoutNumberOfEventsDuration")
         Thread.sleep(timeoutNumberOfEventsDuration.toMillis)
       })
+
 
     /**
      * Starts to generate events in a recursive way.
@@ -150,7 +153,7 @@ class KhermesExecutor(hc: KhermesConfig)(implicit config: Config) extends Kherme
     @tailrec
     def recursiveGeneration(numberOfEvents: Int): Unit =
     if (running) {
-      log.debug(s"$numberOfEvents")
+      logger.debug(s"$numberOfEvents")
       val json = template.static(khermes).toString()
       parserOption match {
         case None =>
