@@ -198,7 +198,7 @@ Based on [Faker](https://github.com/stympy/faker) we are developing a random gen
 ```
 * Music generation:
 ```
-  playedSong() → ("Despacito (Featuring Daddy Yankee)", "Luis Fonsi, Daddy Yankee", "Despacito (Featuring Daddy Yankee)","Latin")
+  playedSong() → {"song": "Shape of You", "artist": "Ed Sheeran", "album": "Shape of You", "genre": "Pop"}
 ```
 
 ## Docker.
