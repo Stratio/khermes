@@ -38,9 +38,9 @@ object KhermesRunnerHelper extends KhermesLogging {
   def welcome(implicit system: ActorSystem, config: Config): Unit = {
     log.info(
       s"""
-         |╦ ╦┌─┐┬─┐┌┬┐┌─┐┌─┐
-         |╠═╣├┤ ├┬┘│││├┤ └─┐
-         |╩ ╩└─┘┴└─┴ ┴└─┘└─┘ Powered by Stratio (www.stratio.com)
+         |╦╔═┬ ┬┌─┐┬─┐┌┬┐┌─┐┌─┐
+         |╠╩╗├─┤├┤ ├┬┘│││├┤ └─┐
+         |╩ ╩┴ ┴└─┘┴└─┴ ┴└─┘└─┘ Powered by Stratio (www.stratio.com)
          |
          |> System Name   : ${system.name}
          |> Start time    : ${new Date(system.startTime)}
