@@ -23,11 +23,12 @@ import com.stratio.khermes.helpers.RandomHelper
 import com.stratio.khermes.helpers.ResourcesHelper._
 import com.stratio.khermes.implicits.KhermesSerializer
 import com.stratio.khermes.models.MusicModel
-import com.stratio.khermes.utils.{KhermesLogging, KhermesUnit}
+import com.stratio.khermes.utils.KhermesUnit
+import com.typesafe.scalalogging.LazyLogging
 
 case class MusicGenerator(locale: String) extends KhermesUnit
   with KhermesSerializer
-  with KhermesLogging {
+  with LazyLogging {
 
   override def unitName: String = "music"
 
@@ -35,7 +36,7 @@ case class MusicGenerator(locale: String) extends KhermesUnit
     case KhermesConstants.DefaultLocale => {
       val resources = getResources(unitName)
         .map(parse[Seq[MusicModel]](unitName, _))
-      if (parseErrors[Seq[MusicModel]](resources).nonEmpty) log.warn(s"${parseErrors[Seq[MusicModel]](resources)}")
+      if (parseErrors[Seq[MusicModel]](resources).nonEmpty) logger.warn(s"${parseErrors[Seq[MusicModel]](resources)}")
       resources
     }
     case localeValue => Seq(parse[Seq[MusicModel]](unitName, s"$localeValue.json"))

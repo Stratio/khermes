@@ -17,12 +17,12 @@
 package com.stratio.khermes.runners
 
 import com.stratio.khermes.helpers.KhermesRunnerHelper
-import com.stratio.khermes.utils.KhermesLogging
+import com.typesafe.scalalogging.LazyLogging
 
 /**
  * Entry point of the application.
  */
-object KhermesRunner extends App with KhermesLogging {
+object KhermesRunner extends App with LazyLogging {
 
   import com.stratio.khermes.implicits.KhermesImplicits._
   KhermesRunnerHelper.welcome

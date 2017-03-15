@@ -27,16 +27,18 @@ import akka.util.Timeout
 /**
  * Generic class used to test Khermes actors. All tests that uses akka should extend this class.
  */
-abstract class KhermesActorTest extends TestKit(ActorSystem("ActorTest",
-  ConfigFactory.load()))
-  with DefaultTimeout with ImplicitSender
-  with WordSpecLike with Matchers with BeforeAndAfterAll {
+abstract class KhermesActorTest extends TestKit(ActorSystem("ActorTest", ConfigFactory.load()))
+  with DefaultTimeout
+  with ImplicitSender
+  with WordSpecLike
+  with Matchers
+  with BeforeAndAfterAll {
 
   lazy implicit val config: Config = KhermesImplicits.config
   lazy implicit val executionContext = KhermesImplicits.executionContext
   override implicit val timeout = Timeout(5 seconds)
 
   override def afterAll {
-   system.terminate()
+    system.terminate()
   }
 }

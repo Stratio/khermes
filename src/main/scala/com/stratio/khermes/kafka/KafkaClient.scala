@@ -18,16 +18,15 @@ package com.stratio.khermes.kafka
 
 import java.util.Properties
 import java.util.concurrent.Future
-
-import com.stratio.khermes.utils.KhermesLogging
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, RecordMetadata}
 
 /**
  * Simple client used to send messages to a Kafka broker.
  * @param config with all Kafka configuration.
  */
-class KafkaClient[K](config: Config) extends KhermesLogging {
+class KafkaClient[K](config: Config) extends LazyLogging {
 
   lazy val producer: KafkaProducer[String, K] = new KafkaProducer(parseProperties())
 
