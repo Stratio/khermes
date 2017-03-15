@@ -9,7 +9,7 @@ hose {
     RELEASETIMEOUT = 40    
     ATTIMEOUT = 240
     PKGMODULESNAMES = ['khermes']
-
+	
  ITSERVICES = [
      ['ZOOKEEPER': [
                 'image': 'jplock/zookeeper:3.5.2-alpha'],

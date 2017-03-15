@@ -16,20 +16,22 @@
 
 package com.stratio.khermes.helpers
 
-import com.stratio.khermes.utils.KhermesLogging
+import com.typesafe.scalalogging.LazyLogging
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class RandomHelperTest extends FlatSpec with Matchers with KhermesLogging {
+class RandomHelperTest extends FlatSpec
+  with Matchers
+  with LazyLogging {
 
   "A RandomHelper" should "generates an element from a generic list" in {
-    RandomHelper.randomElementFromAList(List(1,2,3)) should contain oneOf (1,2,3)
-    RandomHelper.randomElementFromAList(List("a","b","c")) should contain oneOf ("a","b","c")
+    RandomHelper.randomElementFromAList(List(1, 2, 3)) should contain oneOf(1, 2, 3)
+    RandomHelper.randomElementFromAList(List("a", "b", "c")) should contain oneOf("a", "b", "c")
   }
 
   it should "return nothing when a generic list is empty" in {
-    RandomHelper.randomElementFromAList(List.empty) should be (None)
+    RandomHelper.randomElementFromAList(List.empty) should be(None)
   }
 }

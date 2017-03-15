@@ -21,13 +21,14 @@ import com.stratio.khermes.exceptions.KhermesException
 import com.stratio.khermes.helpers.ParserHelper._
 import com.stratio.khermes.helpers.{RandomHelper, ResourcesHelper}
 import com.stratio.khermes.implicits.KhermesSerializer
-import com.stratio.khermes.utils.{KhermesLogging, KhermesUnit}
+import com.stratio.khermes.utils.KhermesUnit
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.util.Try
 
 case class EmailGenerator(locale: String) extends KhermesUnit
   with KhermesSerializer
-  with KhermesLogging {
+  with LazyLogging {
 
   override def unitName: String = "email"
 
@@ -36,12 +37,12 @@ case class EmailGenerator(locale: String) extends KhermesUnit
       val resources = ResourcesHelper.getResources(unitName)
         .map(parse[Seq[String]](unitName, _))
       val maybeErrors = parseErrors[Seq[String]](resources)
-      if (maybeErrors.nonEmpty) log.warn(s"$maybeErrors")
+      if (maybeErrors.nonEmpty) logger.warn(s"$maybeErrors")
       resources
     case localeValue =>
       val resource = Seq(parse[Seq[String]](unitName, s"$localeValue.json"))
       val maybeErrors = parseErrors[Seq[String]](resource)
-      if (maybeErrors.nonEmpty) log.warn(s"$maybeErrors")
+      if (maybeErrors.nonEmpty) logger.warn(s"$maybeErrors")
       resource
   }
 

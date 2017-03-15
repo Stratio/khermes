@@ -21,22 +21,22 @@ import java.util.Date
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import com.stratio.khermes.actors.{KhermesClientActor, KhermesSupervisorActor}
-import com.stratio.khermes.utils.KhermesLogging
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.ExecutionContextExecutor
 
 /**
  * Common operations used when Khermes starts.
  */
-object KhermesRunnerHelper extends KhermesLogging {
+object KhermesRunnerHelper extends LazyLogging {
 
   /**
    * Prints a welcome message with some information about the system and creates necessary paths.
    * @param system
    */
   def welcome(implicit system: ActorSystem, config: Config): Unit = {
-    log.info(
+    logger.info(
       s"""
          |╦╔═┬ ┬┌─┐┬─┐┌┬┐┌─┐┌─┐
          |╠╩╗├─┤├┤ ├┬┘│││├┤ └─┐
@@ -104,7 +104,7 @@ object KhermesRunnerHelper extends KhermesLogging {
   def createPaths(implicit config: Config): Unit = {
     val templatesFile = new File(config.getString("khermes.templates-path"))
     if(!templatesFile.exists()) {
-      log.info(s"Creating templates path: ${templatesFile.getAbsolutePath}")
+      logger.info(s"Creating templates path: ${templatesFile.getAbsolutePath}")
       templatesFile.mkdirs()
     }
   }
