@@ -9,7 +9,6 @@ hose {
     RELEASETIMEOUT = 40    
     ATTIMEOUT = 240
     PKGMODULESNAMES = ['khermes']
-    FOSS = true
 	
  ITSERVICES = [
      ['ZOOKEEPER': [
