@@ -15,40 +15,41 @@
  */
 
 package com.stratio.khermes.kafka
-
 import java.util.UUID
 
-import com.stratio.khermes.utils.KhermesLogging
+import com.stratio.khermes.utils.EmbeddedServersUtils
+import com.typesafe.scalalogging.LazyLogging
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class KafkaClientIT extends FlatSpec with Matchers with KhermesLogging {
+class KafkaClientTest extends FlatSpec
+  with Matchers
+  with LazyLogging
+  with EmbeddedServersUtils{
 
   val Message = "testMessage"
   val Topic = s"topic-${UUID.randomUUID().toString}"
-  val PollTime = 200
-  val SessionTimeout = 1000
-  val ConnectionTimeout = 1000
-  val IsZkSecurityEnabled = false
-  val Partitions = 1
-  val ReplicationFactor = 1
-  val TimeoutPoll = 100
   val NumberOfMessages = 3
-  val ConnectionString = "localhost:2181"
-
-  val config = com.stratio.khermes.implicits.KhermesImplicits.config
 
   "A KafkaClient" should "parse the configuration" in {
-    val kafka = new KafkaClient[Object](config)
-    Option(kafka.parseProperties().getProperty("bootstrap.servers")) should not be (None)
+    withEmbeddedKafkaServer(Seq(Topic)) { kafkaServer =>
+      withKafkaClient[Object](kafkaServer) { kafkaClient =>
+        Option(kafkaClient.parseProperties().getProperty("bootstrap.servers")) should not be (None)
+      }
+    }
   }
 
   it should "produce messages in a topic" in {
-    val kafka = new KafkaClient[Object](config)
-    (1 to NumberOfMessages).foreach(_ => kafka.send(Topic, Message))
-    kafka.producer.flush()
-    kafka.producer.close()
+    withEmbeddedKafkaServer(Seq(Topic)) { kafkaServer =>
+      withKafkaClient[Object](kafkaServer) { kafkaClient =>
+        (1 to NumberOfMessages).foreach(_ => {
+          kafkaClient.send(Topic, Message)
+        })
+        kafkaClient.producer.flush()
+        kafkaClient.producer.close()
+      }
+    }
   }
 }

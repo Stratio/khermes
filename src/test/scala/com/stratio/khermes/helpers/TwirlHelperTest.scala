@@ -17,14 +17,18 @@
 package com.stratio.khermes.helpers
 
 import com.stratio.khermes.helpers.TwirlHelper.CompilationError
-import com.stratio.khermes.utils.{Khermes, KhermesLogging}
+import com.stratio.khermes.utils.Khermes
+import com.typesafe.scalalogging.LazyLogging
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 import play.twirl.api.Txt
 
 @RunWith(classOf[JUnitRunner])
-class TwirlHelperTest  extends FlatSpec with Matchers with BeforeAndAfter with KhermesLogging  {
+class TwirlHelperTest extends FlatSpec
+  with Matchers
+  with BeforeAndAfter
+  with LazyLogging {
 
   implicit val config = com.stratio.khermes.implicits.KhermesImplicits.config
 
@@ -35,7 +39,7 @@ class TwirlHelperTest  extends FlatSpec with Matchers with BeforeAndAfter with K
   "A TwirlHelper" should "compile a simple template without object injection" in {
     val template = "Hello world"
     val result = cleanContent(TwirlHelper.template[() => Txt](template, "templateTest").static().toString())
-    result should be ("Hello world")
+    result should be("Hello world")
   }
 
   it should "compile a template and inject a string" in {
@@ -45,7 +49,7 @@ class TwirlHelperTest  extends FlatSpec with Matchers with BeforeAndAfter with K
         |Hello @name
       """.stripMargin
     val result = cleanContent(TwirlHelper.template[(String) => Txt](template, "templateTest").static("Neo").toString())
-    result should be ("Hello Neo")
+    result should be("Hello Neo")
   }
 
   it should "compile a template and inject an khermes helper" in {
@@ -57,7 +61,8 @@ class TwirlHelperTest  extends FlatSpec with Matchers with BeforeAndAfter with K
 
     val khermes = new Khermes("EN")
 
-    val result = cleanContent(TwirlHelper.template[(Khermes) => Txt](template, "templateTest").static(khermes).toString())
+    val result = cleanContent(
+      TwirlHelper.template[(Khermes) => Txt](template, "templateTest").static(khermes).toString())
     result should fullyMatch regex """Hello [a-zA-Z]+"""
   }
 
@@ -74,5 +79,5 @@ class TwirlHelperTest  extends FlatSpec with Matchers with BeforeAndAfter with K
    * @param content with the original content.
    * @return a sanitized content.
    */
-  def cleanContent(content: String): String = content.replace("\n","").replaceAll("  +","")
+  def cleanContent(content: String): String = content.replace("\n", "").replaceAll("  +", "")
 }

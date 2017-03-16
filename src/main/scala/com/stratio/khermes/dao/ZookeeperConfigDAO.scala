@@ -22,10 +22,11 @@ import org.apache.curator.retry.ExponentialBackoffRetry
 
 import scala.util.{Failure, Success, Try}
 
-class ZookeeperConfigDAO extends ConfigDAO[String] {
+class ZookeeperConfigDAO(connectionServer: Option[String] = None) extends ConfigDAO[String] {
   val config = com.stratio.khermes.implicits.KhermesImplicits.config
-  lazy val curatorFramework: CuratorFramework = buildCurator
-  lazy val connectionString = Try(config.getString(KhermesConstants.ZookeeperConnection)).getOrElse(KhermesConstants.ZookeeperConnectionDefault)
+  lazy val curatorFramework: CuratorFramework = buildCurator(connectionServer.getOrElse(connectionString))
+  lazy val connectionString = Try(config.getString(KhermesConstants.ZookeeperConnection)).getOrElse(
+    KhermesConstants.ZookeeperConnectionDefault)
   lazy val connectionTimeout = config.getInt(KhermesConstants.ZookeeperConnectionTimeout)
   lazy val sessionTimeout = config.getInt(KhermesConstants.ZookeeperSessionTimeout)
   lazy val retryAttempts = config.getInt(KhermesConstants.ZookeeperRetryAttempts)
@@ -67,19 +68,19 @@ class ZookeeperConfigDAO extends ConfigDAO[String] {
   }
 
 
-  def buildCurator: CuratorFramework = {
+  def buildCurator(connectionServer: String): CuratorFramework = {
     Try {
       val cf = CuratorFrameworkFactory.builder()
-        .connectString(connectionString)
+        .connectString(connectionServer)
         .connectionTimeoutMs(connectionTimeout)
         .sessionTimeoutMs(sessionTimeout)
         .retryPolicy(new ExponentialBackoffRetry(retryAttempts, retryInterval))
         .build()
       cf.start()
-      log.info(s"Zookeeper connection to ${connectionString} was STARTED.")
+      logger.info(s"Zookeeper connection to ${connectionServer} was STARTED.")
       cf
     }.getOrElse {
-      log.error("Impossible to start Zookeeper connection")
+      logger.error("Impossible to start Zookeeper connection")
       throw new KhermesException("Impossible to start Zookeeper connection")
     }
   }

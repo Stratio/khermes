@@ -242,4 +242,4 @@ Want to contribute? Great!
 * [Antonio Alfonso](https://github.com/antonioalf)
 * [Emilio Ambrosio](https://github.com/eambrosio)
 * [Enrique Ruiz](https://github.com/eruizgar)
-* [Juan Pedro Gilaberte](https://github.com/jpgilaberte)
+* [Juan Pedro Gilaberte](https://github.com/jpgilaberte-stratio)

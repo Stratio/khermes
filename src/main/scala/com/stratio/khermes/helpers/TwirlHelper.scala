@@ -21,8 +21,8 @@ import java.lang.reflect.Method
 import java.net._
 
 import com.stratio.khermes.constants.KhermesConstants
-import com.stratio.khermes.utils.KhermesLogging
 import com.typesafe.config.Config
+import com.typesafe.scalalogging.LazyLogging
 import play.twirl.compiler.{GeneratedSource, TwirlCompiler}
 
 import scala.collection.mutable
@@ -33,7 +33,7 @@ import scala.tools.nsc.{Global, Settings}
 /**
  * Helper used to parse and compile templates using Twirl.
  */
-object TwirlHelper extends KhermesLogging {
+object TwirlHelper extends LazyLogging {
 
   /**
    * Compiles and executes a template with Twirl. It follows the next steps:
