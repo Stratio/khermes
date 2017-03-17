@@ -2,5 +2,6 @@ language: java
 
 script: "mvn clean compile test"
 
+
 jdk:
    - oraclejdk8
