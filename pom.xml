@@ -40,6 +40,8 @@
         <joda-converter.version>1.7</joda-converter.version>
         <curator-framework.version>2.9.0</curator-framework.version>
         <scala-logging.version>3.5.0</scala-logging.version>
+        <scala-maven.tests.plugin.version>2.19.1</scala-maven.tests.plugin.version>
+        <scala-maven.plugin.version>3.2.2</scala-maven.plugin.version>
     </properties>
 
     <developers>
@@ -262,6 +264,23 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
+                <version>${scala-maven.plugin.version}</version>
+                <configuration>
+                    <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
+                    <recompileMode>modified-only</recompileMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                            <goal>doc</goal>
+                            <goal>doc-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -322,6 +341,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${scala-maven.tests.plugin.version}</version>
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
@@ -329,6 +349,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${scala-maven.tests.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.scalastyle</groupId>
@@ -352,7 +381,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>
