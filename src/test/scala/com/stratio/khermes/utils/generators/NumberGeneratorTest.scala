@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.stratio.khermes.utils.generators
 
 import java.security.InvalidParameterException
@@ -29,11 +28,9 @@ import org.scalatest.{FlatSpec, Matchers}
 class NumberGeneratorTest extends FlatSpec
   with Matchers {
 
-
   it should "generate a random integer of 0 digit give it 0" in {
     val khermesNum = Khermes("")
     khermesNum.Number.number(0) shouldBe 0
-
   }
 
   it should "generate a random integer when it passed the number of digit" in {
@@ -105,6 +102,13 @@ class NumberGeneratorTest extends FlatSpec
     //scalastyle:on
   }
 
+  it should "generate a random decimal between the range" in {
+    val khermesNum = Khermes("")
+    val decimalInRange = khermesNum.Number.decimalInRange(1, 2).toInt
+
+    decimalInRange should be (1)
+  }
+
   it should "generate a random decimal when it passed the range " in {
     val khermesNum = Khermes("")
     forAll { (n: Int, m: Int) =>
@@ -112,6 +116,20 @@ class NumberGeneratorTest extends FlatSpec
     }
   }
 
+  it should "generate a random rating number less than the number passed as parameter" in {
+    val khermesNum = Khermes("")
+
+    val rating = khermesNum.Number.rating(1)
+    rating shouldBe 0
+  }
+
+  it should "generate a random rating for all n's" in {
+    val khermesNum = Khermes("")
+
+    forAll { (n: Int) =>
+      khermesNum.Number.rating(n) < n
+    }
+  }
 
   /**
    * Returns length of a Integer element.
@@ -126,5 +144,4 @@ class NumberGeneratorTest extends FlatSpec
    * @return size of the BigDecimal.
    */
   def numberOfDigitsFromANumber(n: BigDecimal): Int = n.abs.toString.length - 1
-
 }
