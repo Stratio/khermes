@@ -9,12 +9,6 @@
     <version>0.2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <parent>
-        <groupId>com.stratio</groupId>
-        <artifactId>parent</artifactId>
-        <version>0.9.0</version>
-    </parent>
-
     <name>Stratio Khermes</name>
     <description>A distributed fake data generator based in Akka</description>
     <inceptionYear>2016</inceptionYear>
@@ -23,13 +17,6 @@
         <system>GitHub</system>
         <url>https://github.com/Stratio/khermes/issues</url>
     </issueManagement>
-
-    <scm>
-        <url>https://github.com/stratio/khermes</url>
-        <connection>scm:git:git://github.com/stratio/khermes.git</connection>
-        <developerConnection>scm:git:git@github.com:stratio/khermes.git</developerConnection>
-        <tag>master</tag>
-    </scm>
 
     <properties>
         <scala.binary.version>2.11</scala.binary.version>
