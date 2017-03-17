@@ -99,7 +99,56 @@ class KhermesConfigTest extends FlatSpec
         |}
       """.stripMargin
 
-    "An KhermesConfig" should "parse a correct config when serializer is Json" in {
+    val khermesConfigWithoutTimeOutRules =
+      """
+        |khermes {
+        |  templates-path = "/some/test/path"
+        |  template-name = "someTemplate"
+        |  topic = "someTopic"
+        |  i18n = "EN"
+        |}
+      """.stripMargin
+
+    val khermesConfigWithNumberOfEvents =
+      """
+        |khermes {
+        |  templates-path = "/some/test/path"
+        |  template-name = "someTemplate"
+        |  topic = "someTopic"
+        |  i18n = "EN"
+        |  timeout-rules {
+        |    number-of-events: 1000
+        |  }
+        |}
+      """.stripMargin
+
+    val khermesConfigWithDuration =
+      """
+        |khermes {
+        |  templates-path = "/some/test/path"
+        |  template-name = "someTemplate"
+        |  topic = "someTopic"
+        |  i18n = "EN"
+        |  timeout-rules {
+        |    duration: 2 seconds
+        |  }
+        |}
+      """.stripMargin
+
+    val khermesConfigWithStopRules =
+      """
+        |khermes {
+        |  templates-path = "/some/test/path"
+        |  template-name = "someTemplate"
+        |  topic = "someTopic"
+        |  i18n = "EN"
+        |  stop-rules {
+        |    number-of-events: 500
+        |  }
+        |}
+      """.stripMargin
+
+  "An KhermesConfig" should "parse a correct config when serializer is Json" in {
       val hc = KhermesConfig(khermesConfig, jsonKafkaConfig, template)
       checkCommonFields(hc)
       hc.configType should be(KhermesConfig.ConfigType.Json)
@@ -123,6 +172,48 @@ class KhermesConfigTest extends FlatSpec
       a[AssertionError] should be thrownBy {
         KhermesConfig(khermesConfig, wrongKafkaConfig, template)
       }
+    }
+
+    it should "return None when the parameter timeout-rules/number of events DOES NOT exist" in {
+      val khermesConfig = KhermesConfig(khermesConfigWithoutTimeOutRules, avroKafkaConfig, template, Option(avroSchema))
+      val timeOutNumberOfEvents = khermesConfig.timeoutNumberOfEventsOption
+
+      timeOutNumberOfEvents.isDefined should be(false)
+    }
+
+    it should "return Some when the parameter timeout-rules/number of events DOES exist" in {
+      val khermesConfig = KhermesConfig(khermesConfigWithNumberOfEvents, avroKafkaConfig, template, Option(avroSchema))
+      val timeOutNumberOfEvents = khermesConfig.timeoutNumberOfEventsOption
+
+      timeOutNumberOfEvents.isDefined should be(true)
+    }
+
+    it should "return None when the parameter timeout-rules/duration DOES NOT exist" in {
+      val khermesConfig = KhermesConfig(khermesConfigWithoutTimeOutRules, avroKafkaConfig, template, Option(avroSchema))
+      val timeOutDuration = khermesConfig.timeoutNumberOfEventsDurationOption
+
+      timeOutDuration.isDefined should be(false)
+    }
+
+    it should "return Some when the parameter timeout-rules/duration DOES exist" in {
+      val khermesConfig = KhermesConfig(khermesConfigWithDuration, avroKafkaConfig, template, Option(avroSchema))
+      val timeOutDuration = khermesConfig.timeoutNumberOfEventsDurationOption
+
+      timeOutDuration.isDefined should be(true)
+    }
+
+    it should "return None when the parameter stop-rules/number-of-events DOES NOT exist" in {
+      val khermesConfig = KhermesConfig(khermesConfigWithoutTimeOutRules, avroKafkaConfig, template, Option(avroSchema))
+      val stopRulesNumberOfEvents = khermesConfig.stopNumberOfEventsOption
+
+      stopRulesNumberOfEvents.isDefined should be(false)
+    }
+
+    it should "return Some when the parameter stop-rules/number-of-events DOES exist" in {
+      val khermesConfig = KhermesConfig(khermesConfigWithStopRules, avroKafkaConfig, template, Option(avroSchema))
+      val stopRulesNumberOfEvents = khermesConfig.stopNumberOfEventsOption
+
+      stopRulesNumberOfEvents.isDefined should be(true)
     }
 
     private[this] def checkCommonFields(hc: KhermesConfig): Unit
