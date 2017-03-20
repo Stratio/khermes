@@ -123,12 +123,12 @@ Steps to run a policy:
   }
 ```
   As you can see you should configure the following variables:
-    - templates-path: in every node that you send this configuration, it will need to generate and compile a template.
-    - topic: it indicates a Kafka topic where messages will be produced.
-    - template-name: it indicates a prefix for the generated .scala and .class files. It is possible that in the future this variable dissapears.
-    - i18n: internationalization of Khermes helper. It generates, for example names in Spanish. Right now only ES and EN are available.
-    - timeout-rules: it is optional. When it is set it generates 1000 events and wait 2 seconds to generate the next 1000 events.
-    - stop-rules: it is optional. When it is set it generates 5000 events and the node stops data generation. Besides the node will be free to accept more requests.
+  - templates-path: in every node that you send this configuration, it will need to generate and compile a template.
+  - topic: it indicates a Kafka topic where messages will be produced.
+  - template-name: it indicates a prefix for the generated .scala and .class files. It is possible that in the future this variable dissapears.
+  - i18n: internationalization of Khermes helper. It generates, for example names in Spanish. Right now only ES and EN are available.
+  - timeout-rules: it is optional. When it is set it generates 1000 events and wait 2 seconds to generate the next 1000 events.
+  - stop-rules: it is optional. When it is set it generates 5000 events and the node stops data generation. Besides the node will be free to accept more requests.
     
 * Step 2) Save a Kafka configuration that will also be persisted in Zookeeper.
 ```

@@ -44,7 +44,8 @@ class KhermesSupervisorActor(implicit config: Config) extends Actor with ActorLo
   mediator ! Subscribe("content", self)
 
   var khermesExecutor: Option[KhermesExecutor] = None
-  val id = UUID.randomUUID.toString
+  //TODO Temporal until a better implementation of parsing arguments
+  val id = UUID.randomUUID.toString.replace("-","")
 
   val khermes = Khermes(Try(config.getString("khermes.i18n")).toOption.getOrElse("EN"))
 
