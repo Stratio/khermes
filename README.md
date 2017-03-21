@@ -89,13 +89,13 @@ If you execute help in your command line you can see the list of available comma
 
 ```
 khermes> help
-Khermes client provide the next commands to manage your Khermes cluster:
+Khermes client provides the next commands to manage your Khermes cluster:
   Usage: COMMAND [args...]
 
   Commands:
      start [command options] : Starts event generation in N nodes.
-       -h, --khermes    : Khermes configuration
-       -k, --kafka      : Kafka configuration
+       -kh, --khermes    : Khermes configuration
+       -ka, --kafka      : Kafka configuration
        -t, --template   : Template to generate data
        -a, --avro       : Avro configuration
        -i, --ids        : Node id where start khermes
@@ -103,13 +103,13 @@ Khermes client provide the next commands to manage your Khermes cluster:
        -i, --ids        : Node id where start khermes
      ls                    : List the nodes with their current status
      save [command options] : Save your configuration in zookeeper
-       -h, --khermes    : Khermes configuration
-       -k, --kafka      : Kafka configuration
+       -kh, --khermes    : Khermes configuration
+       -ka, --kafka      : Kafka configuration
        -t, --template   : Template to generate data
        -a, --avro       : Avro configuration
      show [command options] : Show your configuration
-       -h, --khermes    : Khermes configuration
-       -k, --kafka      : Kafka configuration
+       -kh, --khermes    : Khermes configuration
+       -ka, --kafka      : Kafka configuration
        -t, --template   : Template to generate data
        -a, --avro       : Avro configuration
      clear                 : Clean the screen.

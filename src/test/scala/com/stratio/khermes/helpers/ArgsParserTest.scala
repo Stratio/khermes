@@ -20,10 +20,25 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
 @RunWith(classOf[JUnitRunner])
-class ArgsParserTest extends FlatSpec with Matchers{
-    it should "give a message with configuration empties" in {
-      val line = "start --kafka k1 -t t1 --khermes k1 --ids 11231232123213 3123123434535345345"
-      val argsParser = new ArgsParser
-      argsParser.parse(line) shouldBe Map("kafka" -> List("k1"),"t"->List("t1"),"khermes"->List("k1"),"ids"->List("11231232123213","3123123434535345345"))
-    }
+class ArgsParserTest extends FlatSpec with Matchers {
+  it should "give a map with arg as key and a list of the values" in {
+    val line = "start --kafka k1 -t t1 --khermes k1 --ids 11231232123213 3123123434535345345"
+    val argsParser = new ArgsParser
+    argsParser.commandWord(line) shouldBe "start"
+    argsParser.parseArgsValues(line) shouldBe Map("kafka" -> List("k1"), "t" -> List("t1"), "khermes" -> List("k1"), "ids" -> List("11231232123213", "3123123434535345345"))
+  }
+
+  it should "when an arg do not have value that return a empty list" in {
+    val line = "start --kafka -t t1 --khermes k1 --ids 11231232123213 3123123434535345345"
+    val argsParser = new ArgsParser
+    argsParser.parseArgsValues(line) shouldBe Map("kafka" -> List(), "t" -> List("t1"), "khermes" -> List("k1"), "ids" -> List("11231232123213", "3123123434535345345"))
+  }
+
+  it should "give an empty map when there are not args" in {
+    val line = "save"
+    val argsParser = new ArgsParser
+    argsParser.parseArgsValues(line) shouldBe Map()
+  }
+
+
 }

@@ -55,24 +55,23 @@ class KhermesConsoleHelperTest extends FlatSpec
   it should "give a message a help message" in {
     khermesConsoleHelper.help shouldBe helpMessage
   }
-  it should "give a message a when the command is not valid" in {
-    khermesConsoleHelper.printNotFoundCommand shouldBe "Command not found. Type help to list available commands."
-  }
-  it should "give a config message when show a config that you save" in {
-    khermesConsoleHelper.save(Map("kafka" -> List("k1")),"save",Option("k1Config"))
-    khermesConsoleHelper.save(Map("khermes" -> List("h1")),"save",Option("h1Config"))
-    khermesConsoleHelper.save(Map("template" -> List("t1")),"save",Option("t1Config"))
-    khermesConsoleHelper.save(Map("avro" -> List("a1")),"save",Option("a1Config"))
-    khermesConsoleHelper.show(Map("kafka" -> List("k1")),"show") shouldBe "k1Config"
-    khermesConsoleHelper.show(Map("khermes" -> List("h1")),"show") shouldBe "h1Config"
-    khermesConsoleHelper.show(Map("template" -> List("t1")),"show") shouldBe "t1Config"
-    khermesConsoleHelper.show(Map("avro" -> List("a1")),"show") shouldBe "a1Config"
-  }
-  it should "load a None when do not find a config in a specific path" in {
-    khermesConsoleHelper.load("")shouldBe None
-  }
-  it should "give a message a when the params are not correct" in {
-    khermesConsoleHelper.show(Map("fail" -> List("a1")),"show") shouldBe "Arg fail is not correct."
-//    khermesConsoleHelper.save(Map("fail" -> List("a1")),"save",None) shouldBe "Arg fail is not correct."
-  }
+//  it should "give a message a when the command is not valid" in {
+//    khermesConsoleHelper.printNotFoundCommand shouldBe "Command not found. Type help to list available commands."
+//  }
+//  it should "give a config message when show a config that you save" in {
+//    khermesConsoleHelper.save(Map("kafka" -> List("k1")),"save",Option("k1Config"))
+//    khermesConsoleHelper.save(Map("khermes" -> List("h1")),"save",Option("h1Config"))
+//    khermesConsoleHelper.save(Map("template" -> List("t1")),"save",Option("t1Config"))
+//    khermesConsoleHelper.save(Map("avro" -> List("a1")),"save",Option("a1Config"))
+//    khermesConsoleHelper.show(Map("kafka" -> List("k1")),"show") shouldBe "k1Config"
+//    khermesConsoleHelper.show(Map("khermes" -> List("h1")),"show") shouldBe "h1Config"
+//    khermesConsoleHelper.show(Map("template" -> List("t1")),"show") shouldBe "t1Config"
+//    khermesConsoleHelper.show(Map("avro" -> List("a1")),"show") shouldBe "a1Config"
+//  }
+//  it should "load a None when do not find a config in a specific path" in {
+//    khermesConsoleHelper.load("")shouldBe None
+//  }
+//  it should "give a message a when the params are not correct" in {
+//    khermesConsoleHelper.show(Map("fail" -> List("a1")),"show") shouldBe "Arg fail is not correct."
+//  }
 }

@@ -16,12 +16,13 @@
 package com.stratio.khermes.helpers
 
 class ArgsParser {
-  def commandWord(line: String):String={
+  def commandWord(line: String): String = {
     line.split(" ").head
   }
-  def parse(line: String): Map[String, List[String]] ={
+
+  def parseArgsValues(line: String): Map[String, List[String]] = {
     val splitWords = line.split("-").filter(x => x != "")
-    val filterFirstWord= splitWords.drop(1)
+    val filterFirstWord = splitWords.drop(1)
     val options = filterFirstWord.map(x => x.split("\\W+"))
     val result = options.map(c => c.head -> c.tail.toList)
     result.toMap
