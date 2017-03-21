@@ -23,13 +23,13 @@ import org.scalatest.{FlatSpec, Matchers}
 class KhermesConsoleHelperTest extends FlatSpec
   with Matchers {
   val helpMessage =
-    s"""Khermes client provide the next commands to manage your Khermes cluster:
+    s"""Khermes client provides the next commands to manage your Khermes cluster:
        |  Usage: COMMAND [args...]
        |
                |  Commands:
        |     start [command options] : Starts event generation in N nodes.
-       |       -h, --khermes    : Khermes configuration
-       |       -k, --kafka      : Kafka configuration
+       |       -kh, --khermes    : Khermes configuration
+       |       -ka, --kafka      : Kafka configuration
        |       -t, --template   : Template to generate data
        |       -a, --avro       : Avro configuration
        |       -i, --ids        : Node id where start khermes
@@ -37,13 +37,13 @@ class KhermesConsoleHelperTest extends FlatSpec
        |       -i, --ids        : Node id where start khermes
        |     ls                    : List the nodes with their current status
        |     save [command options] : Save your configuration in zookeeper
-       |       -h, --khermes    : Khermes configuration
-       |       -k, --kafka      : Kafka configuration
+       |       -kh, --khermes    : Khermes configuration
+       |       -ka, --kafka      : Kafka configuration
        |       -t, --template   : Template to generate data
        |       -a, --avro       : Avro configuration
        |     show [command options] : Show your configuration
-       |       -h, --khermes    : Khermes configuration
-       |       -k, --kafka      : Kafka configuration
+       |       -kh, --khermes    : Khermes configuration
+       |       -ka, --kafka      : Kafka configuration
        |       -t, --template   : Template to generate data
        |       -a, --avro       : Avro configuration
        |     clear                 : Clean the screen.
@@ -55,9 +55,9 @@ class KhermesConsoleHelperTest extends FlatSpec
   it should "give a message a help message" in {
     khermesConsoleHelper.help shouldBe helpMessage
   }
-//  it should "give a message a when the command is not valid" in {
-//    khermesConsoleHelper.printNotFoundCommand shouldBe "Command not found. Type help to list available commands."
-//  }
+  it should "give a message a when the command is not valid" in {
+    khermesConsoleHelper.printNotFoundCommand shouldBe "Command not found. Type help to list available commands."
+  }
 //  it should "give a config message when show a config that you save" in {
 //    khermesConsoleHelper.save(Map("kafka" -> List("k1")),"save",Option("k1Config"))
 //    khermesConsoleHelper.save(Map("khermes" -> List("h1")),"save",Option("h1Config"))
