@@ -29,17 +29,17 @@ Right now the only way  to execute Khermes is to generate a jar file. To make it
 ```sh
 $ mvn clean package
 ```
-This command will generate a fat jar with all dependencies in target/hermes-<version>.jar. To run it, you should execute:
+This command will generate a fat jar with all dependencies in target/khermes-<version>.jar. To run it, you should execute:
 ```sh
-$ java -jar target/hermes-<version>.jar [-Dparameters.to.overwrite]
+$ java -jar target/khermes-<version>.jar [-Dparameters.to.overwrite]
 ```
 
 ## Getting started.
 The first thing that you should do is to specify a configuration. Khermes configuration is done thanks to Typesafe config.
 You can see all options that you can configure in the next section:
 ```
-hermes {
-  templates-path = "/opt/hermes/templates"
+khermes {
+  templates-path = "/opt/khermes/templates"
   client = false
 }
 akka {
@@ -89,24 +89,38 @@ If you execute help in your command line you can see the list of available comma
 
 ```
 khermes> help
-Khermes commands:
-  set khermes             Sets your Khermes configuration
-  set kafka              Sets your Kafka configuration
-  set template           Sets your template
-  set avro               Sets your Avro configuration
-  show config            Show all set configurations
-  ls                     Lists the nodes with their current status
-  start <node-id>        Starts event generation in node with id <node-id>
-  stop <node-id>         Stops event generation in node with id <node-id>
-  clear                  Cleans the screen.
-  help                   Shows this help.
-  exit                   Exit of Khermes Cli.
+Khermes client provides the next commands to manage your Khermes cluster:
+  Usage: COMMAND [args...]
+
+  Commands:
+     start [command options] : Starts event generation in N nodes.
+       -kh, --khermes    : Khermes configuration
+       -ka, --kafka      : Kafka configuration
+       -t, --template   : Template to generate data
+       -a, --avro       : Avro configuration
+       -i, --ids        : Node id where start khermes
+     stop [command options] : Stop event generation in N nodes.
+       -i, --ids        : Node id where start khermes
+     ls                    : List the nodes with their current status
+     save [command options] : Save your configuration in zookeeper
+       -kh, --khermes    : Khermes configuration
+       -ka, --kafka      : Kafka configuration
+       -t, --template   : Template to generate data
+       -a, --avro       : Avro configuration
+     show [command options] : Show your configuration
+       -kh, --khermes    : Khermes configuration
+       -ka, --kafka      : Kafka configuration
+       -t, --template   : Template to generate data
+       -a, --avro       : Avro configuration
+     clear                 : Clean the screen.
+     help                  : Print this usage.
+     exit | quit | bye     : Exit of Khermes Cli.   
 ```
 
 Steps to run a policy:
 * Step 1) Save a Khermes configuration that will be persisted in Zookeeper. This is needed because otherwise, the next time that the user executes Khermes it will lost this configuration:
 ```
-  khermes> set khermes
+  khermes> save --khermes nameKhermesConfig
   Press Control + D to finish
   khermes {
      templates-path = "/tmp/khermes/templates"
@@ -123,16 +137,16 @@ Steps to run a policy:
   }
 ```
   As you can see you should configure the following variables:
-    - templates-path: in every node that you send this configuration, it will need to generate and compile a template.
-    - topic: it indicates a Kafka topic where messages will be produced.
-    - template-name: it indicates a prefix for the generated .scala and .class files. It is possible that in the future this variable dissapears.
-    - i18n: internationalization of Khermes helper. It generates, for example names in Spanish. Right now only ES and EN are available.
-    - timeout-rules: it is optional. When it is set it generates 1000 events and wait 2 seconds to generate the next 1000 events.
-    - stop-rules: it is optional. When it is set it generates 5000 events and the node stops data generation. Besides the node will be free to accept more requests.
+  - templates-path: in every node that you send this configuration, it will need to generate and compile a template.
+  - topic: it indicates a Kafka topic where messages will be produced.
+  - template-name: it indicates a prefix for the generated .scala and .class files. It is possible that in the future this variable dissapears.
+  - i18n: internationalization of Khermes helper. It generates, for example names in Spanish. Right now only ES and EN are available.
+  - timeout-rules: it is optional. When it is set it generates 1000 events and wait 2 seconds to generate the next 1000 events.
+  - stop-rules: it is optional. When it is set it generates 5000 events and the node stops data generation. Besides the node will be free to accept more requests.
     
 * Step 2) Save a Kafka configuration that will also be persisted in Zookeeper.
 ```
-  khermes> set kafka
+  khermes> save --kafka nameKafkaConfig
   Press Control + D to finish
   kafka {
      bootstrap.servers = "localhost:9092"
@@ -144,7 +158,7 @@ Steps to run a policy:
   
 * Step 3) Save a Twirl template that will also be persisted in Zookeeper.
 ```
-  khermes> set template
+  khermes> save --template nameTemplate
   Press Control + D to finish
   @import com.stratio.hermes.utils.Hermes
   @(khermes: Khermes)
@@ -156,11 +170,11 @@ Steps to run a policy:
 ```
   khermes> ls
   Node Id                                Status
-  845441ec-cb0d-4363-b494-a39d56a82727 | false
-  khermes> start 845441ec-cb0d-4363-b494-a39d56a82727
+  845441eccb0d4363b494a39d56a82727 | false
+  khermes> start --kafka nameKafkaConfig --template nameTemplate --khermes nameKhermesConfig --ids 845441eccb0d4363b494a39d56a82727
   khermes> ls
   Node Id                                Status
-  845441ec-cb0d-4363-b494-a39d56a82727 | true
+  845441eccb0d4363b494a39d56a82727 | true
 ```
   At this moment the node with id 845441ec-cb0d-4363-b494-a39d56a82727 is producing messages to Kafka following the saved template. You can check it using Kafka console consumer.
 
@@ -204,11 +218,11 @@ Based on [Faker](https://github.com/stympy/faker) we are developing a random gen
 ## Docker.
 * Seed + Node
 ```sh
-  docker run -dit --name SEED_NAME -e PARAMS="-Dhermes.client=true -Dakka.remote.hostname=SEED_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2552 -Dakka.remote.netty.tcp.hostname=SEED_NAME.DOMAIN -Dakka.cluster.seed-nodes.0=akka.tcp://hermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/hermes:VERSION
+  docker run -dit --name SEED_NAME -e PARAMS="-Dkhermes.client=true -Dakka.remote.hostname=SEED_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2552 -Dakka.remote.netty.tcp.hostname=SEED_NAME.DOMAIN -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/khermes:VERSION
 ```
 * Node
 ```sh
-  docker run -dit --name AGENT_NAME -e PARAMS="-Dhermes.client=false -Dakka.remote.hostname=AGENT_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2553 -Dakka.cluster.seed-nodes.0=akka.tcp://hermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/hermes:VERSION
+  docker run -dit --name AGENT_NAME -e PARAMS="-Dkhermes.client=false -Dakka.remote.hostname=AGENT_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2553 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/khermes:VERSION
 ```
   
 ## FAQ.

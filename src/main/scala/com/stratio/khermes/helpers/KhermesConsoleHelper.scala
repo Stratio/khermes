@@ -17,113 +17,90 @@
 package com.stratio.khermes.helpers
 
 import com.stratio.khermes.actors.KhermesClientActor
-import com.stratio.khermes.constants.KhermesConstants
+import com.stratio.khermes.constants.KhermesConstants._
 import com.stratio.khermes.implicits.KhermesImplicits.khermesConfigDAO
 import jline.console.ConsoleReader
+import jline.console.completer._
 
-
-import scala.util.{Success, Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 case class KhermesConsoleHelper(client: KhermesClientActor) {
 
   lazy val reader = createDefaultReader()
-
-  parseLines(
-    firstLoad(KhermesConstants.KhermesConfigNodePath),
-    firstLoad(KhermesConstants.KafkaConfigNodePath),
-    firstLoad(KhermesConstants.TemplateNodePath),
-    firstLoad(KhermesConstants.AvroConfigNodePath)
-  )
+  lazy val argsParser = new ArgsParser
 
   //scalastyle:off
-  def parseLines(khermesConfig: Option[String] = None,
-                 kafkaConfig: Option[String] = None,
-                 template: Option[String] = None,
-                 avroConfig: Option[String] = None): Unit = {
+  def parseLines: Unit = {
     reader.readLine.trim match {
-      case "set khermes" =>
-        val config = setConfiguration(khermesConfig, kafkaConfig, template, avroConfig)
-        khermesConfigDAO.saveConfig(KhermesConstants.KhermesConfigNodePath, config.get)
-        parseLines(config, kafkaConfig, template, avroConfig)
+      case value if value.startsWith("save") =>
+        KhermesConsoleHelper.save(argsParser.parseArgsValues(value), argsParser.commandWord(value), this.setConfiguration())
+        parseLines
 
-      case "set kafka" =>
-        val config = setConfiguration(khermesConfig, kafkaConfig, template, avroConfig)
-        khermesConfigDAO.saveConfig(KhermesConstants.KafkaConfigNodePath, config.get)
-        parseLines(khermesConfig, config, template, avroConfig)
-
-      case "set template" =>
-        val config = setConfiguration(khermesConfig, kafkaConfig, template, avroConfig)
-        khermesConfigDAO.saveConfig(KhermesConstants.TemplateNodePath, config.get)
-        parseLines(khermesConfig, kafkaConfig, config, avroConfig)
-
-      case "set avro" =>
-        val config = setConfiguration(khermesConfig, kafkaConfig, template, avroConfig)
-        khermesConfigDAO.saveConfig(KhermesConstants.AvroConfigNodePath, config.get)
-        parseLines(khermesConfig, kafkaConfig, template, config)
+      case value if value.startsWith("show") =>
+        println(KhermesConsoleHelper.show(argsParser.parseArgsValues(value), argsParser.commandWord(value)))
+        parseLines
 
       case value if value.startsWith("start") =>
-        startStop(value, "start", khermesConfig, kafkaConfig, template, avroConfig)
-        parseLines(khermesConfig, kafkaConfig, template, avroConfig)
+        start(argsParser.parseArgsValues(value), argsParser.commandWord(value))
+        parseLines
 
       case value if value.startsWith("stop") =>
-        startStop(value, "stop", khermesConfig, kafkaConfig, template, avroConfig)
-        parseLines(khermesConfig, kafkaConfig, template, avroConfig)
+        stop(argsParser.parseArgsValues(value), argsParser.commandWord(value))
+        parseLines
 
       case "ls" =>
         ls
-        parseLines(khermesConfig, kafkaConfig, template, avroConfig)
-
-      case "show config" =>
-        showConfig(khermesConfig, kafkaConfig, template, avroConfig)
-        parseLines(khermesConfig, kafkaConfig, template, avroConfig)
+        parseLines
 
       case "help" =>
-        help
-        parseLines(khermesConfig, kafkaConfig, template, avroConfig)
+        println(KhermesConsoleHelper.help)
+        parseLines
 
       case "clear" =>
         clearScreen
-        parseLines(khermesConfig, kafkaConfig, template, avroConfig)
+        parseLines
 
       case "exit" | "quit" | "bye" =>
         System.exit(0)
 
       case "" =>
-        parseLines(khermesConfig, kafkaConfig, template, avroConfig)
+        parseLines
 
       case _ =>
-        printNotFoundCommand
-        parseLines(khermesConfig, kafkaConfig, template, avroConfig)
+        println(KhermesConsoleHelper.printNotFoundCommand)
+        parseLines
     }
+    reader.setPrompt("khermes> ")
   }
 
-  def setConfiguration(khermesConfig: Option[String] = None,
-                       kafkaConfig: Option[String] = None,
-                       template: Option[String] = None,
-                       avroConfig: Option[String] = None): Option[String] = {
+  def setConfiguration(): Option[String] = {
     println("Press Control + D to finish")
     val parsedBlock = Option(parseBlock())
     reader.setPrompt("khermes> ")
     parsedBlock
   }
 
-  def startStop(line: String,
-                firstWord: String,
-                khermesConfig: Option[String] = None,
-                kafkaConfig: Option[String] = None,
-                template: Option[String] = None,
-                avroConfig: Option[String] = None): Unit = {
-    val ids = line.replace(firstWord, "").trim.split(",").map(_.trim).filter("" != _)
-    ids.map(id => println(s"Sending $id start message"))
-    firstWord match {
-      case "start" =>
-        ids.map(id => println(s"Sending $id start message"))
-        client.start(khermesConfig, kafkaConfig, template, avroConfig, ids)
-      case "stop" =>
-        ids.map(id => println(s"Sending $id stop message"))
-        client.stop(ids)
-    }
-    reader.setPrompt("khermes> ")
+  def start(args: Map[String, List[String]], commandWord: String): Unit = {
+    Try {
+      val khermes = args(args.filterKeys(x => x == "kh" || x == "khermes").head._1).head
+      val kafka = args(args.filterKeys(x => x == "ka" || x == "kafka").head._1).head
+      val template = args(args.filterKeys(x => x == "t" || x == "template").head._1).head
+      val avro = Try(args(args.filterKeys(x => x == "a" || x == "avro").head._1).head)
+      val ids = Try(args(args.filterKeys(x => x == "i" || x == "ids").head._1))
+      val khermesConfig = KhermesConfig(
+        KhermesConsoleHelper.load(s"$KhermesConfigNodePath/$khermes").get,
+        KhermesConsoleHelper.load(s"$KafkaConfigNodePath/$kafka").get,
+        KhermesConsoleHelper.load(s"$TemplateNodePath/$template").get,
+        KhermesConsoleHelper.load(s"$AvroConfigNodePath/$avro")
+      )
+      client.start(khermesConfig, ids.get)
+    }.getOrElse(println("Bad arguments."))
+  }
+
+  def stop(args: Map[String, List[String]], commandWord: String): Unit = {
+    val ids = Try(args(args.filterKeys(x => x == "i" || x == "ids").head._1))
+    ids.get.map(id => println(s"Sending $id stop message"))
+    client.stop(ids.get)
   }
 
   def ls: Unit = {
@@ -131,54 +108,10 @@ case class KhermesConsoleHelper(client: KhermesClientActor) {
     println("------------------------------------   ------")
     client.ls
     Thread.sleep(KhermesConsoleHelper.TimeoutWhenLsMessage)
-    reader.setPrompt("khermes> ")
-  }
-
-  def showConfig(khermesConfig: Option[String] = None,
-                 kafkaConfig: Option[String] = None,
-                 template: Option[String] = None,
-                 avroConfig: Option[String] = None) = {
-    println("Kafka configuration:")
-    println(kafkaConfig.getOrElse("Kafka config is empty"))
-    println("Khermes configuration:")
-    println(khermesConfig.getOrElse("Khermes config is empty"))
-    println("Template:")
-    println(template.getOrElse("Template is empty"))
-    println("Avro configuration:")
-    println(avroConfig.getOrElse("Avro is empty"))
-  }
-
-  def help: Unit = {
-    println("Khermes client provide the next commands to manage your Khermes cluster:")
-    println("set khermes             Add your Khermes configuration.")
-    println("set kafka              Add your Kafka configuration.")
-    println("set template           Add your template.")
-    println("set avro               Add your Avro configuration.")
-    println("show config            Show all configurations.")
-    println("ls                     List the nodes with their current status")
-    println("start <Node Id>        Starts event generation in N nodes.")
-    println("stop <Node Id>         Stop event generation in N nodes.")
-    println("clear                  Clean the screen.")
-    println("help                   Show this help.")
-    println("exit | quit | bye      Exit of Khermes Cli.")
-    reader.setPrompt("khermes> ")
   }
 
   def clearScreen: Unit = {
     reader.clearScreen()
-  }
-
-  def printNotFoundCommand: Unit = {
-    println("Command not found. Type help to list available commands.")
-  }
-
-  def firstLoad(path: String): Option[String] = {
-    Try(khermesConfigDAO.loadConfig(path)) match {
-      case Success(config) => print(s"${path.capitalize} configuration loaded successfully.")
-        Option(config)
-      case Failure(_) => println(s"${path.capitalize} config is empty")
-        None
-    }
   }
 
   //scalastyle:on
@@ -192,7 +125,26 @@ case class KhermesConsoleHelper(client: KhermesClientActor) {
     val reader = new ConsoleReader()
     reader.setHandleUserInterrupt(true)
     reader.setExpandEvents(false)
-    reader.setPrompt("khermes> ")
+    val completer=new StringsCompleter("bye","clear","exit","help","ls","save","show","start","stop","quit")
+    reader.addCompleter(completer)
+    val argumentShowCompleter =new ArgumentCompleter(
+      new StringsCompleter("show"),
+      new StringsCompleter("-ka", "--kafka", "-t", "--template", "-kh","--khermes","-a","--avro"),
+      new NullCompleter())
+    val argumentSaveCompleter =new ArgumentCompleter(
+      new StringsCompleter("save"),
+      new StringsCompleter("-ka", "--kafka", "-t", "--template", "-kh","--khermes","-a","--avro"),
+      new NullCompleter())
+    val argumentStartCompleter =new ArgumentCompleter(
+      new StringsCompleter("start"),
+      new StringsCompleter("-ka", "--kafka", "-t", "--template", "-kh","--khermes","-a","--avro","-i","--ids"),
+      new NullCompleter())
+    val argumentStopCompleter =new ArgumentCompleter(new StringsCompleter("stop"), new StringsCompleter("-i","--ids"), new NullCompleter())
+    reader.addCompleter(argumentShowCompleter)
+    reader.addCompleter(argumentSaveCompleter)
+    reader.addCompleter(argumentStartCompleter)
+    reader.addCompleter(argumentStopCompleter)
+    reader.setPrompt("\u001B[33mkhermes> \u001B[0m")
     reader
   }
 }
@@ -200,4 +152,69 @@ case class KhermesConsoleHelper(client: KhermesClientActor) {
 object KhermesConsoleHelper {
 
   val TimeoutWhenLsMessage = 200L
+
+  def printNotFoundCommand: String = {
+    "Command not found. Type help to list available commands."
+  }
+
+  def help: String = {
+    s"""Khermes client provides the next commands to manage your Khermes cluster:
+       |  Usage: COMMAND [args...]
+       |
+               |  Commands:
+       |     start [command options] : Starts event generation in N nodes.
+       |       -kh, --khermes    : Khermes configuration
+       |       -ka, --kafka      : Kafka configuration
+       |       -t, --template   : Template to generate data
+       |       -a, --avro       : Avro configuration
+       |       -i, --ids        : Node id where start khermes
+       |     stop [command options] : Stop event generation in N nodes.
+       |       -i, --ids        : Node id where start khermes
+       |     ls                    : List the nodes with their current status
+       |     save [command options] : Save your configuration in zookeeper
+       |       -kh, --khermes    : Khermes configuration
+       |       -ka, --kafka      : Kafka configuration
+       |       -t, --template   : Template to generate data
+       |       -a, --avro       : Avro configuration
+       |     show [command options] : Show your configuration
+       |       -kh, --khermes    : Khermes configuration
+       |       -ka, --kafka      : Kafka configuration
+       |       -t, --template   : Template to generate data
+       |       -a, --avro       : Avro configuration
+       |     clear                 : Clean the screen.
+       |     help                  : Print this usage.
+       |     exit | quit | bye     : Exit of Khermes Cli.   """.stripMargin
+  }
+
+  def show(args: Map[String, List[String]], firstWord: String): String = {
+    Try {
+      val a = args.map {
+        case ("kh", _) | ("khermes", _) => load(s"$KhermesConfigNodePath/${args.head._2.head}").getOrElse(s"Khermes ${args.head._2.head} config is empty")
+        case ("ka", _) | ("kafka", _) => load(s"$KafkaConfigNodePath/${args.head._2.head}").getOrElse(s"Khermes ${args.head._2.head} config is empty")
+        case ("t", _) | ("template", _) => load(s"$TemplateNodePath/${args.head._2.head}").getOrElse(s"Khermes ${args.head._2.head} config is empty")
+        case ("a", _) | ("avro", _) => load(s"$AvroConfigNodePath/${args.head._2.head}").getOrElse(s"Khermes ${args.head._2.head} config is empty")
+        case value => s"Arg ${value._1} is not correct."
+      }
+      a.mkString
+    }.getOrElse("Bad arguments.")
+  }
+
+  def save(args: Map[String, List[String]], commandWord: String, config: Option[String]): Unit = {
+    Try {
+      args.foreach {
+        case ("kh", _) | ("khermes", _) => khermesConfigDAO.saveConfig(s"$KhermesConfigNodePath/${args.head._2.head}", config.get)
+        case ("ka", _) | ("kafka", _) => khermesConfigDAO.saveConfig(s"$KafkaConfigNodePath/${args.head._2.head}", config.get)
+        case ("t", _) | ("template", _) => khermesConfigDAO.saveConfig(s"$TemplateNodePath/${args.head._2.head}", config.get)
+        case ("a", _) | ("avro", _) => khermesConfigDAO.saveConfig(s"$AvroConfigNodePath/${args.head._2.head}", config.get)
+        case value => println(s"Arg ${value._1} is not correct.")
+      }
+    }.getOrElse(println("Bad arguments."))
+  }
+
+  def load(path: String): Option[String] = {
+    Try(khermesConfigDAO.loadConfig(path)) match {
+      case Success(config) => Option(config)
+      case Failure(_) => None
+    }
+  }
 }
