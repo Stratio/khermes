@@ -18,8 +18,7 @@ package com.stratio.khermes.utils
 
 import java.io.File
 import java.util.Properties
-
-import com.stratio.khermes.kafka.KafkaClient
+import com.stratio.khermes.persistence.kafka.KafkaClient
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import kafka.server.{KafkaConfig, KafkaServer}
