@@ -24,7 +24,6 @@ import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import akka.stream.actor.ActorPublisher
 import com.stratio.khermes.clients.http.protocols.{WSProtocolMessage, WsProtocolCommand}
-import com.stratio.khermes.clients.http.protocols.WsProtocolCommand.WsProtocolCommandValue
 import com.stratio.khermes.cluster.collector.CommandCollectorActor.Check
 import com.stratio.khermes.cluster.supervisor.NodeSupervisorActor
 import com.stratio.khermes.cluster.supervisor.NodeSupervisorActor.Result
@@ -43,12 +42,12 @@ class CommandCollectorActor extends ActorPublisher[CommandCollectorActor.Result]
   var commands = scala.collection.mutable.HashMap.empty[String, (Long, List[Result])]
 
   override def preStart: Unit = {
-
     implicit val executionContext = context.system.dispatcher
     context.system.eventStream.subscribe(self, classOf[CommandCollectorActor.Result])
     context.system.scheduler.schedule(0 milliseconds, CheckCommandStateTimeout, self, Check)
   }
 
+  //scalastyle:off
   override def receive: Receive = {
     case WSProtocolMessage(command, args)=>
       command match {
@@ -56,8 +55,28 @@ class CommandCollectorActor extends ActorPublisher[CommandCollectorActor.Result]
           val commandId = UUID.randomUUID().toString
           mediator ! Publish("content", NodeSupervisorActor.List(Seq.empty, commandId))
 
-        case WsProtocolCommand.CreateTemplate =>
-          configDAO.create(args(0), args(1))
+        case WsProtocolCommand.CreateTwirlTemplate =>
+          val name = args.get("name").getOrElse(throw new IllegalArgumentException("not found a name for a twirl-template"))
+          val content =args.get("content").getOrElse(throw new IllegalArgumentException("not found a content for a twirl-template"))
+          configDAO.create(s"${AppConstants.TwirlTemplatePath}/${name}", content)
+          self ! Result("OK", "")
+
+        case WsProtocolCommand.CreateGeneratorConfig =>
+          val name = args.get("name").getOrElse(throw new IllegalArgumentException("not found a name for a generator-config"))
+          val content =args.get("content").getOrElse(throw new IllegalArgumentException("not found a content for a generator-config"))
+          configDAO.create(s"${AppConstants.GeneratorConfigPath}/${name}", content)
+          self ! Result("OK", "")
+
+        case WsProtocolCommand.CreateKafkaConfig =>
+          val name = args.get("name").getOrElse(throw new IllegalArgumentException("not found a name for a kafka-config"))
+          val content =args.get("content").getOrElse(throw new IllegalArgumentException("not found a content for a kafka-config"))
+          configDAO.create(s"${AppConstants.KafkaConfigPath}/${name}", content)
+          self ! Result("OK", "")
+
+        case WsProtocolCommand.CreateAvroConfig =>
+          val name = args.get("name").getOrElse(throw new IllegalArgumentException("not found a name for a avro-config"))
+          val content =args.get("content").getOrElse(throw new IllegalArgumentException("not found a content for a avro-config"))
+          configDAO.create(s"${AppConstants.AvroConfigPath}/${name}", content)
           self ! Result("OK", "")
       }
 
@@ -82,17 +101,14 @@ class CommandCollectorActor extends ActorPublisher[CommandCollectorActor.Result]
         onNext(message)
       }
   }
+  //scalastyle:on
 
   def membersInCluster: Int =
     akka.cluster.Cluster(context.system).state.members.filter(_.status == MemberStatus.Up).size
 }
 
-
 object CommandCollectorActor {
-
   case object Check
-
   case class Result(value: String)
-
   def props: Props = Props[CommandCollectorActor]
 }

@@ -21,9 +21,10 @@ import akka.actor.ActorRef
 import akka.http.scaladsl.model.ws.TextMessage.Strict
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.stream.scaladsl.{Flow, Sink, Source}
-import com.stratio.khermes.clients.http.protocols.{WsProtocolCommand, WSProtocolMessage}
+import com.stratio.khermes.clients.http.protocols.{WSProtocolMessage, WsProtocolCommand}
 import com.stratio.khermes.cluster.collector
 import com.stratio.khermes.cluster.collector.CommandCollectorActor
+import com.typesafe.scalalogging.LazyLogging
 import org.json4s.Formats
 import org.json4s.native.Serialization.{read, write}
 
@@ -32,7 +33,7 @@ import scala.util.Try
 /**
  * All flows that will be used in the communication with the WebSocket should be implemented here.
  */
-case object WSFlow {
+case object WSFlow extends LazyLogging {
 
   val source = Source.actorPublisher[CommandCollectorActor.Result](collector.CommandCollectorActor.props)
 
@@ -58,8 +59,8 @@ case object WSFlow {
     Flow[Any].mapConcat {
       case tm: TextMessage ⇒
         val message = tm.getStrictText
-        Try(read[WSProtocolMessage](message)).toOption.map(commandCollector ! _)
-          .getOrElse(throw new IllegalStateException(s"Imposible to serialize message: $message"))
+        Try(WsProtocolCommand.parseTextBlock(message)).toOption.map(commandCollector ! _)
+          .getOrElse(logger.error(s"Imposible to serialize message: $message"))
         Nil
     }
 }
