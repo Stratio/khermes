@@ -29,10 +29,10 @@ case class KhermesConsoleHelper(client: KhermesClientActor) {
   lazy val reader = createDefaultReader()
 
   parseLines(
-    firstLoad(AppConstants.KhermesConfigNodePath),
-    firstLoad(AppConstants.KafkaConfigNodePath),
-    firstLoad(AppConstants.TemplateNodePath),
-    firstLoad(AppConstants.AvroConfigNodePath)
+    firstLoad(AppConstants.GeneratorConfigPath),
+    firstLoad(AppConstants.KafkaConfigPath),
+    firstLoad(AppConstants.TwirlTemplatePath),
+    firstLoad(AppConstants.AvroConfigPath)
   )
 
   //scalastyle:off
@@ -43,22 +43,22 @@ case class KhermesConsoleHelper(client: KhermesClientActor) {
     reader.readLine.trim match {
       case "set khermes" =>
         val config = setConfiguration(khermesConfig, kafkaConfig, template, avroConfig)
-        configDAO.create(AppConstants.KhermesConfigNodePath, config.get)
+        configDAO.create(AppConstants.GeneratorConfigPath, config.get)
         parseLines(config, kafkaConfig, template, avroConfig)
 
       case "set kafka" =>
         val config = setConfiguration(khermesConfig, kafkaConfig, template, avroConfig)
-        configDAO.create(AppConstants.KafkaConfigNodePath, config.get)
+        configDAO.create(AppConstants.KafkaConfigPath, config.get)
         parseLines(khermesConfig, config, template, avroConfig)
 
       case "set template" =>
         val config = setConfiguration(khermesConfig, kafkaConfig, template, avroConfig)
-        configDAO.create(AppConstants.TemplateNodePath, config.get)
+        configDAO.create(AppConstants.TwirlTemplatePath, config.get)
         parseLines(khermesConfig, kafkaConfig, config, avroConfig)
 
       case "set avro" =>
         val config = setConfiguration(khermesConfig, kafkaConfig, template, avroConfig)
-        configDAO.create(AppConstants.AvroConfigNodePath, config.get)
+        configDAO.create(AppConstants.AvroConfigPath, config.get)
         parseLines(khermesConfig, kafkaConfig, template, config)
 
       case value if value.startsWith("start") =>

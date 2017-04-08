@@ -20,23 +20,25 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
-//@RunWith(classOf[JUnitRunner])
+@RunWith(classOf[JUnitRunner])
 class WSProtocolMessageTest extends FlatSpec with Matchers  {
 
   "A WSProtocolCommand" should "parse a configuration" in {
-
     val block =
       """
         |[command]
         |ls
-        |[arg]
-        |arg1 - text
-        |arg1 - text
-        |[arg]
-        |arg2 - text
-        |arg2 - text
+        |[arg1]
+        |one line content
+        |[arg2]
+        |multiline line 1 content
+        |multiline line 2 content
       """.stripMargin
 
-    WsProtocolCommand.parseTextBlock(block)
+    val result = WsProtocolCommand.parseTextBlock(block)
+    result should be(WSProtocolMessage(WsProtocolCommand.Ls, Map(
+      "arg1" -> "one line content",
+      "arg2" -> "multiline line 1 content\nmultiline line 2 content"
+    )))
   }
 }
