@@ -15,15 +15,15 @@
     limitations under the License.
 
 -->
-@import com.stratio.khermes.utils.Khermes
-@import com.stratio.khermes.utils.Positive
+@import com.stratio.khermes.helpers.faker.Faker
+@import com.stratio.khermes.helpers.faker.generators.Positive
 
-@(khermes: Khermes)
+@(faker: Faker)
 {
-  "customerId": @(khermes.Number.number(3,Positive)),
-  "customerName": "@(khermes.Name.fullName)",
-  "latitude": @(khermes.Geo.geolocation.latitude),
-  "longitude": @(khermes.Geo.geolocation.longitude),
-  "productIds": [@((1 to 5).map(x => khermes.Number.number(1, Positive)).mkString(","))]
+  "customerId": @(faker.Number.number(3,Positive)),
+  "customerName": "@(faker.Name.fullName)",
+  "latitude": @(faker.Geo.geolocation.latitude),
+  "longitude": @(faker.Geo.geolocation.longitude),
+  "productIds": [@((1 to 5).map(x => faker.Number.number(1, Positive)).mkString(","))]
 
 }
