@@ -15,28 +15,28 @@
     limitations under the License.
 
 -->
-@import com.stratio.khermes.utils.Hermes
-@import com.stratio.khermes.utils.generators.Positive
+@import com.stratio.khermes.helpers.faker.Faker
+@import com.stratio.khermes.helpers.faker.generators.Positive
 @import scala.util.Random
 @import org.joda.time.DateTime
 
-@(khermes: Khermes)
-@defining(khermes.Music.playedSong, khermes.Name.fullName, khermes.Geo.geolocation) { case (randomSong, fullname, geo) =>
+@(faker: Faker)
+@defining(faker.Music.playedSong, faker.Name.fullName, faker.Geo.geolocation) { case (randomSong, fullname, geo) =>
 
     {
         "song": "@(randomSong.song)",
         "artist": "@(randomSong.artist)",
         "genre": "@(randomSong.genre)",
         "album": "@(randomSong.album)",
-        "playDuration": @(khermes.Number.number(3,Positive)),
-        "rating": @(khermes.Number.rating(5)),
+        "playDuration": @(faker.Number.number(3,Positive)),
+        "rating": @(faker.Number.rating(5)),
         "user": "@(fullname)",
-        "email": "@(khermes.Email.address(fullname))",
+        "email": "@(faker.Email.address(fullname))",
         "userType": "@(Seq("free", "membership")(Random.nextInt(2)))",
-        "country": "@(khermes.Geo.country)",
+        "country": "@(faker.Geo.country)",
         "latitude": @(geo.latitude),
         "longitude": @(geo.longitude),
         "startTime": "@(s"${Random.nextInt(24)}:${Random.nextInt(60)}:${Random.nextInt(60)}.${Random.nextInt(1000)}")",
-        "artistBirthday" : @(khermes.Datetime.datetime(new DateTime("1970-1-1"),new DateTime("1985-1-1")))
+        "artistBirthday" : @(faker.Datetime.datetime(new DateTime("1970-1-1"),new DateTime("1985-1-1")))
     }
 }

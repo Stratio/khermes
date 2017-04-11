@@ -220,7 +220,7 @@ Based on [Faker](https://github.com/stympy/faker) we are developing a random gen
 * Awesome UI.
 * No Zookeeper dependency using Akka Distributed Data.
 
-## Licenses.
+## Licenses. 
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 ## Tech.
