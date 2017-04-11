@@ -112,7 +112,10 @@ object Khermes extends App with LazyLogging {
             getFromResourceDirectory("web/js")
           } ~
           pathSingleSlash {
-            getFromResource("web/index.html")
+              getFromResource("web/index.html")
+          } ~
+          path("console") {
+            getFromResource("web/console.html")
           } ~
           path("input") {
             handleWebSocketMessages(WSFlow.inputFlow(commandCollector))
