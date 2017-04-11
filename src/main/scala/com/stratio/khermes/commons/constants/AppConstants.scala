@@ -39,10 +39,10 @@ object AppConstants {
   val ZookeeperRetryAttempts = "zookeeper.retryAttempts"
   val ZookeeperRetryInterval = "zookeeper.retryInterval"
 
-  val KafkaConfigNodePath = "kafka"
-  val KhermesConfigNodePath = "khermes"
-  val TemplateNodePath = "template"
-  val AvroConfigNodePath = "avro"
+  val KafkaConfigPath = "kafka-config"
+  val GeneratorConfigPath = "generator-config"
+  val TwirlTemplatePath = "twirl-template"
+  val AvroConfigPath = "avro-config"
 
   val DefaultWSHost = "localhost"
   val DefaultWSPort = 8080
