@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Khermes Terminal</title>
+    <meta name="Description" content="Khermes terminal implementation using the jquery.terminal project"/>
+    <script src="../js/jquery-1.7.1.min.js"></script>
+    <script src="../js/jquery.mousewheel-min.js"></script>
+    <script src="../js/jquery.terminal.min.js"></script>
+    <script src="../js/console.js"></script>
+    <link href="../css/jquery.terminal.css" rel="stylesheet"/>
+</head>
+<body>
+
+<script>
+    jQuery(document).ready(function($) {
+        var id = 1;
+        $('body').terminal(function(command, term) {
+            if (command == 'help') {
+                term.echo("available commands are ls");
+            } else if (command == 'ls'){
+                sendMessage('[command]\nls');
+            } else {
+                term.echo("unknown command " + command);
+            }
+        }, {
+            greetings: '\n' +
+            '|╦╔═┬ ┬┌─┐┬─┐┌┬┐┌─┐┌─┐\n'+
+            '|╠╩╗├─┤├┤ ├┬┘│││├┤ └─┐\n'+
+            '|╩ ╩┴ ┴└─┘┴└─┴ ┴└─┘└─┘ Powered by Stratio (www.stratio.com)\n',
+            prompt: 'khermes> ',
+            onBlur: function() {
+                // prevent loosing focus
+                return false;
+            },
+            onInit: function(term) {
+                setupWebSocket(wsURL("input"), "input", term);
+                setupWebSocket(wsURL("output"), "output", term);
+            }
+        });
+    });
+</script>
+</body>
