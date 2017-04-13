@@ -11,15 +11,27 @@
     <link href="../css/jquery.terminal.css" rel="stylesheet"/>
 </head>
 <body>
-
 <script>
     jQuery(document).ready(function($) {
-        var id = 1;
         $('body').terminal(function(command, term) {
             if (command == 'help') {
-                term.echo("available commands are ls");
+                term.echo("available commands are ls, create kafka-config");
             } else if (command == 'ls'){
                 sendMessage('[command]\nls');
+            } else if (command == 'create kafka-config') {
+                var name = '';
+                var config = '';
+                term.push(function(kafkaConfigName, term) {
+                    name = kafkaConfigName;
+                    term.push(function(kafkaConfig, term) {
+                        config = kafkaConfig;
+                        sendMessage('[command]\ncreate kafka-config\n[name]\n'+name+'\n[content]\n'+config+'\n');
+                    }, {
+                        prompt: 'khermes> kafka-config> Please introduce the kafka-config> ',
+                        name: 'kafka-config'});
+                }, {
+                    prompt: 'khermes> kafka-config> Please introduce the kafka-config name> ',
+                    name: 'kafka-config-name'});
             } else {
                 term.echo("unknown command " + command);
             }
