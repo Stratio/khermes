@@ -13,10 +13,10 @@ function setupWebSocket(endpoint, name, term) {
   ws.onmessage = function(event) {
     console.log(event);
     data = event.data;
-    if (data.indexOf("value") != -1)
+    if (data.indexOf("-") != -1)
        term.echo(parseLs(event.data))
     else
-       term.echo(event.data);
+       term.echo(parseOkResponse(event.data));
   };
 
   ws.onclose = function() {
@@ -38,6 +38,11 @@ function parseLs(data) {
     separator = "-------------------------------------------------";
     var response = JSON.parse(data);
     return header + "\n" + separator + "\n"+ response.value;
+}
+
+function parseOkResponse(data) {
+    var response = JSON.parse(data);
+    return "Command result: "+ response.value;
 }
 
 function sendMessage(msg){
