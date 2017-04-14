@@ -17,7 +17,9 @@
 package com.stratio.khermes.utils
 
 import java.io.File
+import java.net.ServerSocket
 import java.util.Properties
+
 import com.stratio.khermes.persistence.kafka.KafkaClient
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
@@ -66,7 +68,7 @@ trait EmbeddedServersUtils extends LazyLogging {
 
 
   def withEmbeddedZookeeper()(function: TestingServer => Any): Unit = {
-    function(new TestingServer())
+    function(new TestingServer(-1))
   }
 
   def withKafkaProducer[V](kafkaServer: KafkaServer)(testFunction: KafkaProducer[String, V] => Any): Unit = {
@@ -83,20 +85,36 @@ trait EmbeddedServersUtils extends LazyLogging {
   //TODO: Accept initial config parameter (specific traits)
   private def kafkaConfiguration(logDir: File, zkConnectString: String) = {
     val kafkaConfig = new Properties()
+    val randomPort = getRandomPort.toString
     kafkaConfig.put(KafkaConfig.ZkConnectProp, zkConnectString)
     kafkaConfig.put(KafkaConfig.BrokerIdProp, "0")
     kafkaConfig.put(KafkaConfig.HostNameProp, "127.0.0.1")
-    kafkaConfig.put(KafkaConfig.PortProp, "9092")
+    kafkaConfig.put(KafkaConfig.PortProp, randomPort)
     kafkaConfig.put(KafkaConfig.NumPartitionsProp, "1")
     kafkaConfig.put(KafkaConfig.AutoCreateTopicsEnableProp, "true")
     kafkaConfig.put(KafkaConfig.MessageMaxBytesProp, "1000000")
     kafkaConfig.put(KafkaConfig.ControlledShutdownEnableProp, "true")
-    kafkaConfig.put("kafka.bootstrap.servers", "127.0.0.1:9092")
+    kafkaConfig.put("kafka.bootstrap.servers", "127.0.0.1:" + randomPort)
     kafkaConfig.put("kafka.key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
     kafkaConfig.put("kafka.value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
     kafkaConfig.setProperty(KafkaConfig.LogDirProp, logDir.getAbsolutePath)
     //effectiveConfig.putAll(initialConfig);
     kafkaConfig
+  }
+
+  private def openSocket: ServerSocket = Try {
+    new ServerSocket(0)
+  }.recoverWith { case _: Throwable => Try(openSocket) }.get
+
+  private def closeSocket(socket: ServerSocket): Unit = Try {
+    socket.close()
+  }.recoverWith { case _: Throwable => Try(closeSocket(socket)) }
+
+  private def getRandomPort: Int = {
+    val socket = openSocket
+    val port = socket.getLocalPort
+    closeSocket(socket)
+    port
   }
 
 }
