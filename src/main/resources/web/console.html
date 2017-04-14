@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>Khermes Terminal</title>
     <meta name="Description" content="Khermes terminal implementation using the jquery.terminal project"/>
     <script src="../js/jquery-1.7.1.min.js"></script>
@@ -15,7 +15,7 @@
     jQuery(document).ready(function($) {
         $('body').terminal(function(command, term) {
             if (command == 'help') {
-                term.echo("available commands are ls, create kafka-config");
+                term.echo("available commands are ls, create kafka-config, create twirl-template");
             } else if (command == 'ls'){
                 sendMessage('[command]\nls');
             } else if (command == 'create kafka-config') {
@@ -32,6 +32,20 @@
                 }, {
                     prompt: 'khermes> kafka-config> Please introduce the kafka-config name> ',
                     name: 'kafka-config-name'});
+            } else if (command == 'create twirl-template') {
+                var name = '';
+                var config = '';
+                term.push(function(twirlTemplate, term) {
+                    name = twirlTemplate;
+                    term.push(function(twirlConfig, term) {
+                        config = twirlConfig;
+                        sendMessage('[command]\ncreate twirl-template\n[name]\n'+name+'\n[content]\n'+config+'\n');
+                    }, {
+                        prompt: 'khermes> twirl-template> Please introduce the twirl-template> \n',
+                        name: 'twirl-template'});
+                }, {
+                    prompt: 'khermes> twirl-template> Please introduce the twirl-template name> ',
+                    name: 'twirl-template-name'});
             } else {
                 term.echo("unknown command " + command);
             }
@@ -51,5 +65,7 @@
             }
         });
     });
+
+
 </script>
 </body>
