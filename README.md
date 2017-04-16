@@ -94,33 +94,33 @@ Khermes client provides the next commands to manage your Khermes cluster:
 
   Commands:
      start [command options] : Starts event generation in N nodes.
-       --khermes    : Khermes configuration
-       --kafka      : Kafka configuration
-       --template   : Template to generate data
-       --avro       : Avro configuration
-       --ids        : Node id where start khermes
+       --generator-config  : Khermes configuration
+       --kafka-config      : Kafka configuration
+       --twirl-template    : Template to generate data
+       --avro-template     : Avro configuration
+       --ids               : Node id where start khermes
      stop [command options] : Stop event generation in N nodes.
-       --ids        : Node id where start khermes
-     ls                    : List the nodes with their current status
+       --ids               : Node id where start khermes
+     ls : List the nodes with their current status
      save [command options] : Save your configuration in zookeeper
-       --khermes    : Khermes configuration
-       --kafka      : Kafka configuration
-       --template   : Template to generate data
-       --avro       : Avro configuration
+       --generator-config  : Khermes configuration
+       --kafka-config      : Kafka configuration
+       --twirl-template    : Template to generate data
+       --avro-template     : Avro configuration
      show [command options] : Show your configuration
-       --khermes    : Khermes configuration
-       --kafka      : Kafka configuration
-       --template   : Template to generate data
-       --avro       : Avro configuration
-     clear                 : Clean the screen.
-     help                  : Print this usage.
-     exit | quit | bye     : Exit of Khermes Cli.   
+       --generator-config  : Khermes configuration
+       --kafka-config      : Kafka configuration
+       --twirl-template    : Template to generate data
+       --avro-template     : Avro configuration
+     clear : Clean the screen.
+     help : Print this usage.
+     exit | quit | bye : Exit of Khermes Cli.   
 ```
 
 Steps to run a policy:
 * Step 1) Save a Khermes configuration that will be persisted in Zookeeper. This is needed because otherwise, the next time that the user executes Khermes it will lost this configuration:
 ```
-  khermes> save --khermes nameKhermesConfig
+  khermes> save --generator-config nameKhermesConfig
   Press Control + D to finish
   khermes {
      templates-path = "/tmp/khermes/templates"
@@ -146,7 +146,7 @@ Steps to run a policy:
     
 * Step 2) Save a Kafka configuration that will also be persisted in Zookeeper.
 ```
-  khermes> save --kafka nameKafkaConfig
+  khermes> save --kafka-config nameKafkaConfig
   Press Control + D to finish
   kafka {
      bootstrap.servers = "localhost:9092"
@@ -158,7 +158,7 @@ Steps to run a policy:
   
 * Step 3) Save a Twirl template that will also be persisted in Zookeeper.
 ```
-  khermes> save --template nameTemplate
+  khermes> save --twirl-template nameTemplate
   Press Control + D to finish
   @import com.stratio.hermes.utils.Hermes
   @(khermes: Khermes)
@@ -171,7 +171,7 @@ Steps to run a policy:
   khermes> ls
   Node Id                                Status
   845441eccb0d4363b494a39d56a82727 | false
-  khermes> start --kafka nameKafkaConfig --template nameTemplate --khermes nameKhermesConfig --ids 845441eccb0d4363b494a39d56a82727
+  khermes> start --kafka-config nameKafkaConfig --twirl-template nameTemplate --generator-config nameKhermesConfig --ids 845441eccb0d4363b494a39d56a82727
   khermes> ls
   Node Id                                Status
   845441eccb0d4363b494a39d56a82727 | true

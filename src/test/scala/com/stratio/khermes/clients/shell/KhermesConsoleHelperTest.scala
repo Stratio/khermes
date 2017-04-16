@@ -23,41 +23,22 @@ import org.scalatest.{FlatSpec, Matchers}
 @RunWith(classOf[JUnitRunner])
 class KhermesConsoleHelperTest extends FlatSpec
   with Matchers {
-  val helpMessage =
-    s"""Khermes client provides the next commands to manage your Khermes cluster:
-        |  Usage: COMMAND [args...]
-        |
-               |  Commands:
-        |     start [command options] : Starts event generation in N nodes.
-        |       --khermes    : Khermes configuration
-        |       --kafka      : Kafka configuration
-        |       --template   : Template to generate data
-        |       --avro       : Avro configuration
-        |       --ids        : Node id where start khermes
-        |     stop [command options] : Stop event generation in N nodes.
-        |       --ids        : Node id where start khermes
-        |     ls                    : List the nodes with their current status
-        |     save [command options] : Save your configuration in zookeeper
-        |       --khermes    : Khermes configuration
-        |       --kafka      : Kafka configuration
-        |       --template   : Template to generate data
-        |       --avro       : Avro configuration
-        |     show [command options] : Show your configuration
-        |       --khermes    : Khermes configuration
-        |       --kafka      : Kafka configuration
-        |       --template   : Template to generate data
-        |       --avro       : Avro configuration
-        |     clear                 : Clean the screen.
-        |     help                  : Print this usage.
-        |     exit | quit | bye     : Exit of Khermes Cli.   """.stripMargin
 
   val khermesConsoleHelper = KhermesConsoleHelper
 
-  it should "give a message a help message" in {
-    khermesConsoleHelper.help shouldBe helpMessage
+  it should "give a map with arg as key and a list of the values" in {
+    val line = "start --kafka k1 --template t1 --khermes k1 --ids 112312-32123213 3123-12343-453534-5345"
+    khermesConsoleHelper.commandArgumentsAndValues(line) shouldBe Map("kafka" -> "k1", "template" -> "t1", "khermes" -> "k1", "ids" -> "112312-32123213 3123-12343-453534-5345")
   }
-  it should "give a message a when the command is not valid" in {
-    khermesConsoleHelper.printNotFoundCommand shouldBe "Command not found. Type help to list available commands."
+
+  it should "when an arg do not have value raise an exception" in {
+    val line = "start --kafka --template t1 --khermes k1 --ids 1123-123212-3213 31231-2343453-5345345"
+    khermesConsoleHelper.commandArgumentsAndValues(line) shouldBe Map("kafka" -> "", "template" -> "t1", "khermes" -> "k1", "ids" -> "1123-123212-3213 31231-2343453-5345345")
+  }
+
+  it should "give an empty map when there are not args" in {
+    val line = "save"
+    khermesConsoleHelper.commandArgumentsAndValues(line) shouldBe Map()
   }
 
 }

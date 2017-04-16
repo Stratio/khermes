@@ -103,11 +103,11 @@ class CommandCollectorActor extends ActorPublisher[CommandCollectorActor.Result]
     val argsAvroConfigOption = args.get(WsProtocolCommand.ArgsAvroConfig)
     val nodeIds = args.get(WsProtocolCommand.ArgsNodeIds).map(value => value.split(" ")).toSeq.flatten
 
-    val twirlTemplate = configDAO.read(s"${AppConstants.TwirlTemplatePath}/${argsTwirlTemplate}")
-    val kafkaConfig = configDAO.read(s"${AppConstants.KafkaConfigPath}/${argsKafkaConfig}")
-    val generatorConfig = configDAO.read(s"${AppConstants.GeneratorConfigPath}/${argsGeneratorConfig}")
+    val twirlTemplate = configDAO.read(s"${AppConstants.TwirlTemplatePath}/$argsTwirlTemplate")
+    val kafkaConfig = configDAO.read(s"${AppConstants.KafkaConfigPath}/$argsKafkaConfig")
+    val generatorConfig = configDAO.read(s"${AppConstants.GeneratorConfigPath}/$argsGeneratorConfig")
     val avroConfig = argsAvroConfigOption.map(
-      argsAvroConfig => configDAO.read(s"${AppConstants.AvroConfigPath}/${argsAvroConfig}"))
+      argsAvroConfig => configDAO.read(s"${AppConstants.AvroConfigPath}/$argsAvroConfig"))
 
     mediator ! Publish("content",
       NodeSupervisorActor.Start(nodeIds, AppConfig(generatorConfig, kafkaConfig, twirlTemplate, avroConfig)))
@@ -126,8 +126,8 @@ class CommandCollectorActor extends ActorPublisher[CommandCollectorActor.Result]
     val content = args.get(WsProtocolCommand.ArgsContent).getOrElse(
       throw new IllegalArgumentException(s"not found content for ${protocolCommand.toString}"))
 
-    configDAO.create(s"${basePath}/${name}", content)
-    self ! Result("OK", s"Created node in ZK: ${basePath}/${name}")
+    configDAO.create(s"$basePath/$name", content)
+    self ! Result("OK", s"Created node in ZK: $basePath/$name")
   }
 
   def checkCommandHasEnd(): Unit = {
