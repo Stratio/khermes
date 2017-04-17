@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
     $('body').terminal(function(command, term) {
         if (command == 'help') {
-            term.echo("available commands are ls, create kafka-config, create twirl-template, create generator-config, create avro-config");
+            term.echo("available commands are ls, create kafka-config, create twirl-template, create generator-config, create avro-config, start, stop");
         } else if (command == 'ls'){
             sendMessage('[command]\nls');
         } else if (command == 'create kafka-config') {
@@ -12,7 +12,12 @@ jQuery(document).ready(function($) {
             createConfig('generator-config',term)
         } else if (command == 'create avro-config') {
             createConfig('avro-config',term)
-        }else {
+        }else if (command.startsWith('start')) {
+            start(term)
+        }else if (command.startsWith('stop')) {
+            stop(term)
+        }
+        else {
             term.echo("unknown command " + command);
         }
     }, {
@@ -33,7 +38,7 @@ jQuery(document).ready(function($) {
 });
 
 
-function createConfig(commandName,term){
+function createConfig(commandName, term){
     var name = '';
     var config = '';
     term.push(function(nameTemplate, term) {
@@ -53,6 +58,63 @@ function createConfig(commandName,term){
         name: commandName+'-name'});
 }
 
+function start(term){
+      var twirl = '';
+      var kafka = '';
+      var generator = '';
+      var avro = '';
+      var nodes = '';
+    term.push(function(twirlTemplate, term) {
+        twirl = twirlTemplate;
+        term.push(function(kafkaConfig, term) {
+            kafka = kafkaConfig;
+             term.push(function(generatorConfig, term) {
+                  generator = generatorConfig;
+                      term.push(function(avroConfig, term) {
+                                 avro = avroConfig;
+                                term.push(function(nodeIds, term) {
+                                           nodes = nodeIds;
+                                           sendMessage('[command]\nstart\n[twirl-template]\n'+twirl+
+                                                               '\n[kafka-config]\n'+kafka+
+                                                               '\n[generator-config]\n'+generator+
+                                                               '\n[avro-config]\n'+avro+
+                                                               '\n[node-ids]\n'+nodes+'\n');
+                                           //Back the prompt to the original level.
+                                           term.pop();
+                                           term.pop();
+                                           term.pop();
+                                           term.pop();
+                                           term.pop();
+                                       }, {
+                                           prompt: 'khermes> start > Please introduce the node-ids> \n',
+                                           name: 'startNodeIds'});
+                             }, {
+                                 prompt: 'khermes> start > Please introduce the avro-config name> \n',
+                                 name: 'startAvroConfig'});
+                    }, {
+                        prompt: 'khermes> start > Please introduce the generator-config name> \n',
+                        name: 'startGeneratorConfig'});
+
+        }, {
+            prompt: 'khermes> start > Please introduce the kafka-config name> \n',
+            name: 'startKafkaConfig'});
+    },
+    {
+        prompt: 'khermes> start > Please introduce the twirl-template name> ',
+        name: 'startTwirlTemplate'});
+}
+
+function stop(term){
+      var nodes = '';
+    term.push(function(nodeIds, term) {
+        nodes = nodeIds;
+      sendMessage('[command]\nstop\n[node-ids]\n'+nodes+'\n');
+      term.pop();
+    },
+    {
+        prompt: 'khermes> start > Please introduce the node-Ids name> ',
+        name: 'stopNodeIds'});
+}
 
 function setupWebSocket(endpoint, name, term) {
 
