@@ -32,6 +32,11 @@ case object WsProtocolCommand extends Enumeration {
   val CreateGeneratorConfig = Value("create generator-config")
   val CreateAvroConfig = Value("create avro-config")
 
+  val ShowTwirlTemplate = Value("show twirl-template")
+  val ShowKafkaConfig = Value("show kafka-config")
+  val ShowGeneratorConfig = Value("show generator-config")
+  val ShowAvroConfig = Value("show avro-config")
+
   val ArgsName = "name"
   val ArgsContent = "content"
   val ArgsTwirlTemplate = "twirl-template"

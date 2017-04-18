@@ -41,6 +41,12 @@ class ZkDAOTest extends FlatSpec
       khermesConfigDAO.delete("stratio")
       data shouldBe "myConfig2"
     }
+    "An KhermesConfig" should "have a way to obtain the list of configs" in {
+      khermesConfigDAO.create("a/b/c","config1")
+      khermesConfigDAO.create("a/b/d","config2")
+      khermesConfigDAO.list("a/b") shouldBe "c\nd"
+    }
+
     it should "raise an exception when it save or load a config in a path that does not exists" in {
       an[KhermesException] should be thrownBy khermesConfigDAO.read("")
       an[KhermesException] should be thrownBy khermesConfigDAO.create("", "config")

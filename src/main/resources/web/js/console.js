@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
     $('body').terminal(function(command, term) {
         if (command == 'help') {
-            term.echo("available commands are ls, create kafka-config, create twirl-template, create generator-config, create avro-config, start, stop");
+            term.echo("available commands are ls, create kafka-config, create twirl-template, create generator-config, create avro-config, start, stop, show kafka-config, show generator-config, show avro-config, show twirl-template");
         } else if (command == 'ls'){
             sendMessage('[command]\nls');
         } else if (command == 'create kafka-config') {
@@ -16,6 +16,18 @@ jQuery(document).ready(function($) {
             start(term)
         }else if (command.startsWith('stop')) {
             stop(term)
+        }
+        else if (command == 'show kafka-config') {
+            sendMessage('[command]\nshow kafka-config')
+        }
+         else if (command == 'show generator-config') {
+            sendMessage('[command]\nshow generator-config')
+        }
+        else if (command == 'show avro-config') {
+            sendMessage('[command]\nshow avro-config')
+        }
+        else if (command == 'show twirl-template') {
+            sendMessage('[command]\nshow twirl-template')
         }
         else {
             term.echo("unknown command " + command);

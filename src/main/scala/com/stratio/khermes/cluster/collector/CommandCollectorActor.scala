@@ -72,6 +72,18 @@ class CommandCollectorActor extends ActorPublisher[CommandCollectorActor.Result]
     case WSProtocolMessage(WsProtocolCommand.CreateAvroConfig, args) =>
       createConfig(args, WsProtocolCommand.CreateAvroConfig, AppConstants.AvroConfigPath)
 
+    case WSProtocolMessage(WsProtocolCommand.ShowTwirlTemplate, _) =>
+      showConfig(AppConstants.TwirlTemplatePath)
+
+    case WSProtocolMessage(WsProtocolCommand.ShowGeneratorConfig, _) =>
+      showConfig(AppConstants.GeneratorConfigPath)
+
+    case WSProtocolMessage(WsProtocolCommand.ShowKafkaConfig, _) =>
+      showConfig(AppConstants.KafkaConfigPath)
+
+    case WSProtocolMessage(WsProtocolCommand.ShowAvroConfig, _) =>
+      showConfig(AppConstants.AvroConfigPath)
+
     case result: NodeSupervisorActor.Result =>
       collectResult(result)
 
@@ -128,6 +140,11 @@ class CommandCollectorActor extends ActorPublisher[CommandCollectorActor.Result]
 
     configDAO.create(s"${basePath}/${name}", content)
     self ! Result("OK", s"Created node in ZK: ${basePath}/${name}")
+  }
+
+  def showConfig(basePath: String): Unit ={
+    val list = configDAO.list(s"$basePath")
+    self ! Result(s"OK \n$list", s"Show config of $basePath")
   }
 
   def checkCommandHasEnd(): Unit = {
