@@ -68,6 +68,12 @@ class ZkDAO(connectionServer: Option[String] = None) extends BaseDAO[String] wit
     curatorFramework.setData().forPath(s"${AppConstants.ZookeeperParentPath}/$path", config.getBytes())
   }
 
+  override def list(path: String): String = {
+    val children = curatorFramework.getChildren.forPath(s"${AppConstants.ZookeeperParentPath}/$path")
+    import collection.JavaConverters._
+    children.asScala.mkString("\n")
+  }
+
 
   def buildCurator(connectionServer: String): CuratorFramework = {
     Try {

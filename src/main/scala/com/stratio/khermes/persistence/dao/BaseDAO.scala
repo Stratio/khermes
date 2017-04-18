@@ -27,4 +27,6 @@ trait BaseDAO[T] {
   def delete(entity: T)
 
   def exists(entity: T): Boolean
+
+  def list(entity: T): T
 }
