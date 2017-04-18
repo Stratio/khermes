@@ -1,3 +1,59 @@
+jQuery(document).ready(function($) {
+    $('body').terminal(function(command, term) {
+        if (command == 'help') {
+            term.echo("available commands are ls, create kafka-config, create twirl-template, create generator-config, create avro-config");
+        } else if (command == 'ls'){
+            sendMessage('[command]\nls');
+        } else if (command == 'create kafka-config') {
+            createConfig('kafka-config',term)
+        } else if (command == 'create twirl-template') {
+            createConfig('twirl-template',term)
+        } else if (command == 'create generator-config') {
+            createConfig('generator-config',term)
+        } else if (command == 'create avro-config') {
+            createConfig('avro-config',term)
+        }else {
+            term.echo("unknown command " + command);
+        }
+    }, {
+        greetings: '\n' +
+        '|╦╔═┬ ┬┌─┐┬─┐┌┬┐┌─┐┌─┐\n'+
+        '|╠╩╗├─┤├┤ ├┬┘│││├┤ └─┐\n'+
+        '|╩ ╩┴ ┴└─┘┴└─┴ ┴└─┘└─┘ Powered by Stratio (www.stratio.com)\n',
+        prompt: 'khermes> ',
+        onBlur: function() {
+            // prevent loosing focus
+            return false;
+        },
+        onInit: function(term) {
+            setupWebSocket(wsURL("input"), "input", term);
+            setupWebSocket(wsURL("output"), "output", term);
+        }
+    });
+});
+
+
+function createConfig(commandName,term){
+    var name = '';
+    var config = '';
+    term.push(function(nameTemplate, term) {
+        name = nameTemplate;
+        term.push(function(nameConfig, term) {
+            config = nameConfig;
+            sendMessage('[command]\ncreate '+commandName+'\n[name]\n'+name+'\n[content]\n'+config+'\n');
+            //Back the prompt to the original level.
+            term.pop();
+            term.pop();
+        }, {
+            prompt: 'khermes> '+commandName+'> Please introduce the '+commandName+'> \n',
+            name: commandName});
+    },
+    {
+        prompt: 'khermes> '+commandName+'> Please introduce the '+commandName+' name> ',
+        name: commandName+'-name'});
+}
+
+
 function setupWebSocket(endpoint, name, term) {
 
   if(window[name]) {
