@@ -29,6 +29,18 @@ jQuery(document).ready(function($) {
         else if (command == 'show twirl-template') {
             sendMessage('[command]\nshow twirl-template')
         }
+        else if (command.startsWith('show kafka-config ')) {
+            sendMessage('[command]\nshow kafka-config\n[name]\n'+command.split(" ").pop(2)+'\n')
+        }
+        else if (command.startsWith('show generator-config')) {
+            sendMessage('[command]\nshow generator-config\n[name]\n'+command.split(" ").pop(2)+'\n')
+        }
+        else if (command.startsWith('show avro-config')) {
+            sendMessage('[command]\nshow avro-config\n[name]\n'+command.split(" ").pop(2)+'\n')
+        }
+        else if (command.startsWith('show twirl-template')) {
+            sendMessage('[command]\nshow twirl-template\n[name]\n'+command.split(" ").pop(2)+'\n')
+        }
         else {
             term.echo("unknown command " + command);
         }
@@ -143,7 +155,7 @@ function setupWebSocket(endpoint, name, term) {
   ws.onmessage = function(event) {
     console.log(event);
     data = event.data;
-    if (data.indexOf("-") != -1)
+    if (data.indexOf("|") != -1)
        term.echo(parseLs(event.data))
     else
        term.echo(parseOkResponse(event.data));
