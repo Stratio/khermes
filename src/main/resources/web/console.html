@@ -11,61 +11,6 @@
     <link href="../css/jquery.terminal.css" rel="stylesheet"/>
 </head>
 <body>
-<script>
-    jQuery(document).ready(function($) {
-        $('body').terminal(function(command, term) {
-            if (command == 'help') {
-                term.echo("available commands are ls, create kafka-config, create twirl-template");
-            } else if (command == 'ls'){
-                sendMessage('[command]\nls');
-            } else if (command == 'create kafka-config') {
-                var name = '';
-                var config = '';
-                term.push(function(kafkaConfigName, term) {
-                    name = kafkaConfigName;
-                    term.push(function(kafkaConfig, term) {
-                        config = kafkaConfig;
-                        sendMessage('[command]\ncreate kafka-config\n[name]\n'+name+'\n[content]\n'+config+'\n');
-                    }, {
-                        prompt: 'khermes> kafka-config> Please introduce the kafka-config> ',
-                        name: 'kafka-config'});
-                }, {
-                    prompt: 'khermes> kafka-config> Please introduce the kafka-config name> ',
-                    name: 'kafka-config-name'});
-            } else if (command == 'create twirl-template') {
-                var name = '';
-                var config = '';
-                term.push(function(twirlTemplate, term) {
-                    name = twirlTemplate;
-                    term.push(function(twirlConfig, term) {
-                        config = twirlConfig;
-                        sendMessage('[command]\ncreate twirl-template\n[name]\n'+name+'\n[content]\n'+config+'\n');
-                    }, {
-                        prompt: 'khermes> twirl-template> Please introduce the twirl-template> \n',
-                        name: 'twirl-template'});
-                }, {
-                    prompt: 'khermes> twirl-template> Please introduce the twirl-template name> ',
-                    name: 'twirl-template-name'});
-            } else {
-                term.echo("unknown command " + command);
-            }
-        }, {
-            greetings: '\n' +
-            '|╦╔═┬ ┬┌─┐┬─┐┌┬┐┌─┐┌─┐\n'+
-            '|╠╩╗├─┤├┤ ├┬┘│││├┤ └─┐\n'+
-            '|╩ ╩┴ ┴└─┘┴└─┴ ┴└─┘└─┘ Powered by Stratio (www.stratio.com)\n',
-            prompt: 'khermes> ',
-            onBlur: function() {
-                // prevent loosing focus
-                return false;
-            },
-            onInit: function(term) {
-                setupWebSocket(wsURL("input"), "input", term);
-                setupWebSocket(wsURL("output"), "output", term);
-            }
-        });
-    });
+<script src="js/console.js"></script>
 
-
-</script>
 </body>
