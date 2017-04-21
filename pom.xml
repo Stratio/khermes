@@ -223,6 +223,11 @@
             <version>${scala-logging.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jliszka</groupId>
+            <artifactId>probability-monad_2.11</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_${scala.binary.version}</artifactId>
             <version>${kafka.version}</version>

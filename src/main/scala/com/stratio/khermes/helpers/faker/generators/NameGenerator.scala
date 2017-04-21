@@ -24,19 +24,22 @@ import com.typesafe.scalalogging.LazyLogging
 /**
  * Generates random names.
  */
-case class NameGenerator(locale: String) extends FakerGenerator
+case class NameGenerator(locale: String, weightStrategy: Map[String, Double]) extends FakerGenerator
   with AppSerializer
   with LazyLogging {
 
   override def name: String = "name"
 
-  lazy val nameModel = locale match {
+  lazy val nameModel: Seq[Either[String, NameModel]] = locale match {
     case AppConstants.DefaultLocale =>
       val resources = getResources(name)
         .map(parse[NameModel](name, _))
       if (parseErrors[NameModel](resources).nonEmpty) logger.warn(s"${parseErrors[NameModel](resources)}")
       resources
-    case localeValue => Seq(parse[NameModel](name, s"$localeValue.json"))
+    case localeValue => Seq(parse[NameModel](name, s"$localeValue.json").right.map(elem =>
+      NameModel(repeatElementsInList(listWithWeight(elem.firstNames, weightStrategy)), repeatElementsInList(listWithWeight(elem.lastNames, weightStrategy)))
+    ))
+    //    case localeValue => repeatElementsInList(listWithWeight(Seq(parse[NameModel](name, s"$localeValue.json")),weightStrategy))
   }
 
   /**
