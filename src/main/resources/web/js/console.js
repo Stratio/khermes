@@ -124,7 +124,7 @@ function stop(term){
       term.pop();
     },
     {
-        prompt: 'khermes> start > Please introduce the node-Ids name> ',
+        prompt: 'khermes> stop > Please introduce the node-Ids name> ',
         name: 'stopNodeIds'});
 }
 
