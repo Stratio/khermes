@@ -17,6 +17,7 @@
 package com.stratio.khermes
 
 import java.io.File
+import java.net.InetAddress
 import java.util.Date
 
 import akka.actor.{ActorRef, ActorSystem, Props}
@@ -32,7 +33,7 @@ import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 /**
  * Entry point of the application.
@@ -105,7 +106,12 @@ object Khermes extends App with LazyLogging {
 
     val routes =
       get {
+        path("ping"){
+          logger.info("ENTRA EN EL PUTO PING!!!!!!!!!!!!!!!!!!")
+          complete("PONG!!")
+        } ~
         pathPrefix("css") {
+          logger.info("ENTRA EN CSS!!!!!!!!!!!!!!!!!!")
           getFromResourceDirectory("web/css")
         } ~
           pathPrefix("js") {
@@ -115,6 +121,7 @@ object Khermes extends App with LazyLogging {
               getFromResource("web/index.html")
           } ~
           path("console") {
+            logger.info("ENTRA EN CONSOLE!!!!!!!!!!!!!!!!!!")
             getFromResource("web/console.html")
           } ~
           path("input") {
@@ -131,14 +138,18 @@ object Khermes extends App with LazyLogging {
     })
 
     val port = Try(config.getInt("khermes.ws.port")).getOrElse({
-      logger.info("khermes.ws.port is not defined. Setting default: 8080")
+      logger.info("khermes.ws.port is not defined. Setting default: 8081")
       AppConstants.DefaultWSPort
     })
 
-    val binding = Http().bindAndHandle(routes, host, port)
-    logger.info(s"WebSocket Command Server online at http://$host:$port Press ENTER to stop")
+    logger.info("Binding routes......")
+    val binding = Http().bindAndHandle(routes, "0.0.0.0", port)
 
-    StdIn.readLine
+    binding.onComplete {
+      case Success(b) ⇒ logger.info(s"Started WebSocket Command Server online at ${b.localAddress}")
+      case Failure(t) ⇒ logger.error("Failed to start HTTP server")
+    }
+    while(true){}
     binding.flatMap(_.unbind()).onComplete(_ ⇒ system.terminate())
   }
 }
