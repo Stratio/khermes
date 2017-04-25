@@ -76,5 +76,5 @@ object AppConstants {
   val DefaultWSHost = "localhost"
   val DefaultWSPort = 8080
 
-  val DefaultStrategy = Map("Gonzalo" ->0.8)
+  val DefaultStrategy = Option("default")
 }

@@ -22,7 +22,6 @@ import com.stratio.khermes.commons.constants.AppConstants
 import com.stratio.khermes.commons.exceptions.KhermesException
 import com.stratio.khermes.commons.implicits.AppSerializer
 import com.stratio.khermes.helpers.faker.generators._
-import org.jliszka.probabilitymonad.Distribution
 import org.json4s.native.Serialization._
 
 import scala.util.{Failure, Random, Success, Try}
@@ -30,7 +29,7 @@ import scala.util.{Failure, Random, Success, Try}
 /**
  * Khermes util used for to generate random values.
  */
-case class Faker(locale: String = AppConstants.DefaultLocale, strategy: Map[String, Double] = AppConstants.DefaultStrategy) extends AppSerializer {
+case class Faker(locale: String = AppConstants.DefaultLocale, strategy: Option[String] = None) extends AppSerializer {
 
   object Name extends NameGenerator(locale, strategy)
 
@@ -59,24 +58,18 @@ trait FakerGenerator extends AppSerializer {
   def randomElementFromAList[T](list: Seq[T]): Option[T] =
     if (list.nonEmpty) Option(list(Random.nextInt((list.size - 1) + 1))) else None
 
-  def randomElementFromAListWithWeight[T](list: Seq[T], weight: Map[T, Double]): Option[T] = {
-
-    if (list.nonEmpty) {
-      val l: Seq[(T, Double)] = listWithWeight(list, weight)
-      val distribution: Distribution[T] = Distribution.discrete(l: _*)
-      Option(distribution.sample(100).head)
-    } else {
-      None
+  //TODO: We should provide more strategies.
+  def listWithStrategy[T](list: Seq[T], strategy: String): Seq[(T, Double)] = {
+    var p = 0.0
+    strategy match {
+      case "default" => p = 0.8
+      case _ => p =0.5
     }
-  }
-
-  def listWithWeight[T](list: Seq[T], weight: Map[T, Double]): Seq[(T, Double)] = {
-    list.map(x => if (weight.contains(x)) {
-      x -> weight(x)
-    }
-    else {
-      x -> ((1 - weight.values.sum) / (list.size - weight.size))
-    }).toSeq
+    val first: (T, Double) = list.head -> p
+    val tail: Seq[(T, Double)] = list.tail.map(x =>
+      x -> ((1 - p)/(list.size - 1))
+    )
+    tail:+first
   }
 
 
@@ -91,18 +84,8 @@ trait FakerGenerator extends AppSerializer {
     case Success(resources) => resources.list().toSeq
     case Failure(_) => throw new KhermesException(s"Error loading invalid name /locales/$name")
   }
-//  def getResources(name: String, weight: Map[String, Double]): Seq[String] = Try(
-//    new File(getClass.getResource(s"/locales/$name").getFile)) match {
-//    case Success(resources) => resources.list().toSeq.flatMap(x => x.flatMap(e =>repeatElementsInList(listWithWeight(x, weight)) ))
-//    case Failure(_) => throw new KhermesException(s"Error loading invalid name /locales/$name")
-//  }
 
   def parse[T](unitName: String, locale: String)(implicit m: Manifest[T]): Either[String, T] = Try(
-    read[T](getResource(unitName, locale))) match {
-    case Success(model) => Right(model)
-    case Failure(e) => Left(s"${e.getMessage}")
-  }
-  def parse[T](unitName: String, locale: String, weight: Map[String, Double])(implicit m: Manifest[T]): Either[String, T] = Try(
     read[T](getResource(unitName, locale))) match {
     case Success(model) => Right(model)
     case Failure(e) => Left(s"${e.getMessage}")

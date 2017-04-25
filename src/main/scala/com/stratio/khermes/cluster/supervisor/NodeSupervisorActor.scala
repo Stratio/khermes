@@ -22,7 +22,6 @@ import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.{DistributedPubSub, DistributedPubSubMediator}
 import com.stratio.khermes.cluster.supervisor.NodeSupervisorActor.Result
 import com.stratio.khermes.commons.config.AppConfig
-import com.stratio.khermes.commons.constants.AppConstants
 import com.stratio.khermes.helpers.faker.Faker
 import com.stratio.khermes.helpers.twirl.TwirlHelper
 import com.stratio.khermes.persistence.kafka.KafkaClient
@@ -50,8 +49,7 @@ class NodeSupervisorActor(implicit config: Config) extends Actor with ActorLoggi
   val id = UUID.randomUUID.toString
 
   val khermes = Faker(Try(config.getString("khermes.i18n")).toOption.getOrElse("EN"),
-    AppConstants.DefaultStrategy)
-//    Try(config.getString("khermes.weightStrategy")).toOption.getOrElse("DefaultStrategy"))
+    Try(config.getString("khermes.strategy")).toOption)
 
   override def receive: Receive = {
     case NodeSupervisorActor.Start(ids, hc) =>
@@ -115,7 +113,7 @@ class NodeExecutorThread(hc: AppConfig)(implicit config: Config) extends NodeExe
     running = true
     val kafkaClient = new KafkaClient[Object](hc.kafkaConfig)
     val template = TwirlHelper.template[(Faker) => Txt](hc.templateContent, hc.templateName)
-    val khermes = Faker(hc.khermesI18n)
+    val khermes = Faker(hc.khermesI18n,hc.strategy)
 
     val parserOption = hc.avroSchema.map(new Parser().parse(_))
 
