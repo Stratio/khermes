@@ -106,12 +106,7 @@ object Khermes extends App with LazyLogging {
 
     val routes =
       get {
-        path("ping"){
-          logger.info("ENTRA EN EL PUTO PING!!!!!!!!!!!!!!!!!!")
-          complete("PONG!!")
-        } ~
         pathPrefix("css") {
-          logger.info("ENTRA EN CSS!!!!!!!!!!!!!!!!!!")
           getFromResourceDirectory("web/css")
         } ~
           pathPrefix("js") {
@@ -121,7 +116,6 @@ object Khermes extends App with LazyLogging {
               getFromResource("web/index.html")
           } ~
           path("console") {
-            logger.info("ENTRA EN CONSOLE!!!!!!!!!!!!!!!!!!")
             getFromResource("web/console.html")
           } ~
           path("input") {
