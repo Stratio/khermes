@@ -17,8 +17,14 @@
 
 -->
 <configuration scan="true">
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <Pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</Pattern>
+        </encoder>
+    </appender>
     <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>/khermes.log</file>
+        <file>./khermes.log</file>
         <append>true</append>
         <encoder>
             <pattern>%-5relative %-5level %logger{35} - %msg%n</pattern>
@@ -26,5 +32,6 @@
     </appender>
     <root level="info">
         <appender-ref ref="file" />
+        <appender-ref ref="consoleAppender" />
     </root>
 </configuration>
