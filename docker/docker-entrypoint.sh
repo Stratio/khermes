@@ -8,4 +8,3 @@ else
 fi
 
 tail -F /khermes.log
-s
