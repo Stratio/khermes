@@ -39,7 +39,7 @@ class TwirlHelperTest extends FlatSpec
 
   "A TwirlHelper" should "compile a simple template without object injection" in {
     val template = "Hello world"
-    val result = cleanContent(TwirlHelper.template[() => Txt](template, "templateTest").static().toString())
+    val result = cleanContent(TwirlHelper.template[() => Txt](template, "templateTest").get.static().toString())
     result should be("Hello world")
   }
 
@@ -49,7 +49,7 @@ class TwirlHelperTest extends FlatSpec
         |@(name: String)
         |Hello @name
       """.stripMargin
-    val result = cleanContent(TwirlHelper.template[(String) => Txt](template, "templateTest").static("Neo").toString())
+    val result = cleanContent(TwirlHelper.template[(String) => Txt](template, "templateTest").get.static("Neo").toString())
     result should be("Hello Neo")
   }
 
@@ -63,7 +63,7 @@ class TwirlHelperTest extends FlatSpec
     val khermes = new Faker("EN")
 
     val result = cleanContent(
-      TwirlHelper.template[(Faker) => Txt](template, "templateTest").static(khermes).toString())
+      TwirlHelper.template[(Faker) => Txt](template, "templateTest").get.static(khermes).toString())
     result should fullyMatch regex """Hello [a-zA-Z]+"""
   }
 
@@ -71,7 +71,7 @@ class TwirlHelperTest extends FlatSpec
     val template = "Hello @(error)"
     //scalastyle:off
     the[CompilationError] thrownBy (TwirlHelper.template[() => Txt]
-      (template, "templateTest").static().toString()) should have('line (1), 'column (8))
+      (template, "templateTest").get.static().toString()) should have('line (1), 'column (8))
     //scalastyle:on
   }
 
