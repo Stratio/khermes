@@ -135,11 +135,7 @@ object TwirlHelper extends LazyLogging {
         try {
           val generated = myparseAndGenerateCode(templateName, TwirlIO2.readFile(source), codec, source.getAbsolutePath,
             resultType, formatterType, additionalImports, constructorAnnotations, inclusiveDot)
-          logger.debug("********* ABOUT TO WRITE STRING TO FILE ***********")
-          Thread.sleep(10000)
           TwirlIO2.writeStringToFile(generatedSource.file, generated.toString, codec)
-          logger.debug("********* WRITE FINE!!!!!! ***********")
-          Thread.sleep(10000)
           Some(generatedSource.file)
         } catch {
           case TemplateCompilationError(source, message, line, column) => {
@@ -157,8 +153,6 @@ object TwirlHelper extends LazyLogging {
     }
 
     def mytemplateCode(template: Template, resultType: String): Seq[Any] = {
-      logger.debug("********* MY TEMPLATE CODE ***********")
-      Thread.sleep(5000)
       val defs = (template.sub ++ template.defs).map { i =>
         i match {
           case t: Template if t.name == "" => templateCode(t, resultType)
@@ -172,15 +166,11 @@ object TwirlHelper extends LazyLogging {
       }
 
       val imports = formatImports(template.imports)
-      logger.debug("********* IMPORTS ***********"+imports)
-      Thread.sleep(5000)
       Nil :+ imports :+ "\n" :+ defs :+ "\n" :+ "Seq[Any](" :+ visit(template.content, Nil) :+ ")"
     }
 
 
     def mygetFunctionMapping(signature: String, returnType: String): (String, String, String) = synchronized {
-      logger.debug(s"********* MY GET FUNCTION MAPPING. SIGNATURE $signature AND RETURNTYPE $returnType ***********")
-      Thread.sleep(5000)
       def filterType(t: String) = t
         .replace("_root_.scala.<repeated>", "Array")
         .replace("<synthetic>", "")
@@ -188,31 +178,20 @@ object TwirlHelper extends LazyLogging {
       def findSignature(tree: Tree): Option[DefDef] = {
         tree match {
           case t: DefDef if t.name.toString == "signature" => {
-            logger.debug("SIGNATURE SOMEEEEE!!!!!!!!!!!!!1")
-            Thread.sleep(5000)
             Some(t)
           }
           case t: Tree => {
-            logger.debug("SIGNATURE FLATMAP!!!!!")
-            Thread.sleep(5000)
-            logger.debug("T.CHILDREN --> "+t.children.size)
             t.children.flatMap(findSignature).headOption
           }
         }
       }
 
       def myTreeFrom(src: String): global.Tree = {
-        logger.debug(s"********* MY TREE FROM WITH FILE ----> $src")
-        Thread.sleep(5000)
         val randomFileName = {
           val r = new java.util.Random
           () => "file" + r.nextInt
         }
-        logger.debug("RANDOM FILE NAME -->"+randomFileName)
-        Thread.sleep(5000)
         val file = new BatchSourceFile(randomFileName(), src)
-        logger.debug("CALLING... PresentationCompiler.treeFrom(file)")
-        Thread.sleep(5000)
         try {
           treeFrom2(file)
           logger.debug("PresentationCompiler.treeFrom(file) OK!!!!!!!!!!!!!")
@@ -224,13 +203,8 @@ object TwirlHelper extends LazyLogging {
       }
 
       def treeFrom2(file: SourceFile): global.Tree = {
-        logger.debug("TREEFROM2!!!!!")
-        Thread.sleep(5000)
         import tools.nsc.interactive.Response
         val r1 = new Response[global.Tree]
-        logger.debug("ABOUT TO ASK PARSED ENTERED THE FOLLOWING FILE: ")
-        logger.debug("FILE PATH: "+file.path+" FILE CONTENT: "+file.toString()+" FILE: "+file.content)
-        Thread.sleep(10000)
         //PETAAA AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIII
         global.askParsedEntered(file, true, r1)
         logger.debug("ASK PARSED ENTERED FINE!!!!!!!!....")
@@ -245,15 +219,8 @@ object TwirlHelper extends LazyLogging {
 
       val treeFrom = myTreeFrom("object FT { def signature" + signature + " }")
 
-      logger.debug(s"********* TREEFORM ID ----> ${treeFrom.id}")
-      Thread.sleep(5000)
-
-      Thread.sleep(5000)
       val params = findSignature(
         PresentationCompiler.treeFrom("object FT { def signature" + signature + " }")).get.vparamss
-
-      logger.debug("********* FIND SIGNATURE OK!!!!!!!!!!!***********")
-      Thread.sleep(5000)
 
       val resp = PresentationCompiler.global.askForResponse { () =>
 
@@ -263,8 +230,6 @@ object TwirlHelper extends LazyLogging {
         }.mkString(",") + ")").mkString(" => ") + " => " + returnType + ")"
 
         val renderCall = {
-          logger.debug("********* RENDER CALL!!!!!!!!!!!***********")
-          Thread.sleep(5000)
           val call = "def render%s: %s = apply%s".format(
             "(" + params.flatten.map {
               case ByNameParam(name, paramType) => name + ":" + paramType
@@ -274,14 +239,10 @@ object TwirlHelper extends LazyLogging {
             params.map(group => "(" + group.map { p =>
               p.name.toString + Option(p.tpt.toString).filter(_.startsWith("_root_.scala.<repeated>")).map(_ => ":_*").getOrElse("")
             }.mkString(",") + ")").mkString)
-          logger.debug("********* RENDER CALL OK!!!!!!!!!!!***********")
-          Thread.sleep(5000)
           call
         }
 
         val templateType = {
-          logger.debug("********* TEMPLATE TYPE!!!!!!!!!!!***********")
-          Thread.sleep(5000)
           val root = "_root_.play.twirl.api.Template%s[%s%s]".format(
             params.flatten.size,
             params.flatten.map {
@@ -289,49 +250,34 @@ object TwirlHelper extends LazyLogging {
               case a => filterType(a.tpt.toString)
             }.mkString(","),
             (if (params.flatten.isEmpty) "" else ",") + returnType)
-          logger.debug("********* TEMPLATE TYPE OK!!!!!!!!!!!***********")
-          Thread.sleep(5000)
           root
         }
 
         val f = {
-          logger.debug("********* FUNCTION TYPE!!!!!!!!!!!***********")
-          Thread.sleep(5000)
           val function = "def f:%s = %s => apply%s".format(
             functionType,
             params.map(group => "(" + group.map(_.name.toString).mkString(",") + ")").mkString(" => "),
             params.map(group => "(" + group.map { p =>
               p.name.toString + Option(p.tpt.toString).filter(_.startsWith("_root_.scala.<repeated>")).map(_ => ":_*").getOrElse("")
             }.mkString(",") + ")").mkString)
-          logger.debug("********* FUNCTION TYPE OK!!!!!!!!!!!***********")
-          Thread.sleep(5000)
           function
         }
 
         (renderCall, f, templateType)
       }.get(10000)
 
-      logger.debug("********* RESP OK!!!!!!!!!!!***********")
-      Thread.sleep(5000)
-
       resp match {
         case None => {
-          logger.debug("********* RESP NONE!!!!!!!!!!!***********")
-          Thread.sleep(5000)
           PresentationCompiler.global.reportThrowable(new Throwable("Timeout in getFunctionMapping"))
           ("", "", "")
         }
         case Some(res) =>
           res match {
             case Right(t) => {
-              logger.debug("********* RIGHT!!!!!!!!!!!***********")
-              Thread.sleep(5000)
               PresentationCompiler.global.reportThrowable(new Throwable("Throwable in getFunctionMapping", t))
               ("", "", "")
             }
             case Left(res) => {
-              logger.debug("********* LEFT!!!!!!!!!!!***********")
-              Thread.sleep(5000)
               res
             }
           }
@@ -344,21 +290,15 @@ object TwirlHelper extends LazyLogging {
       val (renderCall, f, templateType) = mygetFunctionMapping(
         root.params.str,
         resultType)
-      logger.debug("********* TemplateAsFunctionCompiler OK!!!!!!!!!!!!! ***********")
-      Thread.sleep(5000)
       // Get the imports that we need to include, filtering out empty imports
       val imports: Seq[Any] = Seq(additionalImports.map(i => Seq("import ", i, "\n")),
         formatImports(root.topImports))
-      logger.debug("********* IMPORTS OK ***********")
-      Thread.sleep(5000)
       val classDeclaration = root.constructor.fold[Seq[Any]](
         Seq("object ", name)
       ) { constructor =>
         Vector.empty :+ "/*" :+ constructor.comment.fold("")(_.msg) :+ """*/
 class """ :+ name :+ " " :+ constructorAnnotations :+ " " :+ Source(constructor.params.str, constructor.params.pos)
       }
-      logger.debug("*********CLASS DECLARATIONS OK ***********")
-      Thread.sleep(5000)
       val generated = {
         Vector.empty :+ """
 package """ :+ packageName :+ """
@@ -386,8 +326,6 @@ package """ :+ packageName :+ """
 """
       }
 
-      logger.debug("********* MY GENERATECODE OK!!!!!!!! ***********")
-      Thread.sleep(5000)
       generated
     }
 
@@ -406,8 +344,6 @@ package """ :+ packageName :+ """
       val templateParser = new MyTwirlParser(inclusiveDot)
       templateParser.parse(new String(content, codec.charSet)) match {
         case templateParser.Success(parsed: Template, rest) if rest.atEnd => {
-          logger.debug("********* TEMPLATE PARSER SUCCESS REST.ATEND ***********")
-          Thread.sleep(5000)
           myGenerateFinalTemplate(absolutePath,
             content,
             templateName.dropRight(1).mkString("."),
@@ -420,13 +356,9 @@ package """ :+ packageName :+ """
           )
         }
         case templateParser.Success(_, rest) => {
-          logger.debug("********* TEMPLATE PARSER SUCCESS ***********")
-          Thread.sleep(5000)
           throw new TemplateCompilationError(new File(absolutePath), "Not parsed?", rest.pos.line, rest.pos.column)
         }
         case templateParser.Error(_, rest, errors) => {
-          logger.debug("********* TEMPLATE PARSER ERRORS --> ")
-          errors.foreach(e => logger.error(s"ERROR -> ${e.str}"))
           val firstError = errors.head
           throw new TemplateCompilationError(new File(absolutePath), firstError.str, firstError.pos.line, firstError.pos.column)
         }
@@ -435,9 +367,7 @@ package """ :+ packageName :+ """
 
     def generatedFile(template: File, codec: Codec, sourceDirectory: File, generatedDirectory: File, inclusiveDot: Boolean) = {
       val templateName = {
-        logger.debug("SOURCE2 TEMPLATE NAME....")
         val name = source2TemplateName(template, sourceDirectory, template.getName.split('.').takeRight(1).head).split('.')
-        logger.debug("NAME OK!!!!....")
         if (inclusiveDot) addInclusiveDotName(name) else name
       }
       templateName -> GeneratedSource(new File(generatedDirectory, templateName.mkString("/") + ".template.scala"), codec)
