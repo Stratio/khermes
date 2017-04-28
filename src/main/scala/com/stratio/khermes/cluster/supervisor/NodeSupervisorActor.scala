@@ -113,7 +113,7 @@ class NodeExecutorThread(hc: AppConfig)(implicit config: Config) extends NodeExe
     running = true
     val kafkaClient = new KafkaClient[Object](hc.kafkaConfig)
     val template = TwirlHelper.template[(Faker) => Txt](hc.templateContent, hc.templateName)
-    val khermes = Faker(hc.khermesI18n,hc.strategy)
+    val khermes = Faker(hc.khermesI18n, hc.strategy)
 
     val parserOption = hc.avroSchema.map(new Parser().parse(_))
 

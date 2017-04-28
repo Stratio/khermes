@@ -79,10 +79,4 @@ class FakerGeneratorTest extends FlatSpec with FakerGenerator with Matchers with
     }
   }
 
-
-  it should "return always the same value of a list if have a weight of 1" in {
-//    randomElementFromAList(Seq(0, 1, 2), Map(0 -> 1.0)) shouldBe Some(0)
-
-  }
-
 }

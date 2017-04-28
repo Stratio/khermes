@@ -82,13 +82,5 @@ class NameGeneratorTest extends FlatSpec
     khermesES.Name.firstNames(khermesEN.Name.nameModel) should contain(khermesES.Name.firstName)
     khermesES.Name.lastNames(khermesEN.Name.nameModel) should contain(khermesES.Name.lastName)
   }
-  "A Khermes" should "generates random firstNames and lastNames with EN and ES locales with weight" in {
-    val khermesEN = Faker()
-    khermesEN.Name.firstNames(khermesEN.Name.nameModel) should contain(khermesEN.Name.firstName())
-    khermesEN.Name.lastNames(khermesEN.Name.nameModel) should contain(khermesEN.Name.lastName)
 
-    val khermesES = Faker("ES")
-    khermesES.Name.firstNames(khermesEN.Name.nameModel) should contain(khermesEN.Name.firstName())
-    khermesES.Name.lastNames(khermesEN.Name.nameModel) should contain(khermesES.Name.lastName)
-  }
 }

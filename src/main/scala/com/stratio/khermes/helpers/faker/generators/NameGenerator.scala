@@ -42,8 +42,7 @@ case class NameGenerator(locale: String, strategy: Option[String]) extends Faker
         ))
         if (parseErrors[NameModel](res).nonEmpty) logger.warn(s"${parseErrors[NameModel](res)}")
         res
-      }
-      else {
+      } else {
         val res = resources.map(parse[NameModel](name, _))
         if (parseErrors[NameModel](res).nonEmpty) logger.warn(s"${parseErrors[NameModel](res)}")
         res
@@ -60,8 +59,6 @@ case class NameGenerator(locale: String, strategy: Option[String]) extends Faker
       }
   }
 
-  lazy val fisrtNameModel = firstNames(nameModel)
-  lazy val lastNameModel = lastNames(nameModel)
 
   /**
    * Example: "Bruce Wayne".
@@ -80,7 +77,7 @@ case class NameGenerator(locale: String, strategy: Option[String]) extends Faker
    * @return a first name.
    */
   def firstName(): String =
-  randomElementFromAList[String](fisrtNameModel).getOrElse(throw new NoSuchElementException)
+  randomElementFromAList[String](firstNames(nameModel)).getOrElse(throw new NoSuchElementException)
 
 
   /**
@@ -88,7 +85,7 @@ case class NameGenerator(locale: String, strategy: Option[String]) extends Faker
    * @return a last name.
    */
   def lastName(): String =
-  randomElementFromAList[String](lastNameModel).getOrElse(throw new NoSuchElementException)
+  randomElementFromAList[String](lastNames(nameModel)).getOrElse(throw new NoSuchElementException)
 
   def lastNames(resources: Seq[Either[String, NameModel]]): Seq[String] = {
     getName(resources: Seq[Either[String, NameModel]]).flatMap(_.firstNames)

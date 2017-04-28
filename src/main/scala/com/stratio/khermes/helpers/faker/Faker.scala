@@ -27,8 +27,8 @@ import org.json4s.native.Serialization._
 import scala.util.{Failure, Random, Success, Try}
 
 /**
- * Khermes util used for to generate random values.
- */
+  * Khermes util used for to generate random values.
+  */
 case class Faker(locale: String = AppConstants.DefaultLocale, strategy: Option[String] = None) extends AppSerializer {
 
   object Name extends NameGenerator(locale, strategy)
@@ -50,26 +50,29 @@ trait FakerGenerator extends AppSerializer {
   def name: String
 
   /**
-   * Returns a random element from a list.
-   * @param list initial list
-   * @tparam T with the type of the list
-   * @return a random element of the list or None if the list is empty.
-   */
+    * Returns a random element from a list.
+    *
+    * @param list initial list
+    * @tparam T with the type of the list
+    * @return a random element of the list or None if the list is empty.
+    */
   def randomElementFromAList[T](list: Seq[T]): Option[T] =
-    if (list.nonEmpty) Option(list(Random.nextInt((list.size - 1) + 1))) else None
+  if (list.nonEmpty) Option(list(Random.nextInt((list.size - 1) + 1))) else None
 
   //TODO: We should provide more strategies.
   def listWithStrategy[T](list: Seq[T], strategy: String): Seq[(T, Double)] = {
-    var p = 0.0
     strategy match {
-      case "default" => p = 0.8
-      case _ => p =0.5
+      case "default" => listStrategyApply(list, 0.8)
+      case _ => listStrategyApply(list, 0.5)
     }
+  }
+
+  def listStrategyApply[T](list: Seq[T], p: Double): Seq[(T, Double)] = {
     val first: (T, Double) = list.head -> p
     val tail: Seq[(T, Double)] = list.tail.map(x =>
-      x -> ((1 - p)/(list.size - 1))
+      x -> ((1 - p) / (list.size - 1))
     )
-    tail:+first
+    tail :+ first
   }
 
 
