@@ -45,3 +45,5 @@ apidocs
 
 # Logs
 *.log
+esdata/
+
