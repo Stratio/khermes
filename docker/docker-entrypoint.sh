@@ -1,23 +1,11 @@
 #!/bin/bash -xe
 
-if [[ -z ${PARAMS} ]]; then
-    echo "No params provided!"
-    exit 1
-fi
-
-client=$(echo $PARAMS | grep khermes.client=true || true)
-echo "Params: ${PARAMS}"
-
-if [[ ! -z ${MARATHON_APP_LABEL_DCOS_PACKAGE_NAME} ]]; then
-	sleep 10
-	ping -c10 ${MARATHON_APP_LABEL_DCOS_PACKAGE_NAME}.marathon.mesos 
-	host -t a ${MARATHON_APP_LABEL_DCOS_PACKAGE_NAME}.marathon.mesos
-fi
-
-if [[ -z ${client} ]]; then
-    java -jar ${PARAMS} /khermes.jar
+if [ $SEED = "true" ]; then
+    HOSTNAME="$(hostname)"
+    SEED_IP_ADDRESS="$(dig +short $HOSTNAME)"
+    java -jar -Dkhermes.ws=true -Dakka.remote.netty.tcp.port=$PORT0 -Dakka.remote.netty.tcp.hostname=$SEED_IP_ADDRESS -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@$SEED_IP_ADDRESS:$PORT0 -Dzookeeper.connection=master.mesos:2181 /khermes.jar
 else
-    screen -S client -d -m java -jar ${PARAMS} /khermes.jar
+    java -jar -Dkhermes.client=true -Dkhermes.ws=false -Dakka.remote.netty.tcp.port=$PORT0 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@$SEED_IP:$SEED_PORT -Dzookeeper.connection=master.mesos:2181 /khermes.jar
 fi
 
-tail -F /var/log/sds/khermes/khermes.log
+tail -F /khermes.log

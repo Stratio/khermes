@@ -17,13 +17,26 @@
 
 -->
 <configuration scan="true">
-    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+    <!--
+    WE MIGHT ADD A MAVEN PROFILE FOR DEVELOPMENT AND PRODUCTION LOGGER. FOR PRODUCTION (DC/OS CLUSTER)
+    WE NEED TO COMMENT THE CONSOLE APPENDER BECAUSE IF NOT THE APP GETS KILLED.
+    IN DEVELOPMENT MODE WE RECOMMEND TO UNCOMMENT THIS LOGGER AND COMMENT THE FILE ONE-->
+    <!--<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <charset>UTF-8</charset>
             <Pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</Pattern>
         </encoder>
     </appender>
-    <root level="info">
-        <appender-ref ref="consoleAppender" />
+    -->
+    <appender name="file" class="ch.qos.logback.core.FileAppender">
+        <file>./khermes.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%-5relative %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="debug">
+        <appender-ref ref="file" />
+        <!--<appender-ref ref="consoleAppender" />-->
     </root>
 </configuration>

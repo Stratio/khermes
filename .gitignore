@@ -43,3 +43,7 @@ build.log
 javadoc
 apidocs
 
+# Logs
+*.log
+esdata/
+

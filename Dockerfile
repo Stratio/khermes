@@ -1,13 +1,15 @@
-FROM stratio/ubuntu-base:16.04
+FROM qa.stratio.com/stratio/ubuntu-base:16.04
 
 MAINTAINER stratio
 
 ARG VERSION
 
-RUN apt-get update && apt-get install -y screen
-
 COPY target/khermes-${VERSION}-allinone.jar /khermes.jar
 COPY docker/docker-entrypoint.sh /
+COPY docker/docker-entrypoint-local.sh /
 COPY src/main/resources/application.conf /
+RUN touch /khermes.log
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+EXPOSE 8080
+
+ENTRYPOINT ["/docker-entrypoint-local.sh"]
