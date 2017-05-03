@@ -132,12 +132,12 @@ object Khermes extends App with LazyLogging {
     })
 
     val port = Try(config.getInt("khermes.ws.port")).getOrElse({
-      logger.info("khermes.ws.port is not defined. Setting default: 8081")
+      logger.info("khermes.ws.port is not defined. Setting default: 8080")
       AppConstants.DefaultWSPort
     })
 
     logger.info("Binding routes......")
-    val binding = Http().bindAndHandle(routes, "0.0.0.0", port)
+    val binding = Http().bindAndHandle(routes, host, port)
 
     binding.onComplete {
       case Success(b) ⇒ logger.info(s"Started WebSocket Command Server online at ${b.localAddress}")
