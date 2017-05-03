@@ -37,7 +37,6 @@ class KafkaClient[K](config: Config) extends LazyLogging {
    * @return a parsed properties object.
    */
   def parseProperties(path: String = "kafka"): Properties = {
-    logger.debug("Parsing kafka client properties...")
     assert(config.hasPath(path), s"Not existing $path path in application.conf")
     import scala.collection.JavaConversions._
     val props = new Properties()
@@ -45,8 +44,6 @@ class KafkaClient[K](config: Config) extends LazyLogging {
       entry.getKey -> entry.getValue.unwrapped()
     })(collection.breakOut)
     props.putAll(map)
-    logger.debug("Kafka client properties: ")
-    propertiesAsScalaMap(props).foreach(prop => println(prop._1 + "->" + prop._2))
     props
   }
 
