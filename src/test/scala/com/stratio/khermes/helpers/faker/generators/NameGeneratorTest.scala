@@ -28,15 +28,7 @@ class NameGeneratorTest extends FlatSpec
   with Matchers {
 
 
-  "A Khermes" should "generates random firstNames and lastNames with EN and ES locales" in {
-    val khermesEN = Faker()
-    khermesEN.Name.firstNames(khermesEN.Name.nameModel) should contain(khermesEN.Name.firstName)
-    khermesEN.Name.lastNames(khermesEN.Name.nameModel) should contain(khermesEN.Name.lastName)
 
-    val khermesES = Faker("ES")
-    khermesES.Name.firstNames(khermesEN.Name.nameModel) should contain(khermesES.Name.firstName)
-    khermesES.Name.lastNames(khermesEN.Name.nameModel) should contain(khermesES.Name.lastName)
-  }
 
   it should "generate valid names: firstName lastName with EN and ES locales" in {
     val khermesEN = Faker()
@@ -80,4 +72,15 @@ class NameGeneratorTest extends FlatSpec
     //scalastyle:on
     model.map(_.left.get should equal(s"Error loading invalid resource /locales/name/XY.json"))
   }
+
+  "A Khermes" should "generates random firstNames and lastNames with EN and ES locales" in {
+    val khermesEN = Faker()
+    khermesEN.Name.firstNames(khermesEN.Name.nameModel) should contain(khermesEN.Name.firstName)
+    khermesEN.Name.lastNames(khermesEN.Name.nameModel) should contain(khermesEN.Name.lastName)
+
+    val khermesES = Faker("ES")
+    khermesES.Name.firstNames(khermesEN.Name.nameModel) should contain(khermesES.Name.firstName)
+    khermesES.Name.lastNames(khermesEN.Name.nameModel) should contain(khermesES.Name.lastName)
+  }
+
 }

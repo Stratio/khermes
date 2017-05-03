@@ -78,4 +78,5 @@ class FakerGeneratorTest extends FlatSpec with FakerGenerator with Matchers with
       getResource("no-valid-name", "EN.json")
     }
   }
+
 }

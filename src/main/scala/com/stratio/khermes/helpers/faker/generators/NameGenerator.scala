@@ -24,20 +24,41 @@ import com.typesafe.scalalogging.LazyLogging
 /**
  * Generates random names.
  */
-case class NameGenerator(locale: String) extends FakerGenerator
+case class NameGenerator(locale: String, strategy: Option[String]) extends FakerGenerator
   with AppSerializer
   with LazyLogging {
 
   override def name: String = "name"
 
-  lazy val nameModel = locale match {
+  lazy val nameModel: Seq[Either[String, NameModel]] = locale match {
     case AppConstants.DefaultLocale =>
       val resources = getResources(name)
-        .map(parse[NameModel](name, _))
-      if (parseErrors[NameModel](resources).nonEmpty) logger.warn(s"${parseErrors[NameModel](resources)}")
-      resources
-    case localeValue => Seq(parse[NameModel](name, s"$localeValue.json"))
+      if (strategy.isDefined) {
+        val res = resources.map(parse[NameModel](name, _)
+          .right.map(elem =>
+          NameModel(
+            repeatElementsInList(listWithStrategy(elem.firstNames, strategy.getOrElse(throw new IllegalArgumentException("Bad strategy definition"))))
+            , repeatElementsInList(listWithStrategy(elem.lastNames, strategy.getOrElse(throw new IllegalArgumentException("Bad strategy definition")))))
+        ))
+        if (parseErrors[NameModel](res).nonEmpty) logger.warn(s"${parseErrors[NameModel](res)}")
+        res
+      } else {
+        val res = resources.map(parse[NameModel](name, _))
+        if (parseErrors[NameModel](res).nonEmpty) logger.warn(s"${parseErrors[NameModel](res)}")
+        res
+      }
+    case localeValue =>
+      if (strategy.isDefined) {
+        Seq(parse[NameModel](name, s"$localeValue.json")
+          .right.map(elem =>
+          NameModel(repeatElementsInList(listWithStrategy(elem.firstNames, strategy.getOrElse(throw new IllegalArgumentException("Bad strategy definition")))),
+            repeatElementsInList(listWithStrategy(elem.lastNames, strategy.getOrElse(throw new IllegalArgumentException("Bad strategy definition"))))))
+        )
+      } else {
+        Seq(parse[NameModel](name, s"$localeValue.json"))
+      }
   }
+
 
   /**
    * Example: "Bruce Wayne".
@@ -56,7 +77,7 @@ case class NameGenerator(locale: String) extends FakerGenerator
    * @return a first name.
    */
   def firstName(): String =
-    randomElementFromAList[String](firstNames(nameModel)).getOrElse(throw new NoSuchElementException)
+  randomElementFromAList[String](firstNames(nameModel)).getOrElse(throw new NoSuchElementException)
 
 
   /**
@@ -64,7 +85,7 @@ case class NameGenerator(locale: String) extends FakerGenerator
    * @return a last name.
    */
   def lastName(): String =
-    randomElementFromAList[String](lastNames(nameModel)).getOrElse(throw new NoSuchElementException)
+  randomElementFromAList[String](lastNames(nameModel)).getOrElse(throw new NoSuchElementException)
 
   def lastNames(resources: Seq[Either[String, NameModel]]): Seq[String] = {
     getName(resources: Seq[Either[String, NameModel]]).flatMap(_.firstNames)

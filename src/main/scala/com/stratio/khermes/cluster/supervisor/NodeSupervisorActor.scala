@@ -48,7 +48,8 @@ class NodeSupervisorActor(implicit config: Config) extends Actor with ActorLoggi
   var khermesExecutor: Option[NodeExecutorThread] = None
   val id = UUID.randomUUID.toString
 
-  val khermes = Faker(Try(config.getString("khermes.i18n")).toOption.getOrElse("EN"))
+  val khermes = Faker(Try(config.getString("khermes.i18n")).toOption.getOrElse("EN"),
+    Try(config.getString("khermes.strategy")).toOption)
 
   override def receive: Receive = {
     case NodeSupervisorActor.Start(ids, hc) =>
@@ -112,7 +113,7 @@ class NodeExecutorThread(hc: AppConfig)(implicit config: Config) extends NodeExe
     running = true
     val kafkaClient = new KafkaClient[Object](hc.kafkaConfig)
     val template = TwirlHelper.template[(Faker) => Txt](hc.templateContent, hc.templateName)
-    val khermes = Faker(hc.khermesI18n)
+    val khermes = Faker(hc.khermesI18n, hc.strategy)
 
     val parserOption = hc.avroSchema.map(new Parser().parse(_))
 

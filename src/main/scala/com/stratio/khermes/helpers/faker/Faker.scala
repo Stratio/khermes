@@ -27,11 +27,11 @@ import org.json4s.native.Serialization._
 import scala.util.{Failure, Random, Success, Try}
 
 /**
- * Khermes util used for to generate random values.
- */
-case class Faker(locale: String = AppConstants.DefaultLocale) extends AppSerializer {
+  * Khermes util used for to generate random values.
+  */
+case class Faker(locale: String = AppConstants.DefaultLocale, strategy: Option[String] = None) extends AppSerializer {
 
-  object Name extends NameGenerator(locale)
+  object Name extends NameGenerator(locale, strategy)
 
   object Number extends NumberGenerator
 
@@ -42,6 +42,7 @@ case class Faker(locale: String = AppConstants.DefaultLocale) extends AppSeriali
   object Music extends MusicGenerator(locale)
 
   object Email extends EmailGenerator(locale)
+
 }
 
 trait FakerGenerator extends AppSerializer {
@@ -49,13 +50,37 @@ trait FakerGenerator extends AppSerializer {
   def name: String
 
   /**
-   * Returns a random element from a list.
-   * @param list initial list
-   * @tparam T with the type of the list
-   * @return a random element of the list or None if the list is empty.
-   */
+    * Returns a random element from a list.
+    *
+    * @param list initial list
+    * @tparam T with the type of the list
+    * @return a random element of the list or None if the list is empty.
+    */
   def randomElementFromAList[T](list: Seq[T]): Option[T] =
-    if (list.nonEmpty) Option(list(Random.nextInt((list.size - 1) + 1))) else None
+  if (list.nonEmpty) Option(list(Random.nextInt((list.size - 1) + 1))) else None
+
+  //TODO: We should provide more strategies.
+  def listWithStrategy[T](list: Seq[T], strategy: String): Seq[(T, Double)] = {
+    strategy match {
+      case "default" => listStrategyApply(list, 0.8)
+      case _ => listStrategyApply(list, 0.5)
+    }
+  }
+
+  def listStrategyApply[T](list: Seq[T], p: Double): Seq[(T, Double)] = {
+    val first: (T, Double) = list.head -> p
+    val tail: Seq[(T, Double)] = list.tail.map(x =>
+      x -> ((1 - p) / (list.size - 1))
+    )
+    tail :+ first
+  }
+
+
+  def repeatElementsInList[T](list: Seq[(T, Double)]): Seq[T] = {
+    list.flatMap(x =>
+      Seq.fill((x._2 * 1000).toInt)(x._1)
+    )
+  }
 
   def getResources(name: String): Seq[String] = Try(
     new File(getClass.getResource(s"/locales/$name").getFile)) match {
