@@ -76,9 +76,9 @@ class TwirlHelperTest extends FlatSpec
   }
 
   /**
-    * Cleans the content deleting return carriages an not necessary spaces.
-    * @param content with the original content.
-    * @return a sanitized content.
-    */
+   * Cleans the content deleting return carriages an not necessary spaces.
+   * @param content with the original content.
+   * @return a sanitized content.
+   */
   def cleanContent(content: String): String = content.replace("\n", "").replaceAll("  +", "")
 }

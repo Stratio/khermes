@@ -35,9 +35,9 @@ import scala.annotation.tailrec
 import scala.util.Try
 
 /**
-  * Supervisor that will manage a thread that will generate data along the cluster.
-  * @param config with all needed configuration.
-  */
+ * Supervisor that will manage a thread that will generate data along the cluster.
+ * @param config with all needed configuration.
+ */
 class NodeSupervisorActor(implicit config: Config) extends Actor with ActorLogging {
 
   import DistributedPubSubMediator.Subscribe
@@ -88,10 +88,10 @@ class NodeSupervisorActor(implicit config: Config) extends Actor with ActorLoggi
 }
 
 /**
-  * Thread that will generate data and it is controlled by the supervisor thanks to stopExecutor method.
-  * @param hc     with the Hermes' configuration.
-  * @param config with general configuration.
-  */
+ * Thread that will generate data and it is controlled by the supervisor thanks to stopExecutor method.
+ * @param hc     with the Hermes' configuration.
+ * @param config with general configuration.
+ */
 class NodeExecutorThread(hc: AppConfig)(implicit config: Config) extends NodeExecutable
   with LazyLogging {
 
@@ -99,9 +99,9 @@ class NodeExecutorThread(hc: AppConfig)(implicit config: Config) extends NodeExe
   var running: Boolean = false
 
   /**
-    * Starts the thread.
-    * @param hc with all configuration needed to start the thread.
-    */
+   * Starts the thread.
+   * @param hc with all configuration needed to start the thread.
+   */
   override def start(hc: AppConfig): Unit = run()
 
   override def stopExecutor: Unit = running = false
@@ -122,14 +122,14 @@ class NodeExecutorThread(hc: AppConfig)(implicit config: Config) extends NodeExe
     val stopNumberOfEventsOption = hc.stopNumberOfEventsOption
 
     /**
-      * If you are defining the following example configuration:
-      * timeout-rules {
-      * number-of-events: 1000
-      * duration: 2 seconds
-      * }
-      * Then when the node produces 1000 events, it will wait 2 seconds to start producing again.
-      * @param numberOfEvents with the current number of events generated.
-      */
+     * If you are defining the following example configuration:
+     * timeout-rules {
+     * number-of-events: 1000
+     * duration: 2 seconds
+     * }
+     * Then when the node produces 1000 events, it will wait 2 seconds to start producing again.
+     * @param numberOfEvents with the current number of events generated.
+     */
     def performTimeout(numberOfEvents: Int): Unit =
       for {
         timeoutNumberOfEvents <- timeoutNumberOfEventsOption
@@ -142,18 +142,18 @@ class NodeExecutorThread(hc: AppConfig)(implicit config: Config) extends NodeExe
 
 
     /**
-      * Starts to generate events in a recursive way.
-      * Note that this generation only will stop in two cases:
-      *   1. The user sends an stop event to the supervisor actor; the supervisor change the state of running to false,
-      * stopping the execution.
-      *   2. The user defines the following Hermes' configuration:
-      * stop-rules {
-      * number-of-events: 5000
-      * }
-      * In this case only it will generate 5000 events, then automatically the thread puts its state of running to
-      * false stopping the event generation.
-      * @param numberOfEvents with the current number of events generated.
-      */
+     * Starts to generate events in a recursive way.
+     * Note that this generation only will stop in two cases:
+     *   1. The user sends an stop event to the supervisor actor; the supervisor change the state of running to false,
+     * stopping the execution.
+     *   2. The user defines the following Hermes' configuration:
+     * stop-rules {
+     * number-of-events: 5000
+     * }
+     * In this case only it will generate 5000 events, then automatically the thread puts its state of running to
+     * false stopping the event generation.
+     * @param numberOfEvents with the current number of events generated.
+     */
     @tailrec
     def recursiveGeneration(numberOfEvents: Int): Unit =
     if (running) {

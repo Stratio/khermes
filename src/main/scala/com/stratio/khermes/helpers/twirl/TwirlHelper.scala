@@ -31,22 +31,22 @@ import scala.tools.nsc.reporters.ConsoleReporter
 import scala.tools.nsc.{Global, Settings}
 
 /**
-  * Helper used to parse and compile templates using Twirl.
-  */
+ * Helper used to parse and compile templates using Twirl.
+ */
 object TwirlHelper extends LazyLogging {
 
   /**
-    * Compiles and executes a template with Twirl. It follows the next steps:
-    * Step 1) A string that represents the template is saved in Khermes' templates path.
-    * Step 2) The engine generates a scala files to be compiled.
-    * Step 3) The engine compiles the scala files generated in the previous step.
-    * Step 4) Finally it executes the compiled files interpolating values with the template.
-    * @param template a string with the template.
-    * @param templateName the name of the file that will contain the content of the template.
-    * @param config with Khermes' configuration.
-    * @tparam T with the type of object to inject in the template.
-    * @return a compiled and executed template.
-    */
+   * Compiles and executes a template with Twirl. It follows the next steps:
+   * Step 1) A string that represents the template is saved in Khermes' templates path.
+   * Step 2) The engine generates a scala files to be compiled.
+   * Step 3) The engine compiles the scala files generated in the previous step.
+   * Step 4) Finally it executes the compiled files interpolating values with the template.
+   * @param template a string with the template.
+   * @param templateName the name of the file that will contain the content of the template.
+   * @param config with Khermes' configuration.
+   * @tparam T with the type of object to inject in the template.
+   * @return a compiled and executed template.
+   */
   def template[T](template: String, templateName: String)(implicit config: Config): CompiledTemplate[T] = {
     val templatesPath = config.getString("khermes.templates-path")
     val templatePath = s"$templatesPath/$templateName.scala.html"
@@ -66,28 +66,28 @@ object TwirlHelper extends LazyLogging {
   }
 
   /**
-    * If the template is wrong this exception informs about the mistake.
-    * @param message with information about the error.
-    * @param line that contains the error.
-    * @param column that contains the error.
-    */
+   * If the template is wrong this exception informs about the mistake.
+   * @param message with information about the error.
+   * @param line that contains the error.
+   * @param column that contains the error.
+   */
   case class CompilationError(message: String, line: Int, column: Int) extends RuntimeException(message)
 
   /**
-    * Deletes all content in a path.
-    * @param dir a file that represents the path to delete.
-    */
+   * Deletes all content in a path.
+   * @param dir a file that represents the path to delete.
+   */
   protected[this] def deleteRecursively(dir: File) {
     if(dir.isDirectory) dir.listFiles().foreach(deleteRecursively)
     dir.delete()
   }
 
   /**
-    * Helper used to compile templates internally.
-    * @param sourceDir that contains original templates.
-    * @param generatedDir that contains scala files from the templates.
-    * @param generatedClasses that contains class files with the result of the compilation.
-    */
+   * Helper used to compile templates internally.
+   * @param sourceDir that contains original templates.
+   * @param generatedDir that contains scala files from the templates.
+   * @param generatedClasses that contains class files with the result of the compilation.
+   */
   protected[this] class CompilerHelper(sourceDir: File, generatedDir: File, generatedClasses: File) {
 
     val twirlCompiler = TwirlCompiler
@@ -138,11 +138,11 @@ object TwirlHelper extends LazyLogging {
   }
 
   /**
-    * From a classname and a classloader it returns a result of a compiled and executed template.
-    * @param className with the classname.
-    * @param classloader with the classloader.
-    * @tparam T with the type of object to inject in the template.
-    */
+   * From a classname and a classloader it returns a result of a compiled and executed template.
+   * @param className with the classname.
+   * @param classloader with the classloader.
+   * @tparam T with the type of object to inject in the template.
+   */
   class CompiledTemplate[T](className: String, classloader: URLClassLoader) {
     var method: Option[Method] = None
     var declaredField: Option[AnyRef] = None
@@ -156,8 +156,8 @@ object TwirlHelper extends LazyLogging {
       }
     }
     /**
-      * @return the result of a compiled and executed template.
-      */
+     * @return the result of a compiled and executed template.
+     */
     //scalastyle:off
     def static: T = {
       if(declaredField.isEmpty) {
