@@ -1,0 +1,105 @@
+version: '2'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:3.1.0
+    network_mode: host
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  schema-registry:
+      image: confluentinc/cp-schema-registry:3.1.0
+      network_mode: host
+      depends_on:
+       - zookeeper
+      environment:
+        SCHEMA_REGISTRY_HOST_NAME: schema-registry
+        SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: localhost:2181
+
+  kafka:
+    image: confluentinc/cp-kafka:3.1.0
+    network_mode: host
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: localhost:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+
+  kafka-connect:
+    image: confluentinc/cp-kafka-connect:3.1.0
+    network_mode: host
+    depends_on:
+      - kafka
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: localhost:9092
+      CONNECT_REST_PORT: 8082
+      CONNECT_GROUP_ID: "default"
+      CONNECT_CONFIG_STORAGE_TOPIC: "default.config"
+      CONNECT_OFFSET_STORAGE_TOPIC: "default.offsets"
+      CONNECT_STATUS_STORAGE_TOPIC: "default.status"
+      CONNECT_KEY_CONVERTER: "io.confluent.connect.avro.AvroConverter"
+      CONNECT_VALUE_CONVERTER: "io.confluent.connect.avro.AvroConverter"
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: "http://localhost:8081"
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://localhost:8081"
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_REST_ADVERTISED_HOST_NAME: "default-config"
+      CONNECT_ZOOKEEPER_CONNECT: "localhost:2181"
+
+  elasticsearch:
+    image: elasticsearch:2.4.1
+    network_mode: host
+    volumes:
+      - $PWD/esdata:/usr/share/elasticsearch/data
+
+  kibana:
+    image: kibana:4.6.4
+    network_mode: host
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_URL: http://localhost:9200
+
+  khermes-seed:
+    image: ardlema/khermes:latest
+    network_mode: host
+    depends_on:
+      - kafka-connect
+    environment:
+      SEED: "true"
+      SEED_PORT: 2552
+      ZK_PORT: 2181
+
+  khermes-node-1:
+    image: ardlema/khermes:latest
+    network_mode: host
+    depends_on:
+      - khermes-seed
+    environment:
+      SEED: "false"
+      NODE_PORT: 2553
+      SEED_PORT: 2552
+      ZK_PORT: 2181
+
+  khermes-node-2:
+    image: ardlema/khermes:latest
+    network_mode: host
+    depends_on:
+      - khermes-seed
+    environment:
+      SEED: "false"
+      NODE_PORT: 2554
+      SEED_PORT: 2552
+      ZK_PORT: 2181
+
+  khermes-node-3:
+    image: ardlema/khermes:latest
+    network_mode: host
+    depends_on:
+      - khermes-seed
+    environment:
+      SEED: "false"
+      NODE_PORT: 2555
+      SEED_PORT: 2552
+      ZK_PORT: 2181
