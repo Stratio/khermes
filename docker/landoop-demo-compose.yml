@@ -1,0 +1,62 @@
+version: '2'
+services:
+  landoop-fast-data:
+      image: landoop/fast-data-dev:cp3.1
+      network_mode: host
+
+  elasticsearch:
+    image: elasticsearch:2.4.1
+    network_mode: host
+    volumes:
+      - $PWD/esdata:/usr/share/elasticsearch/data
+
+  kibana:
+    image: kibana:4.6.4
+    network_mode: host
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_URL: http://localhost:9200
+
+  khermes-seed:
+    image: ardlema/khermes:latest
+    network_mode: host
+    depends_on:
+      - landoop-fast-data
+    environment:
+      SEED: "true"
+      SEED_PORT: 2552
+      ZK_PORT: 2181
+
+  khermes-node-1:
+    image: ardlema/khermes:latest
+    network_mode: host
+    depends_on:
+      - khermes-seed
+    environment:
+      SEED: "false"
+      NODE_PORT: 2553
+      SEED_PORT: 2552
+      ZK_PORT: 2181
+
+  khermes-node-2:
+    image: ardlema/khermes:latest
+    network_mode: host
+    depends_on:
+      - khermes-seed
+    environment:
+      SEED: "false"
+      NODE_PORT: 2554
+      SEED_PORT: 2552
+      ZK_PORT: 2181
+
+  khermes-node-3:
+    image: ardlema/khermes:latest
+    network_mode: host
+    depends_on:
+      - khermes-seed
+    environment:
+      SEED: "false"
+      NODE_PORT: 2555
+      SEED_PORT: 2552
+      ZK_PORT: 2181
