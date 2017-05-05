@@ -5,7 +5,7 @@ MAINTAINER stratio
 ARG VERSION
 
 COPY target/khermes-${VERSION}-allinone.jar /khermes.jar
-COPY docker/docker-entrypoint.sh /
+COPY docker/docker-entrypoint-dcos.sh /
 COPY docker/docker-entrypoint-local.sh /
 COPY src/main/resources/application.conf /
 RUN touch /khermes.log
