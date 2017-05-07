@@ -33,7 +33,7 @@ This command will generate a fat jar with all dependencies in target/khermes-<ve
 ```sh
 $ java -jar target/khermes-<version>.jar [-Dparameters.to.overwrite]
 ```
-We have create both shell scripts and docker-compose files to make easier for you to start using khermes. For further info on how to get start do please go to the Wiki.
+We have create both shell scripts and docker-compose files to make easier for you to start using khermes. For further info on how to get started please go to the [Wiki](https://github.com/Stratio/khermes/wiki).
 
 ## Random Helper.
 Based on [Faker](https://github.com/stympy/faker) we are developing a random generator. At this moment we have the next features:
