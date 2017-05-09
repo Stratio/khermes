@@ -18,7 +18,7 @@ To build the project, run the tests and generate the khermes jar artifact you sh
 $ mvn clean package
 ```
 
-We have create both shell scripts and docker-compose files to make easier for you to start using khermes. For further info on how to get started please go to the [Gettins Started section](https://github.com/Stratio/khermes/wiki/Getting-started) of our Wiki.
+We have create both shell scripts and docker-compose files to make easier for you to start using khermes. For further info on how to get started please go to the [Getting Started](https://github.com/Stratio/khermes/wiki/Getting-started) section of our Wiki.
 
 ## Licenses.
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
