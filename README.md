@@ -14,16 +14,6 @@ It has the next features:
   - Scalable generation through an Akka Cluster. Run up all nodes that you need to generate data.
   - A simple but powerful shell to take the control of your cluster: you can start, stop node generation in seconds.
 
-## Architecture.
-The main idea behind Khermes is to run nodes that produce messages. These nodes should be increased or decreased depending on the needs of the user. For this reason we thought it could be a good idea to use an Akka cluster. An architecture can be summarized in these points:
-- Each Akka cluster node  can receive messages to perform operations such as start, stop, etc. data generation. To start a node it needs three basic things:
-    * A Khermes configuration. This configuration will set, for example, where the templates will compile, i18n of the data, etc.
-    * A Kafka configuration. This configuration will set Kafka parameters. You can see the official Kafka documentation to get more specific information.
-    * A Twirl template. A template that will define how to generat a CSV, JSON or every structure that you need.
-    * All configurations can be reused thanks to persisting all of them in Zookeeper. For this reason it is mandatory to have a running instance of zookeeper in our system.
-    
-<img src="doc/khermes-architecture.png?raw=true">
-
 ## Installation and Execution.
 To generate the khermes jar you should execute:
 ```sh
