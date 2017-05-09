@@ -25,43 +25,6 @@ $ java -jar target/khermes-<version>.jar [-Dparameters.to.overwrite]
 ```
 We have create both shell scripts and docker-compose files to make easier for you to start using khermes. For further info on how to get started please go to the [Wiki](https://github.com/Stratio/khermes/wiki).
 
-## Random Helper.
-Based on [Faker](https://github.com/stympy/faker) we are developing a random generator. At this moment we have the next features:
-* Name generation:
-```
-  fullname() → Paul Brown
-  middleName() → George Michael
-  firstName() → Steven
-  lastName() → Robinson
-```
-* Number generation:
-```
-  number(2) → 23
-  number(2,Positive) → 23
-  decimal(2) → 23.45
-  decimal(2,Negative) → -45.89
-  decimal(2,4) → 45.7568
-  decimal(3,2,Positive) → 354.89
-  numberInRange(1,9) → 2
-  decimalInRange(1,9) → 2.6034840849740117
-```
-* Geolocation generation:
-```
-  geolocation() → (40.493556, -3.566764, Madrid)
-  geolocationWithoutCity() → (28.452717, -13.863761)
-  city() → Tenerife
-  country() → ES
-```
-* Timestamp generation:
-```
-  dateTime("1970-1-12" ,"2017-1-1") → 2005-03-01T20:34:30.000+01:00
-  time() → 15:30:00.000+01:00
-```
-* Music generation:
-```
-  playedSong() → {"song": "Shape of You", "artist": "Ed Sheeran", "album": "Shape of You", "genre": "Pop"}
-```
-
 ## Docker.
 * Seed + Node
 ```sh
