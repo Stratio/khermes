@@ -29,18 +29,12 @@ We have create both shell scripts and docker-compose files to make easier for yo
 ## Licenses.
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-## Tech.
-Khermes uses a number of open source projects to work properly:
-* [Twirl](https://github.com/playframework/twirl) - Twirl is the Play template engine.
-* [Akka](http://akka.io) - Akka is a toolkit and runtime for building highly concurrent, distributed, and resilient message-driven applications on the JVM.
-* [Apache Kafka]() - Kafka™ is used for building real-time data pipelines and streaming apps.
-
-And of course it is open source itself with a repository on GitHub [Khermes](https://github.com/stratio/khermes)
-
 ## Bugs and Feedback
 
 For bugs, questions and discussions please use the [GitHub Issues](https://github.com/Stratio/khermes/issues).
 
 ## Development.
+
 Want to contribute? Great!
 **Khermes is open source and we need you to keep growing.**
+If you want to contribute do not hesitate to create a Pull Request with your changes!
