@@ -19,15 +19,12 @@ It has the next features:
 See the [Wiki](https://github.com/Stratio/khermes/wiki/) for full documentation, examples, operational details and other information.
   
 ## Build
-To generate the khermes jar you should execute:
+To build the project, run the tests and generate the khermes jar artifact you should execute:
 ```sh
 $ mvn clean package
 ```
-This command will generate a fat jar with all dependencies in target/khermes-<version>.jar. To run it, you should execute:
-```sh
-$ java -jar target/khermes-<version>.jar [-Dparameters.to.overwrite]
-```
-We have create both shell scripts and docker-compose files to make easier for you to start using khermes. For further info on how to get started please go to the [Wiki](https://github.com/Stratio/khermes/wiki).
+
+We have create both shell scripts and docker-compose files to make easier for you to start using khermes. For further info on how to get started please go to the [Wiki](https://github.com/Stratio/khermes/wiki/Getting-started).
 
 ## Docker.
 * Seed + Node
