@@ -13,8 +13,12 @@ It has the next features:
   - Random event generation through Khermes helper: based in Faker, you can generate generic names, dates, numbers, etc.
   - Scalable generation through an Akka Cluster. Run up all nodes that you need to generate data.
   - A simple but powerful shell to take the control of your cluster: you can start, stop node generation in seconds.
+  
+## Full Documentation
 
-## Installation and Execution.
+See the [Wiki](https://github.com/Stratio/khermes/wiki/) for full documentation, examples, operational details and other information.
+  
+## Build
 To generate the khermes jar you should execute:
 ```sh
 $ mvn clean package
@@ -54,6 +58,10 @@ Khermes uses a number of open source projects to work properly:
 * [Apache Kafka]() - Kafka™ is used for building real-time data pipelines and streaming apps.
 
 And of course it is open source itself with a repository on GitHub [Khermes](https://github.com/stratio/khermes)
+
+## Bugs and Feedback
+
+For bugs, questions and discussions please use the [GitHub Issues](https://github.com/Stratio/khermes/issues).
 
 ## Development.
 Want to contribute? Great!
