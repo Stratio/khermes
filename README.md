@@ -26,25 +26,6 @@ $ mvn clean package
 
 We have create both shell scripts and docker-compose files to make easier for you to start using khermes. For further info on how to get started please go to the [Wiki](https://github.com/Stratio/khermes/wiki/Getting-started).
 
-## Docker.
-* Seed + Node
-```sh
-  docker run -dit --name SEED_NAME -e PARAMS="-Dkhermes.client=true -Dakka.remote.hostname=SEED_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2552 -Dakka.remote.netty.tcp.hostname=SEED_NAME.DOMAIN -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/khermes:VERSION
-```
-* Node
-```sh
-  docker run -dit --name AGENT_NAME -e PARAMS="-Dkhermes.client=false -Dakka.remote.hostname=AGENT_NAME.DOMAIN -Dakka.remote.netty.tcp.port=2553 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@SEED_NAME.DOMAIN:2552" qa.stratio.com/stratio/khermes:VERSION
-```
-  
-## FAQ.
-* **Is Zookeeper needed to run Khermes?.** Yes, at this moment it is mandatory to have an instance of Zookeper in order to run Khermes.
-* **Is Apache Kafka needed to run Khermes?.** Yes, at the end all generated event will be persisted in Kafka and right now there are not any other possibility.
-* **Is there any throughput limitation?.** No, Khermes is designed to scale out of the box adding infinite nodes in an Akka cluster.
-
-## Roadmap.
-* Awesome UI.
-* No Zookeeper dependency using Akka Distributed Data.
-
 ## Licenses.
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
