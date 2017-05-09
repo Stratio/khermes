@@ -105,12 +105,3 @@ And of course it is open source itself with a repository on GitHub [Khermes](htt
 ## Development.
 Want to contribute? Great!
 **Khermes is open source and we need you to keep growing.**
-
-## Contributors.
-* [Alberto Rodriguez](https://github.com/albertostratio)
-* [Alicia Doblas](https://github.com/adoblas)
-* [Alvaro Nistal](https://github.com/anistal)
-* [Antonio Alfonso](https://github.com/antonioalf)
-* [Emilio Ambrosio](https://github.com/eambrosio)
-* [Enrique Ruiz](https://github.com/eruizgar)
-* [Juan Pedro Gilaberte](https://github.com/jpgilaberte-stratio)
