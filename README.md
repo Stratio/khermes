@@ -7,12 +7,6 @@
 When you have a complex system architecture with a huge variety of services, the first question that arises is:  "What happens when I start to generate tons of events and what is the behaviour of the system when it starts to process them?". For these reasons we are devoloping a high configurable and scalable tool called Khermes that can answer this "a priori simple" question.
 
 > "Khermes is a distributed fake data generator used in distributed environments that produces a high volume of events in a scalable way".
-
-It has the next features:
-  - Configurable templates through Play Twirl. Make your own template and send it to one or more nodes.
-  - Random event generation through Khermes helper: based in Faker, you can generate generic names, dates, numbers, etc.
-  - Scalable generation through an Akka Cluster. Run up all nodes that you need to generate data.
-  - A simple but powerful shell to take the control of your cluster: you can start, stop node generation in seconds.
   
 ## Full Documentation
 
