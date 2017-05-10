@@ -7,12 +7,6 @@
 When you have a complex system architecture with a huge variety of services, the first question that arises is:  "What happens when I start to generate tons of events and what is the behaviour of the system when it starts to process them?". For these reasons we are devoloping a high configurable and scalable tool called Khermes that can answer this "a priori simple" question.
 
 > "Khermes is a distributed fake data generator used in distributed environments that produces a high volume of events in a scalable way".
-
-It has the next features:
-  - Configurable templates through Play Twirl. Make your own template and send it to one or more nodes.
-  - Random event generation through Khermes helper: based in Faker, you can generate generic names, dates, numbers, etc.
-  - Scalable generation through an Akka Cluster. Run up all nodes that you need to generate data.
-  - A simple but powerful shell to take the control of your cluster: you can start, stop node generation in seconds.
   
 ## Full Documentation
 
@@ -24,7 +18,7 @@ To build the project, run the tests and generate the khermes jar artifact you sh
 $ mvn clean package
 ```
 
-We have create both shell scripts and docker-compose files to make easier for you to start using khermes. For further info on how to get started please go to the [Wiki](https://github.com/Stratio/khermes/wiki/Getting-started).
+We have create both shell scripts and docker-compose files to make easier for you to start using khermes. For further info on how to get started please go to the [Getting Started](https://github.com/Stratio/khermes/wiki/Getting-started) section of our Wiki.
 
 ## Licenses.
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
