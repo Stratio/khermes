@@ -1,4 +1,4 @@
-java -jar -Dkhermes.client=false -Dkhermes.ws=false -Dakka.remote.netty.tcp.port=2553 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@localhost:2552 ../target/khermes-0.2.0-SNAPSHOT-allinone.jar &
-java -jar -Dkhermes.client=false -Dkhermes.ws=false -Dakka.remote.netty.tcp.port=2554 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@localhost:2552 ../target/khermes-0.2.0-SNAPSHOT-allinone.jar &
-java -jar -Dkhermes.client=false -Dkhermes.ws=false -Dakka.remote.netty.tcp.port=2555 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@localhost:2552 ../target/khermes-0.2.0-SNAPSHOT-allinone.jar &
-java -jar -Dkhermes.client=false -Dkhermes.ws=false -Dakka.remote.netty.tcp.port=2556 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@localhost:2552 ../target/khermes-0.2.0-SNAPSHOT-allinone.jar
+java -jar -Dkhermes.client=false -Dkhermes.ws=false -Dakka.remote.netty.tcp.port=2553 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@localhost:2552 -Dmetrics.graphite.name="khermes-node1" ../target/khermes-0.2.0-SNAPSHOT-allinone.jar &
+java -jar -Dkhermes.client=false -Dkhermes.ws=false -Dakka.remote.netty.tcp.port=2554 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@localhost:2552 -Dmetrics.graphite.name="khermes-node2" ../target/khermes-0.2.0-SNAPSHOT-allinone.jar &
+java -jar -Dkhermes.client=false -Dkhermes.ws=false -Dakka.remote.netty.tcp.port=2555 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@localhost:2552 -Dmetrics.graphite.name="khermes-node3" ../target/khermes-0.2.0-SNAPSHOT-allinone.jar &
+java -jar -Dkhermes.client=false -Dkhermes.ws=false -Dakka.remote.netty.tcp.port=2556 -Dakka.cluster.seed-nodes.0=akka.tcp://khermes@localhost:2552 -Dmetrics.graphite.name="khermes-node4" ../target/khermes-0.2.0-SNAPSHOT-allinone.jar

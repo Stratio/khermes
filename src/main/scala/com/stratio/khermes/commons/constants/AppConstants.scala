@@ -77,4 +77,18 @@ object AppConstants {
   val DefaultWSPort = 8080
 
   val DefaultStrategy = Option("default")
+
+  val LoggerEnabled = "metrics.logger.enabled"
+  val LoggerEnabledDefault = false
+  val GraphiteEnabled = "metrics.graphite.enabled"
+  val GraphiteEnabledDefault = false
+  val LoggerReporterName = "metrics.logger.name"
+  val LoggerReporterNameDefault = "khermes"
+  val GraphiteReporterName = "metrics.graphite.name"
+  val GraphiteReporterNameDefault = "khermes"
+  val GraphiteReporterHost = "metrics.graphite.host"
+  val GraphiteReporterHostDefault = "localhost"
+  val GraphiteReporterPort = "metrics.graphite.port"
+  val GraphiteReporterPortDefault = 2003
+
 }
