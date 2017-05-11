@@ -28,11 +28,11 @@ import com.stratio.khermes.cluster.collector.CommandCollectorActor
 import com.stratio.khermes.cluster.supervisor.{KhermesClientActor, NodeSupervisorActor}
 import com.stratio.khermes.commons.constants.AppConstants
 import com.stratio.khermes.commons.implicits.AppImplicits
+import com.stratio.khermes.metrics.MetricsReporter
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.ExecutionContextExecutor
-import scala.io.StdIn
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -43,6 +43,7 @@ object Khermes extends App with LazyLogging {
   import AppImplicits._
   welcome
   createPaths
+  MetricsReporter.start
 
   val khermesSupervisor = workerSupervisor
 
@@ -143,6 +144,7 @@ object Khermes extends App with LazyLogging {
       case Success(b) ⇒ logger.info(s"Started WebSocket Command Server online at ${b.localAddress}")
       case Failure(t) ⇒ logger.error("Failed to start HTTP server")
     }
+
     while(true){}
     binding.flatMap(_.unbind()).onComplete(_ ⇒ system.terminate())
   }

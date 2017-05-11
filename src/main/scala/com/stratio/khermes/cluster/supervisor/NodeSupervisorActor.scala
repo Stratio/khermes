@@ -24,6 +24,7 @@ import com.stratio.khermes.cluster.supervisor.NodeSupervisorActor.Result
 import com.stratio.khermes.commons.config.AppConfig
 import com.stratio.khermes.helpers.faker.Faker
 import com.stratio.khermes.helpers.twirl.TwirlHelper
+import com.stratio.khermes.metrics.KhermesMetrics
 import com.stratio.khermes.persistence.kafka.KafkaClient
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
@@ -38,7 +39,7 @@ import scala.util.Try
  * Supervisor that will manage a thread that will generate data along the cluster.
  * @param config with all needed configuration.
  */
-class NodeSupervisorActor(implicit config: Config) extends Actor with ActorLogging {
+class NodeSupervisorActor(implicit config: Config) extends Actor with ActorLogging with KhermesMetrics {
 
   import DistributedPubSubMediator.Subscribe
 
@@ -93,11 +94,12 @@ class NodeSupervisorActor(implicit config: Config) extends Actor with ActorLoggi
  * @param config with general configuration.
  */
 class NodeExecutorThread(hc: AppConfig)(implicit config: Config) extends NodeExecutable
-  with LazyLogging {
+  with LazyLogging with KhermesMetrics {
 
   val converter = new JsonAvroConverter()
   var running: Boolean = false
-
+  val messageSentCounterMetric = getAvailableCounterMetrics("khermes-messages-count")
+  val messageSentMeterMetric = getAvailableMeterMetrics("khermes-messages-meter")
   /**
    * Starts the thread.
    * @param hc with all configuration needed to start the thread.
@@ -160,14 +162,20 @@ class NodeExecutorThread(hc: AppConfig)(implicit config: Config) extends NodeExe
       logger.debug(s"$numberOfEvents")
       val json = template.static(khermes).toString()
       parserOption match {
-        case None =>
+        case None => {
           kafkaClient.send(hc.topic, json)
+          increaseCounterMetric(messageSentCounterMetric)
+          markMeterMetric(messageSentMeterMetric)
           performTimeout(numberOfEvents)
+        }
 
-        case Some(value) =>
+        case Some(value) => {
           val record = converter.convertToGenericDataRecord(json.getBytes("UTF-8"), value)
           kafkaClient.send(hc.topic, record)
+          increaseCounterMetric(messageSentCounterMetric)
+          markMeterMetric(messageSentMeterMetric)
           performTimeout(numberOfEvents)
+        }
       }
       if (stopNumberOfEventsOption.filter(_ == numberOfEvents).map(_ => stopExecutor).isEmpty)
         recursiveGeneration(numberOfEvents + 1)
