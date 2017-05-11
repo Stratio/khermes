@@ -35,7 +35,7 @@
             <pattern>%-5relative %-5level %logger{35} - %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="file" />
         <!--<appender-ref ref="consoleAppender" />-->
     </root>
