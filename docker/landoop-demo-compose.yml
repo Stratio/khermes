@@ -27,6 +27,7 @@ services:
       SEED: "true"
       SEED_PORT: 2552
       ZK_PORT: 2181
+      GRAPHITE_METRICS_NAME: "khermes-seed"
 
   khermes-node-1:
     image: ardlema/khermes:latest
@@ -38,6 +39,7 @@ services:
       NODE_PORT: 2553
       SEED_PORT: 2552
       ZK_PORT: 2181
+      GRAPHITE_METRICS_NAME: "khermes-node1"
 
   khermes-node-2:
     image: ardlema/khermes:latest
@@ -49,6 +51,7 @@ services:
       NODE_PORT: 2554
       SEED_PORT: 2552
       ZK_PORT: 2181
+      GRAPHITE_METRICS_NAME: "khermes-node2"
 
   khermes-node-3:
     image: ardlema/khermes:latest
@@ -60,3 +63,14 @@ services:
       NODE_PORT: 2555
       SEED_PORT: 2552
       ZK_PORT: 2181
+      GRAPHITE_METRICS_NAME: "khermes-node3"
+
+  grafana_graphite:
+    image: kamon/grafana_graphite
+    network_mode: host
+    depends_on:
+      - khermes-seed
+    volumes:
+      - ./data/whisper:/opt/graphite/storage/whisper
+      - ./data/grafana:/opt/grafana/data
+      - ./log/graphite:/opt/graphite/storage/log
