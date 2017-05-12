@@ -4,23 +4,6 @@ services:
       image: landoop/fast-data-dev:cp3.1
       network_mode: host
 
-  grafana_graphite:
-    build: .
-    image: kamon/grafana_graphite
-    container_name: kamon-grafana-dashboard
-    depends_on:
-      - landoop-fast-data
-    ports:
-      - '80:80'
-      - '81:81'
-      - '8125:8125/udp'
-      - '8126:8126'
-      - '2003:2003'
-    volumes:
-      - ./data/whisper:/opt/graphite/storage/whisper
-      - ./data/grafana:/opt/grafana/data
-      - ./log/graphite:/opt/graphite/storage/log
-
   elasticsearch:
     image: elasticsearch:2.4.1
     network_mode: host
@@ -44,6 +27,7 @@ services:
       SEED: "true"
       SEED_PORT: 2552
       ZK_PORT: 2181
+      METRICS_ENABLED: "false"
       GRAPHITE_METRICS_NAME: "khermes-seed"
 
   khermes-node-1:
@@ -56,6 +40,7 @@ services:
       NODE_PORT: 2553
       SEED_PORT: 2552
       ZK_PORT: 2181
+      METRICS_ENABLED: "false"
       GRAPHITE_METRICS_NAME: "khermes-node1"
 
   khermes-node-2:
@@ -68,6 +53,7 @@ services:
       NODE_PORT: 2554
       SEED_PORT: 2552
       ZK_PORT: 2181
+      METRICS_ENABLED: "false"
       GRAPHITE_METRICS_NAME: "khermes-node2"
 
   khermes-node-3:
@@ -80,4 +66,5 @@ services:
       NODE_PORT: 2555
       SEED_PORT: 2552
       ZK_PORT: 2181
+      METRICS_ENABLED: "false"
       GRAPHITE_METRICS_NAME: "khermes-node3"
