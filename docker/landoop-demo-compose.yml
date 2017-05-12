@@ -27,6 +27,8 @@ services:
       SEED: "true"
       SEED_PORT: 2552
       ZK_PORT: 2181
+      METRICS_ENABLED: "false"
+      GRAPHITE_METRICS_NAME: "khermes-seed"
 
   khermes-node-1:
     image: ardlema/khermes:latest
@@ -38,6 +40,8 @@ services:
       NODE_PORT: 2553
       SEED_PORT: 2552
       ZK_PORT: 2181
+      METRICS_ENABLED: "false"
+      GRAPHITE_METRICS_NAME: "khermes-node1"
 
   khermes-node-2:
     image: ardlema/khermes:latest
@@ -49,6 +53,8 @@ services:
       NODE_PORT: 2554
       SEED_PORT: 2552
       ZK_PORT: 2181
+      METRICS_ENABLED: "false"
+      GRAPHITE_METRICS_NAME: "khermes-node2"
 
   khermes-node-3:
     image: ardlema/khermes:latest
@@ -60,3 +66,5 @@ services:
       NODE_PORT: 2555
       SEED_PORT: 2552
       ZK_PORT: 2181
+      METRICS_ENABLED: "false"
+      GRAPHITE_METRICS_NAME: "khermes-node3"
