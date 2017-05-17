@@ -1,7 +1,7 @@
 language: java
 
 script: "mvn clean compile test"
-
+after_success: "mvn scoverage:check scoverage:report"
 
 jdk:
    - oraclejdk8
