@@ -41,22 +41,24 @@ import scala.util.{Failure, Success, Try}
 object Khermes extends App with LazyLogging {
 
   import AppImplicits._
+
   welcome
   createPaths
   MetricsReporter.start
 
   val khermesSupervisor = workerSupervisor
 
-  if(config.getString("khermes.client") == "true") {
+  if (config.getString("khermes.client") == "true") {
     clientActor(khermesSupervisor)
   }
 
-  if(config.getString("khermes.ws") == "true") {
+  if (config.getString("khermes.ws") == "true") {
     wsHttp()
   }
 
   /**
    * Prints a welcome message with some information about the system.
+   *
    * @param system
    */
   def welcome(implicit system: ActorSystem, config: Config): Unit = {
@@ -76,16 +78,16 @@ object Khermes extends App with LazyLogging {
 
   /**
    * Creates necessary paths used mainly to generate and compile Twirl templates.
+   *
    * @param config with all necessary configuration.
    */
   def createPaths(implicit config: Config): Unit = {
     val templatesFile = new File(config.getString("khermes.templates-path"))
-    if(!templatesFile.exists()) {
+    if (!templatesFile.exists()) {
       logger.info(s"Creating templates path: ${templatesFile.getAbsolutePath}")
       templatesFile.mkdirs()
     }
   }
-
 
   def workerSupervisor(implicit config: Config,
                        system: ActorSystem,
@@ -114,7 +116,7 @@ object Khermes extends App with LazyLogging {
             getFromResourceDirectory("web/js")
           } ~
           pathSingleSlash {
-              getFromResource("web/index.html")
+            getFromResource("web/index.html")
           } ~
           path("console") {
             getFromResource("web/console.html")
@@ -145,7 +147,7 @@ object Khermes extends App with LazyLogging {
       case Failure(t) ⇒ logger.error("Failed to start HTTP server")
     }
 
-    while(true){}
+    while (true) {}
     binding.flatMap(_.unbind()).onComplete(_ ⇒ system.terminate())
   }
 }

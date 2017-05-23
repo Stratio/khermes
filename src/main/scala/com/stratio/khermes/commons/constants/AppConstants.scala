@@ -74,7 +74,7 @@ object AppConstants {
         |     exit | quit | bye : Exit of Khermes Cli. """.stripMargin
 
   val DefaultWSHost = "0.0.0.0"
-  val DefaultWSPort = 8080
+  val DefaultWSPort = 8082
 
   val DefaultStrategy = Option("default")
 
