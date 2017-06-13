@@ -31,19 +31,13 @@ case class FlightsGenerator(locale: String) extends FakerGenerator
 
   override def name: String = "flights"
 
-  val resourcesFiles = Seq("1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997",
-    "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008")
-  val resourcesFilesSmall = Seq("1990small", "1991small", "1992small",
-    "1993small", "1994small", "1995small", "1996small",
-    "1997small", "1998small", "1999small", "2000small", "2001small", "2002small", "2003small", "2004small", "2005small",
-    "2006small", "2007small", "2008small")
+  val resourcesFilesSmall = Seq("1990", "1991", "1992", "1993", "1994", "1995",
+    "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003",
+    "2004", "2005", "2006", "2007", "2008")
 
   lazy val flightsModel: Seq[FlightModel] = locale match {
-    case AppConstants.DefaultLocale =>
+    case AppConstants.DefaultLocale | "ALL-SMALL" | "EN" | "ES" =>
       logger.info("Flights from all resources .... ")
-      resourcesFiles.flatMap(resource => getFlights(resource))
-    case "ALL-SMALL" | "EN" | "ES" =>
-      logger.info("Flights from all small resources .... ")
       resourcesFilesSmall.flatMap(resource => getFlights(resource))
     case resource =>
       logger.info("Flights from one resource .... ")
@@ -69,7 +63,8 @@ case class FlightsGenerator(locale: String) extends FakerGenerator
   }
 }
 
-final case class FlightModel(Year: String,
+final case class FlightModel(
+                              Year: String,
                              Month: String,
                              DayofMonth: String,
                              DayOfWeek: String,
@@ -97,4 +92,5 @@ final case class FlightModel(Year: String,
                              WeatherDelay: String,
                              NASDelay: String,
                              SecurityDelay: String,
-                             LateAircraftDelay: String)
+                             LateAircraftDelay: String
+                            )

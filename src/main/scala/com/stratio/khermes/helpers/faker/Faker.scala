@@ -44,6 +44,8 @@ case class Faker(locale: String = AppConstants.DefaultLocale, strategy: Option[S
 
   object Flights extends FlightsGenerator(locale)
 
+  object TicketsStratio extends TicketsStratioGenerator(locale)
+
   object Email extends EmailGenerator(locale)
 
 }
