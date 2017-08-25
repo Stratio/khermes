@@ -358,6 +358,7 @@
                         <exclude>**/*.txt</exclude>
                         <exclude>**/*.conf</exclude>
                     </excludes>
+                    <header>${license.header}</header>
                 </configuration>
                 <executions>
                     <execution>
