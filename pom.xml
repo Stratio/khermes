@@ -43,6 +43,7 @@
         <scala-maven.tests.plugin.version>2.19.1</scala-maven.tests.plugin.version>
         <scala-maven.plugin.version>3.2.2</scala-maven.plugin.version>
         <dropwizard.metrics.version>3.2.2</dropwizard.metrics.version>
+        <breeze.version>0.13.2</breeze.version>
     </properties>
 
     <developers>
@@ -239,6 +240,11 @@
             <version>${dropwizard.metrics.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.scalanlp</groupId>
+            <artifactId>breeze_${scala.binary.version}</artifactId>
+            <version>${breeze.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_${scala.binary.version}</artifactId>
             <version>${kafka.version}</version>
@@ -288,7 +294,6 @@
             <version>${scalacheck.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
