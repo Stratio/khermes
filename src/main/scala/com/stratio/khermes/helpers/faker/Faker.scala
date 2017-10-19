@@ -37,6 +37,9 @@ case class Faker(locale: String = AppConstants.DefaultLocale, strategy: Option[S
 
   object Email extends EmailGenerator(locale)
 
+  object Categoric extends CategoryGenerator()
+
+  object Gaussian extends GaussianDistGenerator()
 }
 
 trait FakerGenerator extends AppSerializer {
