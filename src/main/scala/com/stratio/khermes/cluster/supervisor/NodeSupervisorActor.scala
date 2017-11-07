@@ -12,7 +12,7 @@ package com.stratio.khermes.cluster.supervisor
 
 import java.util.UUID
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, ActorSystem}
 import akka.cluster.pubsub.{DistributedPubSub, DistributedPubSubMediator}
 import com.stratio.khermes.cluster.supervisor.NodeSupervisorActor.Result
 import com.stratio.khermes.commons.config.AppConfig
@@ -107,7 +107,7 @@ class NodeExecutorThread(hc: AppConfig)(implicit config: Config) extends NodeExe
   //scalastyle:off
   override def run(): Unit = {
     running = true
-    val kafkaClient = new KafkaClient[Object](hc.kafkaConfig)
+    val kafkaClient = new KafkaClient[Object](hc.kafkaConfig.get)
     val template = TwirlHelper.template[(Faker) => Txt](hc.templateContent, hc.templateName)
     val khermes = Faker(hc.khermesI18n, hc.strategy)
 

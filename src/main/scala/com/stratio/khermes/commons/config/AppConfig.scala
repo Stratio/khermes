@@ -28,35 +28,73 @@ import com.stratio.khermes.commons.config.AppConfig._
  * @param avroSchema in the case that you are using avro serialization.
  */
 case class AppConfig(khermesConfigContent: String,
-                     kafkaConfigContent: String,
+                     kafkaConfigContent: Option[String] = None,
+                     localFileConfigContent: Option[String] = None,
                      template: String,
                      avroSchema: Option[String] = None) {
 
   val khermesConfig = ConfigFactory.parseString(khermesConfigContent)
-  val kafkaConfig = ConfigFactory.parseString(kafkaConfigContent)
+
+  val kafkaConfig = kafkaConfigContent match {
+    case Some(kcfg) =>
+      // TODO: check that it can stat without kafka config
+      val config = Some(ConfigFactory.parseString(kcfg))
+      config
+    case _ => None
+  }
+
+  val fileConfig = {
+    localFileConfigContent match {
+      case Some(fcfg) => Some(ConfigFactory.parseString(fcfg))
+      case _ => None
+    }
+  }
 
   assertCorrectConfig()
 
-  /**
-   * Tries to parse the configuration and checks that the KhermesConfig object has all required fields.
-   */
+  /** Check only if sink is Kafka !! **/
   protected[this] def assertCorrectConfig(): Unit = {
-    def buildErrors(mandatoryFields: Seq[String]): Seq[String] =
+    def buildErrors(mandatoryFields: Seq[String]): Seq[String] = {
+      // Check if Kafka is defined in configuration
+        for {
+          mandatoryField <- mandatoryFields
+          if Try(khermesConfig.getAnyRef(mandatoryField)).isFailure && Try(kafkaConfig.get.getAnyRef(mandatoryField)).isFailure
+        } yield (s"$mandatoryField not found in the config.")
+    }
+
+    def buildErrorsFile(mandatoryFields: Seq[String]): Seq[String] = {
+      // Check if Kafka is defined in configuration
       for {
         mandatoryField <- mandatoryFields
-        if Try(khermesConfig.getAnyRef(mandatoryField)).isFailure && Try(kafkaConfig.getAnyRef(mandatoryField)).isFailure
-      } yield(s"$mandatoryField not found in the config.")
+        if Try(khermesConfig.getAnyRef(mandatoryField)).isFailure
+      } yield (s"$mandatoryField not found in the config.")
+    }
 
-    val errors = buildErrors(MandatoryFields) ++ (if(configType == ConfigType.Avro) buildErrors(AvroMandatoryFields) else Seq.empty)
+    // TODO: Check error for khermes and file
+    val errors = {
+      if (kafkaConfig.isDefined) {
+        buildErrors(MandatoryFields) ++ (if (configType == ConfigType.Avro) buildErrors(AvroMandatoryFields) else Seq.empty)
+      }
+      /*
+      else if(fileConfig.isDefined) {
+        buildErrorsFile(FileMandatoryFields)
+      }*/
+      else {
+        Seq.empty
+      }
+    }
+
     assert(errors.isEmpty, errors.mkString("\n"))
   }
 
-  def configType(): ConfigType.Value =
-    if(kafkaConfig.getString("kafka.key.serializer") == AppConstants.KafkaAvroSerializer) {
+  def configType(): ConfigType.Value = {
+    // Check kafka config only when kafka is not None
+    if (kafkaConfig.get.getString("kafka.key.serializer") == AppConstants.KafkaAvroSerializer) {
       ConfigType.Avro
     } else {
       ConfigType.Json
     }
+  }
 
   def topic: String = khermesConfig.getString("khermes.topic")
 
@@ -74,6 +112,8 @@ case class AppConfig(khermesConfigContent: String,
 
   def stopNumberOfEventsOption: Option[Int] = Try(khermesConfig.getInt("khermes.stop-rules.number-of-events")).toOption
 
+  def filePath: String = if(fileConfig.isDefined) fileConfig.get.getString("file.path") else ""
+
 }
 
 object AppConfig {
@@ -87,6 +127,12 @@ object AppConfig {
 
   val AvroMandatoryFields = Seq(
     "kafka.schema.registry.url"
+  )
+
+  val FileMandatoryFields = Seq(
+    "file.path",
+    "khermes.template-name",
+    "khermes.i18n"
   )
 
   object ConfigType extends Enumeration {

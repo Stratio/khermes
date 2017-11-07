@@ -69,7 +69,7 @@ class NodeSupervisorActorTest extends BaseActorTest {
   "An WorkerSupervisorActor" should {
     "Start n threads of working kafka producers" in {
       within(10 seconds) {
-        nodeSupervisor ! Start(Seq.empty, AppConfig(khermesConfigContent, kafkaConfigContent, templateContent))
+        nodeSupervisor ! Start(Seq.empty, AppConfig(khermesConfigContent, Some(kafkaConfigContent), None, templateContent))
         expectMsg(WorkerStatus.Started)
       }
     }

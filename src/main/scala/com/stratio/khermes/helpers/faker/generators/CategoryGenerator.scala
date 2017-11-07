@@ -15,7 +15,7 @@ case class CategoryGenerator() {
   /**
     * Function which generates a random value from a list whose elements are categorized
     * @param in list of possible values with their appearence probabilities
-    * @return
+    * @return value created
     */
   def runNext(in: List[CategoryFormat]): String = {
     if (BigDecimal(in.map(el => el.weight.toFloat).sum).setScale(2, RoundingMode.HALF_UP).toInt == 1) {

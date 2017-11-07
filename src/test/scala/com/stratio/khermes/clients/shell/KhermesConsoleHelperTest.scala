@@ -35,4 +35,5 @@ class KhermesConsoleHelperTest extends FlatSpec
     khermesConsoleHelper.commandArgumentsAndValues(line) shouldBe Map()
   }
 
+  // TODO: Add commands for file processing
 }

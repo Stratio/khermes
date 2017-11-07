@@ -44,6 +44,7 @@
         <scala-maven.plugin.version>3.2.2</scala-maven.plugin.version>
         <dropwizard.metrics.version>3.2.2</dropwizard.metrics.version>
         <breeze.version>0.13.2</breeze.version>
+        <scalaz.version>7.2.16</scalaz.version>
     </properties>
 
     <developers>
@@ -143,6 +144,11 @@
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>
             <version>${typesafe.config.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalaz</groupId>
+            <artifactId>scalaz-core_${scala.binary.version}</artifactId>
+            <version>${scalaz.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
