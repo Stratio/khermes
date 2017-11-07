@@ -25,11 +25,14 @@ case object WsProtocolCommand extends Enumeration {
   val CreateKafkaConfig = Value("create kafka-config")
   val CreateGeneratorConfig = Value("create generator-config")
   val CreateAvroConfig = Value("create avro-config")
+  val CreateFileConfig = Value("create file-config")
+
 
   val ShowTwirlTemplate = Value("show twirl-template")
   val ShowKafkaConfig = Value("show kafka-config")
   val ShowGeneratorConfig = Value("show generator-config")
   val ShowAvroConfig = Value("show avro-config")
+  val ShowFileConfig = Value("show file-config")
 
   val ArgsName = "name"
   val ArgsContent = "content"
@@ -38,6 +41,7 @@ case object WsProtocolCommand extends Enumeration {
   val ArgsGeneratorConfig = "generator-config"
   val ArgsAvroConfig = "avro-config"
   val ArgsNodeIds = "node-ids"
+  val ArgsFileConfig = "file-config"
 
   //scalastyle:off
   def parseTextBlock(block: String): WSProtocolMessage = {

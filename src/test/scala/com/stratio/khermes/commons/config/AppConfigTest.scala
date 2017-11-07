@@ -21,6 +21,13 @@ class AppConfigTest extends FlatSpec
   with BeforeAndAfter
   with LazyLogging {
 
+    // TODO: add this test
+    val fileConfig = {
+      """file {
+        path = ""
+      }"""
+    }
+
     val khermesConfig =
       """
         |khermes {
@@ -142,15 +149,23 @@ class AppConfigTest extends FlatSpec
         |}
       """.stripMargin
 
+
+  /*
+  case class AppConfig(khermesConfigContent: String,
+                     kafkaConfigContent: Option[String] = None,
+                     localFileConfigContent: Option[String] = None,
+                     template: String,
+                     avroSchema: Option[String] = None)
+   */
   "An KhermesConfig" should "parse a correct config when serializer is Json" in {
-      val hc = AppConfig(khermesConfig, jsonKafkaConfig, template)
+      val hc = AppConfig(khermesConfig, Some(jsonKafkaConfig), None, template)
       checkCommonFields(hc)
       hc.configType should be(AppConfig.ConfigType.Json)
       hc.avroSchema should be(None)
     }
 
     it should "parse a correct config when the serializer is Avro" in {
-      val hc = AppConfig(khermesConfig, avroKafkaConfig, template, Option(avroSchema))
+      val hc = AppConfig(khermesConfig, Some(avroKafkaConfig), None, template, Option(avroSchema))
       checkCommonFields(hc)
       hc.configType should be(AppConfig.ConfigType.Avro)
       hc.avroSchema should be(Option(avroSchema))
@@ -158,53 +173,53 @@ class AppConfigTest extends FlatSpec
 
     it should "throw an error when a mandatory field is not supplied when the serializer is JSON" in {
       a[AssertionError] should be thrownBy {
-        AppConfig(wrongKhermesConfig, jsonKafkaConfig, template)
+        AppConfig(wrongKhermesConfig, Some(jsonKafkaConfig), None, template)
       }
     }
 
     it should "throw an error when a mandatory field is not supplied when the serializer is Avro" in {
       a[AssertionError] should be thrownBy {
-        AppConfig(khermesConfig, wrongKafkaConfig, template)
+        AppConfig(khermesConfig, Some(wrongKafkaConfig), None, template)
       }
     }
 
     it should "return None when the parameter timeout-rules/number of events DOES NOT exist" in {
-      val khermesConfig = AppConfig(khermesConfigWithoutTimeOutRules, avroKafkaConfig, template, Option(avroSchema))
+      val khermesConfig = AppConfig(khermesConfigWithoutTimeOutRules, Some(avroKafkaConfig), None, template, Option(avroSchema))
       val timeOutNumberOfEvents = khermesConfig.timeoutNumberOfEventsOption
 
       timeOutNumberOfEvents.isDefined should be(false)
     }
 
     it should "return Some when the parameter timeout-rules/number of events DOES exist" in {
-      val khermesConfig = AppConfig(khermesConfigWithNumberOfEvents, avroKafkaConfig, template, Option(avroSchema))
+      val khermesConfig = AppConfig(khermesConfigWithNumberOfEvents, Some(avroKafkaConfig), None, template, Option(avroSchema))
       val timeOutNumberOfEvents = khermesConfig.timeoutNumberOfEventsOption
 
       timeOutNumberOfEvents.isDefined should be(true)
     }
 
     it should "return None when the parameter timeout-rules/duration DOES NOT exist" in {
-      val khermesConfig = AppConfig(khermesConfigWithoutTimeOutRules, avroKafkaConfig, template, Option(avroSchema))
+      val khermesConfig = AppConfig(khermesConfigWithoutTimeOutRules, Some(avroKafkaConfig), None, template, Option(avroSchema))
       val timeOutDuration = khermesConfig.timeoutNumberOfEventsDurationOption
 
       timeOutDuration.isDefined should be(false)
     }
 
     it should "return Some when the parameter timeout-rules/duration DOES exist" in {
-      val khermesConfig = AppConfig(khermesConfigWithDuration, avroKafkaConfig, template, Option(avroSchema))
+      val khermesConfig = AppConfig(khermesConfigWithDuration, Some(avroKafkaConfig), None, template, Option(avroSchema))
       val timeOutDuration = khermesConfig.timeoutNumberOfEventsDurationOption
 
       timeOutDuration.isDefined should be(true)
     }
 
     it should "return None when the parameter stop-rules/number-of-events DOES NOT exist" in {
-      val khermesConfig = AppConfig(khermesConfigWithoutTimeOutRules, avroKafkaConfig, template, Option(avroSchema))
+      val khermesConfig = AppConfig(khermesConfigWithoutTimeOutRules, Some(avroKafkaConfig), None, template, Option(avroSchema))
       val stopRulesNumberOfEvents = khermesConfig.stopNumberOfEventsOption
 
       stopRulesNumberOfEvents.isDefined should be(false)
     }
 
     it should "return Some when the parameter stop-rules/number-of-events DOES exist" in {
-      val khermesConfig = AppConfig(khermesConfigWithStopRules, avroKafkaConfig, template, Option(avroSchema))
+      val khermesConfig = AppConfig(khermesConfigWithStopRules, Some(avroKafkaConfig), None, template, Option(avroSchema))
       val stopRulesNumberOfEvents = khermesConfig.stopNumberOfEventsOption
 
       stopRulesNumberOfEvents.isDefined should be(true)

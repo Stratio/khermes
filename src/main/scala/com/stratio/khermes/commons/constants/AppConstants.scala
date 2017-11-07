@@ -38,6 +38,9 @@ object AppConstants {
   val TwirlTemplatePath = "twirl-template"
   val AvroConfigPath = "avro-config"
 
+  // TODO: check this
+  val FileConfigPath = "file-config"
+
   val CommandNotFoundMessage = "Command not found. Type help to list available commands."
   val HelpMessage =
     s"""Khermes client provides the next commands to manage your Khermes cluster:
@@ -47,6 +50,7 @@ object AppConstants {
         |     start [command options] : Starts event generation in N nodes.
         |       --generator-config  : Khermes configuration
         |       --kafka-config      : Kafka configuration
+        |       --file-config       : Local file configuration
         |       --twirl-template    : Template to generate data
         |       --avro-template     : Avro configuration
         |       --ids               : Node id where start khermes
@@ -56,11 +60,13 @@ object AppConstants {
         |     save [command options] : Save your configuration in zookeeper
         |       --generator-config  : Khermes configuration
         |       --kafka-config      : Kafka configuration
+        |       --file-config       : Localfile configuration
         |       --twirl-template    : Template to generate data
         |       --avro-template     : Avro configuration
         |     show [command options] : Show your configuration
         |       --generator-config  : Khermes configuration
         |       --kafka-config      : Kafka configuration
+        |       --file-config       : Local file configuration
         |       --twirl-template    : Template to generate data
         |       --avro-template     : Avro configuration
         |     clear : Clean the screen.

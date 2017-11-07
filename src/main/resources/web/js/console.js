@@ -22,6 +22,8 @@ jQuery(document).ready(function($) {
             createConfig('generator-config',term)
         } else if (command == 'create avro-config') {
             createConfig('avro-config',term)
+        } else if (command == 'create file-config') {
+            createConfig('file-config',term)
         }else if (command.startsWith('start')) {
             start(term)
         }else if (command.startsWith('stop')) {
@@ -50,6 +52,9 @@ jQuery(document).ready(function($) {
         }
         else if (command.startsWith('show twirl-template')) {
             sendMessage('[command]\nshow twirl-template\n[name]\n'+command.split(" ").pop(2)+'\n')
+        }
+        else if (command.startsWith('show file-template')) {
+            sendMessage('[command]\nshow file-template\n[name]\n'+command.split(" ").pop(2)+'\n')
         }
         else {
             term.echo("unknown command " + command);
@@ -98,11 +103,14 @@ function start(term){
       var generator = '';
       var avro = '';
       var nodes = '';
+      var file = '';
     term.push(function(twirlTemplate, term) {
         twirl = twirlTemplate;
         term.push(function(kafkaConfig, term) {
             kafka = kafkaConfig;
-             term.push(function(generatorConfig, term) {
+             term.push(function(fileConfig, term) {
+                file = fileConfig;
+                term.push(function(generatorConfig, term) {
                   generator = generatorConfig;
                       term.push(function(avroConfig, term) {
                                  avro = avroConfig;
@@ -110,6 +118,7 @@ function start(term){
                                            nodes = nodeIds;
                                            sendMessage('[command]\nstart\n[twirl-template]\n'+twirl+
                                                                '\n[kafka-config]\n'+kafka+
+                                                               '\n[file-config]\n'+file+
                                                                '\n[generator-config]\n'+generator+
                                                                '\n[avro-config]\n'+avro+
                                                                '\n[node-ids]\n'+nodes+'\n');
@@ -128,7 +137,9 @@ function start(term){
                     }, {
                         prompt: 'khermes> start > Please introduce the generator-config name> \n',
                         name: 'startGeneratorConfig'});
-
+        }, {
+            prompt: 'khermes> start > Please introduce the file-config name> \n',
+            name: 'startFileConfig'});
         }, {
             prompt: 'khermes> start > Please introduce the kafka-config name> \n',
             name: 'startKafkaConfig'});
