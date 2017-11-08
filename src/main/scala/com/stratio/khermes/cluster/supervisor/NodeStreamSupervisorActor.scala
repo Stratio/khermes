@@ -19,11 +19,14 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 import akka.{Done, NotUsed}
-import akka.actor.{Actor, ActorLogging, Cancellable}
+import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable, Props}
 import akka.cluster.pubsub.{DistributedPubSub, DistributedPubSubMediator}
-import akka.event.LoggingAdapter
-import akka.stream.{ActorMaterializer, KillSwitches, UniqueKillSwitch}
+import akka.stream._
+import akka.stream.actor.ActorPublisher
+import akka.stream.actor.ActorPublisherMessage.{Cancel, Request}
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
+import akka.stream.stage.{GraphStage, GraphStageLogic, OutHandler}
+import cats.{Eval, data}
 import com.stratio.khermes.cluster.supervisor.StreamFileOperations.FileOperations
 import com.stratio.khermes.cluster.supervisor.StreamKafkaOperations.KafkaOperations
 import com.stratio.khermes.cluster.supervisor.StreamGenericOperations.{executeBatchIO, startStream}
@@ -40,12 +43,12 @@ import org.apache.kafka.clients.producer.RecordMetadata
 import play.twirl.api.Txt
 
 import scala.concurrent.{ExecutionContext, Future, Promise}
-import scala.util.{Failure, Random, Success, Try}
+import scala.util.Try
 import scala.concurrent.duration._
-import scala.io.Codec
-import scalaz.{State, \/}
+import scala.io.{Codec, StdIn}
+import cats.data.{State, StateT}
+import org.reactivestreams.Publisher
 
-//scalastyle:off
 object StreamKafkaOperations {
   case class KafkaOperations(topic: String, counter: Int, suspend: List[Future[RecordMetadata]])
 
@@ -82,40 +85,51 @@ object StreamGenericOperations {
 
   import State._
 
+  class EventPublisher(hc: AppConfig)(implicit val config: Config) extends ActorPublisher[String] with ActorLogging {
+    def receive = {
+      case Request(cnt) =>
+        log.debug("Received Request ({}) from Subscriber", cnt)
+        val str = StreamGenericOperations.getEvent(hc)
+        while(isActive && totalDemand > 0) {
+          onNext(str)
+        }
+      case Cancel =>
+        log.info("Cancel Message Received -- Stopping")
+        context.stop(self)
+      case _ =>
+    }
+  }
+
   // Function to put a runtime value inside the Monad.
   def init[S, A](a: A): State[S, A] = State(s => (s, a))
-
   //scalastyle:off
   /**
-    * Using Scalaz State Monad to perform each bulk of operations. It allows to abstract of IO operation via ioFunction,
+    * Using Cats State Monad to perform each bulk of operations. It allows to abstract of IO operation via ioFunction,
     * State monad can be helpful in the future, i.e, dealing with temporal sequences or using and external
-    * enriching services.
-    *
+    * enriching services. Cats Monad is heap safe.
     * @param in         Events collection
     * @param ioFunction Function with perform one single io operation. TODO: In thise case Task could be used
     * @tparam S
     * @return
     */
-  //TODO:  Check if stackoverflow using Task. It seems to be a Monad transformer with the Id.
   def executeBatchIO[S](in: List[String])(ioFunction: String => S => S) = {
     in.foldLeft(init[S, String](""))((state, event) => {
-      for {
-        s0 <- state
-        _ <- modify[S](s => ioFunction(s0)(s))
-        s2 <- get
-        s3 <- put(s2)
+      val result = for {
+        _ <-  modify[S]{s => ioFunction(event)(s)}
+        s1 <- get[S]
+        s2 <- set(s1)
       } yield event
+      result
     })
   } //scalastyle:on
 
   /**
     * It gives a single event
-    *
     * @param hc     User configuration
     * @param config App configuration. It is required for twirl execution
     * @return
     */
-  private def getEvent(hc: AppConfig)(implicit config: Config): String = {
+  private[supervisor] def getEvent(hc: AppConfig)(implicit config: Config): String = {
     val template =
       TwirlHelper.template[(Faker) => Txt](hc.templateContent, hc.templateName)
     val khermes = Faker(hc.khermesI18n, hc.strategy)
@@ -131,9 +145,7 @@ object StreamGenericOperations {
     (hc: AppConfig) => {
       hc.timeoutNumberOfEventsOption match {
         case (Some(nevents)) =>
-          List.tabulate(nevents) { _ =>
-            getEvent(hc)
-          }
+          List.tabulate(nevents) { _ => getEvent(hc)}
         case None => List(getEvent(hc))
       }
     }
@@ -143,7 +155,7 @@ object StreamGenericOperations {
     * @param config generator configuration
     * @return Akka Streams Source which emits a collection of events
     */
-  def createSource(hc: AppConfig)(implicit config: Config): Source[List[String], Cancellable] = {
+  def createSource(hc: AppConfig, ref: Publisher[String])(implicit config: Config): Source[List[String], NotUsed] = {
     val timeout = {
       hc.timeoutNumberOfEventsDurationOption match {
         case Some(duration) =>
@@ -151,7 +163,7 @@ object StreamGenericOperations {
         case None => FiniteDuration(1, TimeUnit.SECONDS)
       }
     }
-    Source.tick(timeout, timeout, getTwirlStringCollection(config)(hc))
+    Source.fromPublisher(ref).groupedWithin(hc.timeoutNumberOfEventsOption.get, 5 seconds).map(_.toList)
   }
 
   /**
@@ -160,18 +172,18 @@ object StreamGenericOperations {
     * @tparam A Type parameter to abstract over the IO model
     * @return Return handlerd to abort stream and a future if the stream is aborted or has crashed.
     */
-  def startStream[A](source: Source[A, Cancellable])(
+  def startStream[A](source: Source[A, NotUsed])(
     implicit am: ActorMaterializer): (UniqueKillSwitch, Future[Done]) = {
     source
-      .viaMat(KillSwitches.single)(Keep.right)
+    .viaMat(KillSwitches.single)(Keep.right)
       .toMat(Sink.ignore)(Keep.both)
       .run()
   }
 
   /**
-    * Implicit classes to extend Akka sources to provide this method to start "in line"
+    * Implicit class to extend Akka sources to provide this method to start "in line"
     */
-  implicit class SourceOps[A, B](in: Source[(A, B), Cancellable])(implicit am: ActorMaterializer) {
+  implicit class SourceOps[A, B](in: Source[(A, B), NotUsed])(implicit am: ActorMaterializer) {
     def start: (UniqueKillSwitch, Future[Done]) =
       startStream(in)
   }
@@ -201,6 +213,9 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
   implicit val as = context.system
   implicit val am = ActorMaterializer()
 
+  var dataPublisherProps : Option[Props]    = None
+  var dataPublisherRef   : Option[ActorRef] = None
+
   val mediator = DistributedPubSub(context.system).mediator
   mediator ! Subscribe("content", self)
 
@@ -218,6 +233,9 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
     case NodeSupervisorActor.Start(ids, hc) =>
       log.info(s"Received configuration ${hc}")
 
+      dataPublisherProps = Some(Props(new EventPublisher(hc)))
+      dataPublisherRef   = Some(as.actorOf(dataPublisherProps.get))
+
       // Depending on the config it starts File or Kafka flow
       (hc.kafkaConfig, hc.fileConfig) match {
         // Kafka config is included
@@ -226,9 +244,9 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
           implicit val client = new KafkaClient[String](kafka)
           log.info(s"Starting stream . . .")
 
-          val (streamHandler, streamStatus) = createSource(hc)
+          val (streamHandler, streamStatus) = createSource(hc, ActorPublisher(dataPublisherRef.get))
             .via(StreamKafkaOperations.kafkaFlow(hc))
-            .map(_.run(KafkaOperations(hc.topic, 0, Nil))).start
+            .map(_.run(KafkaOperations(hc.topic, 0, Nil)).value).start
 
           this.streamHandler = Some(streamHandler)
           streamStatus andThen { case _ => this.streamStatus = Some(Done) }
@@ -236,10 +254,9 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
         // Local file config is included
         case (None, Some(file)) =>
           implicit val client = new FileClient[String](hc.filePath)
-
-          val (streamHandler, streamStatus) = createSource(hc)
+          val (streamHandler, streamStatus) = createSource(hc, ActorPublisher(dataPublisherRef.get))
             .via(StreamFileOperations.fileFlow(hc))
-            .map(_.run(FileOperations(0))).start
+            .map(_.run(FileOperations(0)).value).start
 
           this.streamHandler = Some(streamHandler)
           streamStatus andThen { case _ => this.streamStatus = Some(Done) }
@@ -256,6 +273,7 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
         streamHandler match {
           case Some((handler)) =>
             handler.shutdown()
+            this.streamHandler = None
           case _ => // Do nothing?!
         }
       })

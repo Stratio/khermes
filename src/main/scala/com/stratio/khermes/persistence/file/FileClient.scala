@@ -8,18 +8,19 @@ import com.typesafe.scalalogging.LazyLogging
   */
 class FileClient[K](path: String)
     extends LazyLogging {
+
   def send(message: String): Unit = {
     import java.io.BufferedWriter
     import java.io.FileWriter
     import java.io.IOException
-
     var bw: BufferedWriter = null
 
     try {
       bw = new BufferedWriter(new FileWriter(path, true))
-      bw.write(message)
-      bw.newLine()
-      bw.flush()
+      if(!message.isEmpty) {
+        bw.write(message.trim() + "\n")
+        bw.flush()
+      }
     } catch {
       case ioe: IOException =>
         ioe.printStackTrace()
