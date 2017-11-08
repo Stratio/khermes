@@ -151,6 +151,16 @@
             <version>${scalaz.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.scalaz</groupId>
+            <artifactId>scalaz-concurrent_${scala.binary.version}</artifactId>
+            <version>${scalaz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.typelevel</groupId>
+            <artifactId>cats-core_${scala.binary.version}</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-http-experimental_${scala.binary.version}</artifactId>
             <version>${akka.http.experimental.version}</version>
