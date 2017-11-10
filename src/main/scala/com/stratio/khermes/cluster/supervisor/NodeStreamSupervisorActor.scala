@@ -26,6 +26,7 @@ import akka.stream.actor.ActorPublisher
 import akka.stream.actor.ActorPublisherMessage.{Cancel, Request}
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import akka.stream.stage.{GraphStage, GraphStageLogic, OutHandler}
+import akka.util.Timeout
 import cats.{Eval, data}
 import com.stratio.khermes.cluster.supervisor.StreamFileOperations.FileOperations
 import com.stratio.khermes.cluster.supervisor.StreamKafkaOperations.KafkaOperations
@@ -34,7 +35,7 @@ import com.stratio.khermes.cluster.supervisor.NodeSupervisorActor.Result
 import com.stratio.khermes.commons.config.AppConfig
 import com.stratio.khermes.commons.exceptions.KhermesException
 import com.stratio.khermes.helpers.faker.Faker
-import com.stratio.khermes.helpers.twirl.TwirlHelper
+import com.stratio.khermes.helpers.twirl.{TwirlActorCache, TwirlHelper}
 import com.stratio.khermes.metrics.KhermesMetrics
 import com.stratio.khermes.persistence.file.FileClient
 import com.stratio.khermes.persistence.kafka.KafkaClient
@@ -42,11 +43,12 @@ import com.typesafe.config.Config
 import org.apache.kafka.clients.producer.RecordMetadata
 import play.twirl.api.Txt
 
-import scala.concurrent.{ExecutionContext, Future, Promise}
+import scala.concurrent.{Await, ExecutionContext, Future, Promise}
 import scala.util.Try
 import scala.concurrent.duration._
 import scala.io.{Codec, StdIn}
 import cats.data.{State, StateT}
+import com.stratio.khermes.helpers.twirl.TwirlActorCache.NextEvent
 import org.reactivestreams.Publisher
 
 object StreamKafkaOperations {
@@ -84,12 +86,15 @@ object StreamFileOperations {
 object StreamGenericOperations {
 
   import State._
+  import akka.pattern.ask
 
-  class EventPublisher(hc: AppConfig)(implicit val config: Config) extends ActorPublisher[String] with ActorLogging {
+  class EventPublisher(hc: AppConfig, twirlActorCache: ActorRef)(implicit val config: Config) extends ActorPublisher[String] with ActorLogging {
+    implicit val timeout: Timeout = 15 seconds
     def receive = {
       case Request(cnt) =>
         log.debug("Received Request ({}) from Subscriber", cnt)
-        val str = StreamGenericOperations.getEvent(hc)
+        //val str = StreamGenericOperations.getEvent(hc)
+        val str = Await.result((twirlActorCache ? NextEvent).mapTo[String], 15 seconds)
         while(isActive && totalDemand > 0) {
           onNext(str)
         }
@@ -213,8 +218,10 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
   implicit val as = context.system
   implicit val am = ActorMaterializer()
 
-  var dataPublisherProps : Option[Props]    = None
-  var dataPublisherRef   : Option[ActorRef] = None
+  var dataPublisherProps    : Option[Props]    = None
+  var dataPublisherRef      : Option[ActorRef] = None
+  var twirlActorCacheProps  : Option[Props] = None
+  var twitlActorCacheRef    : Option[ActorRef] = None
 
   val mediator = DistributedPubSub(context.system).mediator
   mediator ! Subscribe("content", self)
@@ -233,8 +240,10 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
     case NodeSupervisorActor.Start(ids, hc) =>
       log.info(s"Received configuration ${hc}")
 
-      dataPublisherProps = Some(Props(new EventPublisher(hc)))
-      dataPublisherRef   = Some(as.actorOf(dataPublisherProps.get))
+      twirlActorCacheProps  = Some(Props(new TwirlActorCache(hc)))
+      twitlActorCacheRef    = Some(as.actorOf(twirlActorCacheProps.get))
+      dataPublisherProps    = Some(Props(new EventPublisher(hc, twitlActorCacheRef.get)))
+      dataPublisherRef      = Some(as.actorOf(dataPublisherProps.get))
 
       // Depending on the config it starts File or Kafka flow
       (hc.kafkaConfig, hc.fileConfig) match {
