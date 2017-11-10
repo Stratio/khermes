@@ -42,9 +42,13 @@ class NodeStreamSupervisorActorTest extends BaseActorTest {
 
   val templateContent =
     """|@import com.stratio.khermes.helpers.faker.generators._
+       |@import scala.util.Random
+       |@import com.stratio.khermes.helpers.faker.Faker
+       |@import com.stratio.khermes.helpers.faker.generators.Positive
+       |@import org.joda.time.DateTime
        |@(faker: Faker)
-       |@defining(faker, List(CategoryFormat("MASTERCARD", "0.5"),CategoryFormat("VISA", "0.5"))){ case (f,s) =>
-       |@f.Name.fullName,@f.Categoric.runNext(s) }
+       |@defining(faker, List(CategoryFormat("MASTERCARD", "0.5"),CategoryFormat("VISA", "0.5")),List(CategoryFormat("MOVISTAR", "0.5"),CategoryFormat("IUSACELL", "0.5"))){ case (f,s,s2) =>
+       |@f.Name.fullName,@f.Categoric.runNext(s),@f.Number.numberInRange(10000,50000),@f.Geo.geolocation.city,@f.Number.numberInRange(1000,10000),@f.Categoric.runNext(s2),@f.Number.numberInRange(1,5000),@f.Datetime.datetime(new DateTime("2000-01-01"), new DateTime("2016-01-01"), Option("yyyy-MM-dd")) }
     """.stripMargin
 
   "An NodeStreamSupervisorActor" should {
