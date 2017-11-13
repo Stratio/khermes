@@ -13,7 +13,7 @@ create twirl-template
 @import com.stratio.khermes.helpers.faker.generators.Positive
 @import com.stratio.khermes.helpers.faker.Faker
 @(faker: Faker)
-@defining(faker.TicketsStratio.generateTicket) { case (randomTicket) => {
+@defining(faker.Tickets.generateTicket) { case (randomTicket) => {
     "id": "@(randomTicket.id)",
     "idSale": "@(randomTicket.idSale)",
     "dateFlat": @(randomTicket.dateFlat),
@@ -37,7 +37,7 @@ khermes {
   i18n = "ALL"
 
   timeout-rules {
-    number-of-events: 100
+    number-of-events: 1
     duration: 5 seconds
   }
 }

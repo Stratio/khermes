@@ -31,14 +31,12 @@ case class FlightsGenerator(locale: String) extends FakerGenerator
 
   override def name: String = "flights"
 
-  val resourcesFilesSmall = Seq("1990", "1991", "1992", "1993", "1994", "1995",
-    "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003",
-    "2004", "2005", "2006", "2007", "2008")
+  val resourcesFiles = Seq("2008")
 
   lazy val flightsModel: Seq[FlightModel] = locale match {
     case AppConstants.DefaultLocale | "ALL-SMALL" | "EN" | "ES" =>
       logger.info("Flights from all resources .... ")
-      resourcesFilesSmall.flatMap(resource => getFlights(resource))
+      resourcesFiles.flatMap(resource => getFlights(resource))
     case resource =>
       logger.info("Flights from one resource .... ")
       getFlights(resource)
@@ -54,43 +52,43 @@ case class FlightsGenerator(locale: String) extends FakerGenerator
   def flight: FlightModel = {
     val randomElement = randomElementFromAList[FlightModel](flightsModel).getOrElse(
       throw new KhermesException(s"Error loading locate /locales/$name/$locale"))
-      randomElement.copy(Cancelled = if(!randomElement.Cancelled.isEmpty) randomElement.Cancelled else "NA",
-        Diverted = if(!randomElement.Diverted.isEmpty) randomElement.Diverted else "NA",
-        AirTime = if(randomElement.AirTime.isEmpty || randomElement.AirTime == "NA") "0" else randomElement.AirTime,
-        Distance = if(randomElement.Distance.isEmpty || randomElement.Distance == "NA") "0" else randomElement.Distance,
-        ArrDelay = if(randomElement.ArrDelay.isEmpty || randomElement.ArrDelay == "NA") "0" else randomElement.ArrDelay,
-        DepDelay = if(randomElement.DepDelay.isEmpty || randomElement.DepDelay == "NA") "0" else randomElement.DepDelay)
+    randomElement.copy(Cancelled = if (!randomElement.Cancelled.isEmpty) randomElement.Cancelled else "NA",
+      Diverted = if (!randomElement.Diverted.isEmpty) randomElement.Diverted else "NA",
+      AirTime = if (randomElement.AirTime.isEmpty || randomElement.AirTime == "NA") "0" else randomElement.AirTime,
+      Distance = if (randomElement.Distance.isEmpty || randomElement.Distance == "NA") "0" else randomElement.Distance,
+      ArrDelay = if (randomElement.ArrDelay.isEmpty || randomElement.ArrDelay == "NA") "0" else randomElement.ArrDelay,
+      DepDelay = if (randomElement.DepDelay.isEmpty || randomElement.DepDelay == "NA") "0" else randomElement.DepDelay)
   }
 }
 
 final case class FlightModel(
                               Year: String,
-                             Month: String,
-                             DayofMonth: String,
-                             DayOfWeek: String,
-                             DepTime: String,
-                             CRSDepTime: String,
-                             ArrTime: String,
-                             CRSArrTime: String,
-                             UniqueCarrier: String,
-                             FlightNum: String,
-                             TailNum: String,
-                             ActualElapsedTime: String,
-                             CRSElapsedTime: String,
-                             AirTime: String,
-                             ArrDelay: String,
-                             DepDelay: String,
-                             Origin: String,
-                             Dest: String,
-                             Distance: String,
-                             TaxiIn: String,
-                             TaxiOut: String,
-                             Cancelled: String,
-                             CancellationCode: String,
-                             Diverted: String,
-                             CarrierDelay: String,
-                             WeatherDelay: String,
-                             NASDelay: String,
-                             SecurityDelay: String,
-                             LateAircraftDelay: String
+                              Month: String,
+                              DayofMonth: String,
+                              DayOfWeek: String,
+                              DepTime: String,
+                              CRSDepTime: String,
+                              ArrTime: String,
+                              CRSArrTime: String,
+                              UniqueCarrier: String,
+                              FlightNum: String,
+                              TailNum: String,
+                              ActualElapsedTime: String,
+                              CRSElapsedTime: String,
+                              AirTime: String,
+                              ArrDelay: String,
+                              DepDelay: String,
+                              Origin: String,
+                              Dest: String,
+                              Distance: String,
+                              TaxiIn: String,
+                              TaxiOut: String,
+                              Cancelled: String,
+                              CancellationCode: String,
+                              Diverted: String,
+                              CarrierDelay: String,
+                              WeatherDelay: String,
+                              NASDelay: String,
+                              SecurityDelay: String,
+                              LateAircraftDelay: String
                             )
