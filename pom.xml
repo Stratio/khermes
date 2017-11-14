@@ -27,7 +27,8 @@
         <logback-classic.version>1.1.7</logback-classic.version>
         <maven-assembly-plugin>2.5</maven-assembly-plugin>
         <scalastyle-maven-plugin>0.8.0</scalastyle-maven-plugin>
-        <kafka.version>0.10.1.1</kafka.version>
+        <kafka.version>0.10.0.1</kafka.version>
+        <zookeeper.version>3.4.6</zookeeper.version>
         <typesafe.config.version>1.3.0</typesafe.config.version>
         <akka.version>2.4.17</akka.version>
         <akka.http.experimental.version>2.4.11</akka.http.experimental.version>
@@ -43,6 +44,7 @@
         <scala-maven.tests.plugin.version>2.19.1</scala-maven.tests.plugin.version>
         <scala-maven.plugin.version>3.2.2</scala-maven.plugin.version>
         <dropwizard.metrics.version>3.2.2</dropwizard.metrics.version>
+        <csv.parser.version>0.1.19</csv.parser.version>
     </properties>
 
     <developers>
@@ -113,6 +115,36 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.nrinaudo</groupId>
+            <artifactId>kantan.csv_${scala.binary.version}</artifactId>
+            <version>${csv.parser.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nrinaudo</groupId>
+            <artifactId>kantan.csv-java8_${scala.binary.version}</artifactId>
+            <version>${csv.parser.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nrinaudo</groupId>
+            <artifactId>kantan.csv-scalaz_${scala.binary.version}</artifactId>
+            <version>${csv.parser.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nrinaudo</groupId>
+            <artifactId>kantan.csv-cats_${scala.binary.version}</artifactId>
+            <version>${csv.parser.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nrinaudo</groupId>
+            <artifactId>kantan.csv-generic_${scala.binary.version}</artifactId>
+            <version>${csv.parser.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nrinaudo</groupId>
+            <artifactId>kantan.csv-joda-time_${scala.binary.version}</artifactId>
+            <version>${csv.parser.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.json4s</groupId>
             <artifactId>json4s-native_${scala.binary.version}</artifactId>
             <version>${json4s.version}</version>
@@ -128,6 +160,17 @@
             <version>${logback-classic.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>${zookeeper.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_${scala.binary.version}</artifactId>
             <version>${kafka.version}</version>
@@ -135,6 +178,10 @@
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.zookeeper</groupId>
+                    <artifactId>zookeeper</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

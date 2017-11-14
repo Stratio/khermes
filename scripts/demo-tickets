@@ -1,0 +1,43 @@
+create kafka-config
+
+kafka {
+  bootstrap.servers="localhost:9092"
+  key.serializer = "org.apache.kafka.common.serialization.StringSerializer"
+  value.serializer = "org.apache.kafka.common.serialization.StringSerializer"
+}
+
+
+create twirl-template
+
+@import scala.util.Random
+@import com.stratio.khermes.helpers.faker.generators.Positive
+@import com.stratio.khermes.helpers.faker.Faker
+@(faker: Faker)
+@defining(faker.Tickets.generateTicket) { case (randomTicket) => {
+    "id": "@(randomTicket.id)",
+    "idSale": "@(randomTicket.idSale)",
+    "dateFlat": @(randomTicket.dateFlat),
+    "date": "@(randomTicket.date)",
+    "cashier": "@(randomTicket.cashier)",
+    "clientId": "@(randomTicket.clientId)",
+    "clientName": "@(randomTicket.clientName)",
+    "storeId": "@(randomTicket.storeId)",
+    "totalSale": @(randomTicket.totalSale),
+    "lines": [@(randomTicket.lines)],
+    "pays": [@(randomTicket.pays)]
+}}
+
+
+create generator-config
+
+khermes {
+  templates-path = "/tmp/khermes/templates"
+  topic = "tickets"
+  template-name = "khermestemplate"
+  i18n = "ALL"
+
+  timeout-rules {
+    number-of-events: 1
+    duration: 5 seconds
+  }
+}

@@ -16,6 +16,7 @@ import com.stratio.khermes.commons.constants.AppConstants
 import com.stratio.khermes.commons.exceptions.KhermesException
 import com.stratio.khermes.commons.implicits.AppSerializer
 import com.stratio.khermes.helpers.faker.generators._
+import com.typesafe.scalalogging.LazyLogging
 import org.json4s.native.Serialization._
 
 import scala.util.{Failure, Random, Success, Try}
@@ -35,11 +36,15 @@ case class Faker(locale: String = AppConstants.DefaultLocale, strategy: Option[S
 
   object Music extends MusicGenerator(locale)
 
+  object Flights extends FlightsGenerator(locale)
+
+  object Tickets extends TicketsGenerator(locale)
+
   object Email extends EmailGenerator(locale)
 
 }
 
-trait FakerGenerator extends AppSerializer {
+trait FakerGenerator extends AppSerializer with LazyLogging {
 
   def name: String
 
@@ -76,11 +81,19 @@ trait FakerGenerator extends AppSerializer {
     )
   }
 
-  def getResources(name: String): Seq[String] = Try(
-    new File(getClass.getResource(s"/locales/$name").getFile)) match {
-    case Success(resources) => resources.list().toSeq
-    case Failure(_) => throw new KhermesException(s"Error loading invalid name /locales/$name")
-  }
+  def getResources(name: String): Seq[String] = Try {
+    val res = Option(getClass.getResource(s"/locales/$name/"))
+    logger.info(s"Resources found: $res")
+    if(res.isDefined) new File(res.get.getFile)
+    else throw new KhermesException(s"Error extracting resources, missing folder: /locales/$name/")
+  } match {
+      case Success(resources) =>
+        logger.info(s"Resources list: ${resources.list()}")
+        Try(resources.list().toSeq)
+          .getOrElse(throw new KhermesException(s"Error extracting resources list of files"))
+      case Failure(e) =>
+        throw new KhermesException(s"Error loading invalid name /locales/$name/ , exception: ${e.getLocalizedMessage}")
+    }
 
   def parse[T](unitName: String, locale: String)(implicit m: Manifest[T]): Either[String, T] = Try(
     read[T](getResource(unitName, locale))) match {

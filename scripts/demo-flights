@@ -1,0 +1,48 @@
+create kafka-config
+
+kafka {
+  bootstrap.servers="localhost:9092"
+  key.serializer = "org.apache.kafka.common.serialization.StringSerializer"
+  value.serializer = "org.apache.kafka.common.serialization.StringSerializer"
+}
+
+
+create twirl-template
+
+@import com.stratio.khermes.helpers.faker.Faker
+@(faker: Faker)
+@defining(faker.Flights.flight) { case (randomFlight) => {
+    "Year": "@(randomFlight.Year)",
+    "UniqueCarrier": "@(randomFlight.UniqueCarrier)",
+    "FlightNum": "@(randomFlight.FlightNum)",
+    "AirTime": "@(randomFlight.AirTime)",
+    "ArrDelay": "@(randomFlight.ArrDelay)",
+    "DepDelay": "@(randomFlight.DepDelay)",
+    "Origin": "@(randomFlight.Origin)",
+    "Dest": "@(randomFlight.Dest)",
+    "Distance": "@(randomFlight.Distance)",
+    "Cancelled": "@(randomFlight.Cancelled)",
+    "CancellationCode": "@(randomFlight.CancellationCode)",
+    "Diverted": "@(randomFlight.Diverted)",
+    "CarrierDelay": "@(randomFlight.CarrierDelay)",
+    "WeatherDelay": "@(randomFlight.WeatherDelay)",
+    "NASDelay": "@(randomFlight.NASDelay)",
+    "SecurityDelay": "@(randomFlight.SecurityDelay)",
+    "LateAircraftDelay": "@(randomFlight.LateAircraftDelay)"
+  }}
+
+
+create generator-config
+
+khermes {
+  templates-path = "/tmp/khermes/templates"
+  topic = "khermes"
+  template-name = "khermestemplate"
+  i18n = "ALL-SMALL"
+
+  timeout-rules {
+    number-of-events: 100
+    duration: 10 seconds
+  }
+
+}
