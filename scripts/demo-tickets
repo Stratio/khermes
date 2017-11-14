@@ -21,7 +21,7 @@ create twirl-template
     "cashier": "@(randomTicket.cashier)",
     "clientId": "@(randomTicket.clientId)",
     "clientName": "@(randomTicket.clientName)",
-    "storeId": "@(faker.Number.number(3,Positive))",
+    "storeId": "@(randomTicket.storeId)",
     "totalSale": @(randomTicket.totalSale),
     "lines": [@(randomTicket.lines)],
     "pays": [@(randomTicket.pays)]

@@ -62,13 +62,13 @@ case class TicketsGenerator(locale: String) extends FakerGenerator with AppSeria
       ticket.idSale,
       Option(write(ticket.dateFlat)).getOrElse("{}"),
       Option(ticket.date.$date).getOrElse(""),
-      Option(ticket.cashier).getOrElse(""),
-      Option(ticket.clientId).getOrElse(""),
-      Option(ticket.clientName).getOrElse(""),
-      Option(ticket.storeId).getOrElse(""),
+      Option(ticket.cashier).getOrElse("unspecified"),
+      Option(ticket.clientId).getOrElse("0"),
+      Option(ticket.clientName).getOrElse("unspecified"),
+      Option(ticket.storeId).getOrElse("0"),
       ticket.totalSale,
-      ticket.lines.map(item => write(item)),
-      ticket.pays.map(concept => write(concept))
+      ticket.lines.map(item => write(item)).mkString(","),
+      ticket.pays.map(concept => write(concept)).mkString(",")
     )
   }
 }
@@ -76,7 +76,7 @@ case class TicketsGenerator(locale: String) extends FakerGenerator with AppSeria
 case class TicketModel(
                         id: String, idSale: String, dateFlat: String, date: String, cashier: String,
                         clientId: String, clientName: String, storeId: String, totalSale: Double,
-                        lines: Array[String], pays: Array[String]
+                        lines: String, pays: String
                       )
 
 case class Ticket(
@@ -99,4 +99,4 @@ case class ItemTicket(
 
 case class Concepts(idPay: Int, namePay: String, dueDate: DueDate, totalPay: Double)
 
-case class DueDate($numberLong: String)
+case class DueDate(dateLong: String)
