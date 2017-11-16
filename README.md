@@ -25,13 +25,13 @@ We have create both shell scripts and docker-compose files to make easier for yo
 To start fast generating your files data, check the scripts/quickstart directory. There is a khermes.sh script which starts the complete app along with all its dependencies. Follow the intrucions below:
 
 - Be sure that you have **mvn** command in your PATH and **docker-compose**.
-- Execute khermes.sh script. It check if there is the khermes artifact inside the target directory, if not it tries to build with maven. If you execute the script with the package option:  **khermes.sh package**, it forces the **jar** generation. 
-- If you don´t set the environment variable, the file will be create in your current directory. If you want to use another location set the **LOCALPATH** environment variable: **LOCALPATH=/tmp khermes.sh**. 
+- Execute khermes.sh script. It checks if there is the **khermes artifact** inside the **target** directory, if not it tries to build it with maven. If you execute the script with the **package** option:  **khermes.sh package**, it forces the **jar** generation. 
+- If you don´t set the **LOCALPATH** environment variable, the file will be created in your current directory. If you want to use another location set it: **LOCALPATH=/tmp khermes.sh**. 
 - The scrips starts **khermes** and **zookeeper**. Go to http://localhost:8080/console in your browser a start the configuration.
 - Create the file configuration with the command create **file-config**:
     ```    
     file {
-       path = "file.json"
+       path = "file.csv"
     }
     ```
 - Crate the template with the command **create twirl-template**:
@@ -65,7 +65,7 @@ To start fast generating your files data, check the scripts/quickstart directory
       }
     }
     ```
-- Check the the actor id with the command **ls** and start it. Then you will be asked for the names of the created configurations. Do not include **kafka** and **avro** names, press enter to skip these otherwise kherems will try to find these and will crash.
+- Check the the actor´s id with the command **ls** and start it. Then you will be asked for the names of the created configurations. Do not include **kafka** and **avro** names, press enter to skip these otherwise **khermes** will try to find them and will crash.
 - Events will be created as much as you put in the **number-of-events** property. Enjoy!
  
 ## Licenses.
