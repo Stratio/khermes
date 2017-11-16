@@ -66,7 +66,7 @@ To start fast generating your files data, check the scripts/quickstart directory
     }
     ```
 - Check the the actor´s id with the command **ls** and start it. Then you will be asked for the names of the created configurations. Do not include **kafka** and **avro** names, press enter to skip these otherwise **khermes** will try to find them and will crash.
-- Events will be created as much as you put in the **number-of-events** property. Enjoy!
+- Events will be created as many as you put in the **number-of-events** property. Enjoy!
  
 ## Licenses.
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
