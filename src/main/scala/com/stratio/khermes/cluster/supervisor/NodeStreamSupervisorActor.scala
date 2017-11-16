@@ -19,15 +19,13 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 import akka.{Done, NotUsed}
-import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable, PoisonPill, Props}
 import akka.cluster.pubsub.{DistributedPubSub, DistributedPubSubMediator}
 import akka.stream._
 import akka.stream.actor.ActorPublisher
 import akka.stream.actor.ActorPublisherMessage.{Cancel, Request}
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
-import akka.stream.stage.{GraphStage, GraphStageLogic, OutHandler}
 import akka.util.Timeout
-import cats.{Eval, data}
 import com.stratio.khermes.cluster.supervisor.StreamFileOperations.FileOperations
 import com.stratio.khermes.cluster.supervisor.StreamKafkaOperations.KafkaOperations
 import com.stratio.khermes.cluster.supervisor.StreamGenericOperations.{executeBatchIO, startStream}
@@ -46,8 +44,8 @@ import play.twirl.api.Txt
 import scala.concurrent.{Await, ExecutionContext, Future, Promise}
 import scala.util.Try
 import scala.concurrent.duration._
-import scala.io.{Codec, StdIn}
-import cats.data.{State, StateT}
+import scala.io.{Codec}
+import cats.data.{State}
 import com.stratio.khermes.helpers.twirl.TwirlActorCache.NextEvent
 import org.reactivestreams.Publisher
 
@@ -88,15 +86,20 @@ object StreamGenericOperations {
   import State._
   import akka.pattern.ask
 
-  class EventPublisher(hc: AppConfig, twirlActorCache: ActorRef)(implicit val config: Config) extends ActorPublisher[String] with ActorLogging {
+  final class EventPublisher(hc: AppConfig, twirlActorCache: ActorRef)(implicit val config: Config) extends ActorPublisher[String] with ActorLogging {
     implicit val timeout: Timeout = 15 seconds
+    implicit val ec = context.dispatcher
     def receive = {
       case Request(cnt) =>
         log.debug("Received Request ({}) from Subscriber", cnt)
-        //val str = StreamGenericOperations.getEvent(hc)
-        val str = Await.result((twirlActorCache ? NextEvent).mapTo[String], 15 seconds)
-        while(isActive && totalDemand > 0) {
-          onNext(str)
+
+        while (isActive && !isCompleted && totalDemand > 0) {
+          val e = List.fill(cnt.toInt)((twirlActorCache ? NextEvent).mapTo[String])
+          val f = Future.sequence(e)
+          val l = Await.result(f, 15 seconds)
+          l.foreach {
+            onNext(_)
+          }
         }
       case Cancel =>
         log.info("Cancel Message Received -- Stopping")
@@ -255,20 +258,32 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
 
           val (streamHandler, streamStatus) = createSource(hc, ActorPublisher(dataPublisherRef.get))
             .via(StreamKafkaOperations.kafkaFlow(hc))
-            .map(_.run(KafkaOperations(hc.topic, 0, Nil)).value).start
+            .map(_.run(KafkaOperations(hc.topic, 0, Nil)).value)
+            .take(hc.stopNumberOfEventsOption.get)
+            .takeWhile { case(ops, event) => !event.isEmpty() }
+            .start
 
           this.streamHandler = Some(streamHandler)
-          streamStatus andThen { case _ => this.streamStatus = Some(Done) }
+          streamStatus andThen { case _ => {
+            twitlActorCacheRef.get ! PoisonPill
+            this.streamStatus = Some(Done)
+          } }
 
         // Local file config is included
         case (None, Some(file)) =>
           implicit val client = new FileClient[String](hc.filePath)
           val (streamHandler, streamStatus) = createSource(hc, ActorPublisher(dataPublisherRef.get))
             .via(StreamFileOperations.fileFlow(hc))
-            .map(_.run(FileOperations(0)).value).start
+            .map(_.run(FileOperations(0)).value)
+            .take(hc.stopNumberOfEventsOption.get)
+            // If event is blanck stop stream
+            .takeWhile { case(ops, event) => !event.isEmpty() }
+            .start
 
           this.streamHandler = Some(streamHandler)
-          streamStatus andThen { case _ => this.streamStatus = Some(Done) }
+          streamStatus andThen { case _ => {
+            this.streamStatus = Some(Done)
+          } }
 
         case _ =>
           throw new KhermesException("Invalid Sink Data Configuration")

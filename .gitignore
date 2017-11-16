@@ -48,3 +48,5 @@ apidocs
 esdata/
 data/
 
+scripts/quickstart/khermes/templates/khermestemplate.scala.html
+scripts/quickstart/khermes/templates/generated-templates/html/khermestemplate.template.scala

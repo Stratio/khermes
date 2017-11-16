@@ -1,0 +1,20 @@
+version: '2'
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: confluent/zookeeper:latest
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  khermes:
+    container_name: khermes
+    image: khermes:latest
+    ports:
+      - "8080:8080"
+    links:
+      - zookeeper
+    volumes:
+    - ${LOCALPATH}:/tmp

@@ -20,6 +20,54 @@ $ mvn clean package
 
 We have create both shell scripts and docker-compose files to make easier for you to start using khermes. For further info on how to get started please go to the [Getting Started](https://github.com/Stratio/khermes/wiki/Getting-started) section of our Wiki.
 
+## Quickstart
+
+To start fast generating your files data, check the scripts/quickstart directory. There is a khermes.sh script which starts the complete app along with all its dependencies. Follow the intrucions below:
+
+- Be sure that you have **mvn** command in your PATH and **docker-compose**.
+- Execute khermes.sh script. It check if there is the khermes artifact inside the target directory, if not it tries to build with maven. If you execute the script with the package option:  **khermes.sh package**, it forces the **jar** generation. 
+- If you don´t set the environment variable, the file will be create in your current directory. If you want to use another location set the **LOCALPATH** environment variable: **LOCALPATH=/tmp khermes.sh**. 
+- The scrips starts **khermes** and **zookeeper**. Go to http://localhost:8080/console in your browser a start the configuration.
+- Create the file configuration with the command create **file-config**:
+    ```    
+    file {
+       path = "file.json"
+    }
+    ```
+- Crate the template with the command **create twirl-template**:
+    ```
+    @import com.stratio.khermes.helpers.faker.generators._
+    @import scala.util.Random
+    @import com.stratio.khermes.helpers.faker.Faker
+    @import com.stratio.khermes.helpers.faker.generators.Positive
+    @import org.joda.time.DateTime
+    
+    @(faker: Faker)
+    @defining(faker, List(CategoryFormat("MASTERCARD", "0.5"),CategoryFormat("VISA", "0.5")),List(CategoryFormat("MOVISTAR", "0.5"),CategoryFormat("IUSACELL", "0.5"))){ case (f,s,s2) =>
+    @f.Name.fullName,@f.Categoric.runNext(s),@f.Number.numberInRange(10000,50000),@f.Geo.geolocation.city,@f.Number.numberInRange(1000,10000),@f.Categoric.runNext(s2),@f.Number.numberInRange(1,5000),@f.Datetime.datetime(new DateTime("2000-01-01"), new DateTime("2016-01-01"), Option("yyyy-MM-dd")) }
+    ```
+- Create the generator configuration with the command: **create generator-config**:
+
+    ```
+    khermes {
+      templates-path = "/tmp/khermes/templates"
+      topic = "khermes"
+      template-name = "khermestemplate"
+      i18n = "EN"
+    
+      timeout-rules {
+        number-of-events: 20
+        duration: 5 seconds
+      }
+    
+      stop-rules {
+        number-of-events: 10000
+      }
+    }
+    ```
+- Check the the actor id with the command **ls** and start it. Then you will be asked for the names of the created configurations. Do not include **kafka** and **avro** names, press enter to skip these otherwise kherems will try to find these and will crash.
+- Events will be created as much as you put in the **number-of-events** property. Enjoy!
+ 
 ## Licenses.
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
