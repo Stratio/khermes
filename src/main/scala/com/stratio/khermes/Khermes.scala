@@ -19,7 +19,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import com.stratio.khermes.clients.http.flows.WSFlow
 import com.stratio.khermes.cluster.collector.CommandCollectorActor
-import com.stratio.khermes.cluster.supervisor.{KhermesClientActor, NodeSupervisorActor, NodeStreamSupervisorActor}
+import com.stratio.khermes.cluster.supervisor.{KhermesClientActor, NodeStreamSupervisorActor, NodeSupervisorActor}
 import com.stratio.khermes.commons.constants.AppConstants
 import com.stratio.khermes.commons.implicits.AppImplicits
 import com.stratio.khermes.metrics.MetricsReporter
@@ -145,3 +145,5 @@ object Khermes extends App with LazyLogging {
     binding.flatMap(_.unbind()).onComplete(_ ⇒ system.terminate())
   }
 }
+
+

@@ -16,7 +16,7 @@ class FileClient[K](path: String)
     var bw: BufferedWriter = null
 
     try {
-      bw = new BufferedWriter(new FileWriter(path, true))
+      bw = new BufferedWriter(new FileWriter(s"/tmp/$path", true))
       if(!message.isEmpty) {
         bw.write(message.trim() + "\n")
         bw.flush()
