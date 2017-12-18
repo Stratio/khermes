@@ -2,6 +2,8 @@ package com.stratio.khermes.persistence.file
 
 import com.typesafe.scalalogging.LazyLogging
 
+import scala.util.Success
+
 /**
   * Created by Emiliano Martinez on 2/11/17.
   * Class to write lines in a synchronous way
@@ -16,7 +18,7 @@ class FileClient[K](path: String)
     var bw: BufferedWriter = null
 
     try {
-      bw = new BufferedWriter(new FileWriter(s"/tmp/$path", true))
+      bw = new BufferedWriter(new FileWriter(s"$path", true))
       if(!message.isEmpty) {
         bw.write(message.trim() + "\n")
         bw.flush()
@@ -33,3 +35,10 @@ class FileClient[K](path: String)
     }
   }
 }
+
+
+
+
+
+
+

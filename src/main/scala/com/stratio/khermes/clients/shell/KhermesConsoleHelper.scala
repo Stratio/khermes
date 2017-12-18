@@ -87,7 +87,7 @@ case class KhermesConsoleHelper(client: KhermesClientActor) {
       val khermesConfig = AppConfig(
         configDAO.read(s"$GeneratorConfigPath/$khermes"),
         Try(configDAO.read(s"$KafkaConfigPath/$kafka")).toOption,
-        Try(configDAO.read(s"$FileConfigPath/$kafka")).toOption, //TODO: check this
+        Try(configDAO.read(s"$FileConfigPath/$localFile")).toOption, //TODO: check this
         configDAO.read(s"$TwirlTemplatePath/$template"),
         Try(configDAO.read(s"$AvroConfigPath/$avro")).toOption
       )

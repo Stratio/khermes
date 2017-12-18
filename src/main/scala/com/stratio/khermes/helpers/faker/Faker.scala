@@ -42,6 +42,8 @@ case class Faker(locale: String = AppConstants.DefaultLocale, strategy: Option[S
   object Gaussian extends GaussianDistGenerator()
 
   object Boolean extends BooleanGenerator()
+
+  object UltraFake extends StringFake()
 }
 
 trait FakerGenerator extends AppSerializer {

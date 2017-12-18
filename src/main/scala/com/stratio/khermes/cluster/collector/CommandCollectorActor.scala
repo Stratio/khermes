@@ -135,8 +135,6 @@ class CommandCollectorActor extends ActorPublisher[CommandCollectorActor.Result]
 
     val appConfig = AppConfig(generatorConfig, kafkaConfig, fileConfig, twirlTemplate, avroConfig)
 
-    println("APPConfig: " + appConfig)
-
     mediator ! Publish("content",
       NodeSupervisorActor.Start(nodeIds, AppConfig(generatorConfig, kafkaConfig, fileConfig, twirlTemplate, avroConfig)))
 

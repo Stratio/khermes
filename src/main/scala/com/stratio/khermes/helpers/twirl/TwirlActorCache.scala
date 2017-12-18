@@ -3,7 +3,7 @@ package com.stratio.khermes.helpers.twirl
 import akka.actor.Actor
 import com.stratio.khermes.commons.config.AppConfig
 import com.stratio.khermes.helpers.faker.Faker
-import com.stratio.khermes.helpers.twirl.TwirlActorCache.NextEvent
+import com.stratio.khermes.helpers.twirl.TwirlActorCache.{FakeEvent, NextEvent}
 import com.typesafe.config.Config
 import play.twirl.api.Txt
 
@@ -21,11 +21,12 @@ class TwirlActorCache(val hc: AppConfig)(implicit config: Config)  extends Actor
 
   override def receive: Receive = {
     case NextEvent =>
-      sender ! template.static(khermes).toString()
+      sender ! FakeEvent(template.static(khermes).toString())
   }
 }
 
 object TwirlActorCache {
   case object NextEvent
+  case class FakeEvent(ev: String)
 }
 

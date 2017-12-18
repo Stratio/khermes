@@ -42,11 +42,11 @@ import org.apache.kafka.clients.producer.RecordMetadata
 import play.twirl.api.Txt
 
 import scala.concurrent.{Await, ExecutionContext, Future, Promise}
-import scala.util.Try
+import scala.util.{Success, Try}
 import scala.concurrent.duration._
-import scala.io.{Codec}
-import cats.data.{State}
-import com.stratio.khermes.helpers.twirl.TwirlActorCache.NextEvent
+import scala.io.Codec
+import cats.data.State
+import com.stratio.khermes.helpers.twirl.TwirlActorCache.{FakeEvent, NextEvent}
 import org.reactivestreams.Publisher
 
 object StreamKafkaOperations {
@@ -84,27 +84,31 @@ object StreamFileOperations {
 object StreamGenericOperations {
 
   import State._
-  import akka.pattern.ask
 
   final class EventPublisher(hc: AppConfig, twirlActorCache: ActorRef)(implicit val config: Config) extends ActorPublisher[String] with ActorLogging {
-    implicit val timeout: Timeout = 15 seconds
-    implicit val ec = context.dispatcher
+
+    private[this] var count = 0
+
     def receive = {
+      case FakeEvent(ev) =>
+        if (isActive && !isCompleted && totalDemand > 0) {
+          count = count + 1
+          if(count < hc.stopNumberOfEventsOption.get) {
+            //carry return explicitly dropped
+            onNext(ev.replace("\n", ""))
+          }
+          else
+            context.stop(self)
+        }
+
       case Request(cnt) =>
         log.debug("Received Request ({}) from Subscriber", cnt)
+        for(_ <- 0 to cnt.toInt) twirlActorCache ! NextEvent
 
-        while (isActive && !isCompleted && totalDemand > 0) {
-          val e = List.fill(cnt.toInt)((twirlActorCache ? NextEvent).mapTo[String])
-          val f = Future.sequence(e)
-          val l = Await.result(f, 15 seconds)
-          l.foreach {
-            onNext(_)
-          }
-        }
       case Cancel =>
         log.info("Cancel Message Received -- Stopping")
         context.stop(self)
-      case _ =>
+      case _ => // Do nothing!!
     }
   }
 
@@ -185,7 +189,7 @@ object StreamGenericOperations {
     source
     .viaMat(KillSwitches.single)(Keep.right)
       .toMat(Sink.ignore)(Keep.both)
-      .run()
+      .run
   }
 
   /**
@@ -194,6 +198,10 @@ object StreamGenericOperations {
   implicit class SourceOps[A, B](in: Source[(A, B), NotUsed])(implicit am: ActorMaterializer) {
     def start: (UniqueKillSwitch, Future[Done]) =
       startStream(in)
+  }
+
+  implicit class commonStartStream[A, B](source: Source[(A, B), NotUsed])(implicit am: ActorMaterializer) {
+    def commonStart(hc: AppConfig) = source.take(hc.stopNumberOfEventsOption.get).start
   }
 }
 
@@ -229,7 +237,7 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
   val mediator = DistributedPubSub(context.system).mediator
   mediator ! Subscribe("content", self)
 
-  // These variables sown the stream status
+  // These variables show the stream status
   var streamHandler : Option[UniqueKillSwitch] = None
   var streamStatus  : Option[Done] = None
 
@@ -259,13 +267,11 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
           val (streamHandler, streamStatus) = createSource(hc, ActorPublisher(dataPublisherRef.get))
             .via(StreamKafkaOperations.kafkaFlow(hc))
             .map(_.run(KafkaOperations(hc.topic, 0, Nil)).value)
-            .take(hc.stopNumberOfEventsOption.get)
-            .takeWhile { case(ops, event) => !event.isEmpty() }
-            .start
+            .commonStart(hc)
 
           this.streamHandler = Some(streamHandler)
+
           streamStatus andThen { case _ => {
-            twitlActorCacheRef.get ! PoisonPill
             this.streamStatus = Some(Done)
           } }
 
@@ -275,12 +281,10 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
           val (streamHandler, streamStatus) = createSource(hc, ActorPublisher(dataPublisherRef.get))
             .via(StreamFileOperations.fileFlow(hc))
             .map(_.run(FileOperations(0)).value)
-            .take(hc.stopNumberOfEventsOption.get)
-            // If event is blanck stop stream
-            .takeWhile { case(ops, event) => !event.isEmpty() }
-            .start
+            .commonStart(hc)
 
           this.streamHandler = Some(streamHandler)
+
           streamStatus andThen { case _ => {
             this.streamStatus = Some(Done)
           } }
