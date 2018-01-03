@@ -30,3 +30,32 @@ case class CategoryGenerator() {
     }
   }
 }
+
+
+case class StringFake() {
+
+  def run(): String = {
+
+    val company = CategoryGenerator().runNext(List(CategoryFormat("TELCEL", "0.82"), CategoryFormat("MOVISTAR", "0.08"), CategoryFormat("IUSACELL", "0.07"), CategoryFormat("NEXTEL", "0.01"), CategoryFormat("0", "0.01"), CategoryFormat("UNEFON", "0.01")))
+    val state = CategoryGenerator().runNext(List(CategoryFormat("ZAPOPAN JAL", "0.7"), CategoryFormat("HUIXQUILUCAN", "0.05"), CategoryFormat("GUADALAJARA", "0.05"), CategoryFormat("CHIHUAHUA", "0.1"), CategoryFormat("OTROS", "0.1")))
+
+    def hire(company: String, state: String): Boolean = {
+      val b = if (company == "TELCEL" && state == "ZAPOPAN JAL") true
+      else if (company == "MOVISTAR" && state == "GUADALAJARA") true
+      else if (company == "IUSACELL" && (state == "GUADALAJARA" || state == "HUIXQUILUCAN")) true
+      else false
+      b
+    }
+
+    val companyStr =
+      s""""customerPhoneCompany":"${company}"""".stripMargin
+
+      val stateStr = s""""transactionState": "${state}""""
+      val hireStr = s""""hire":${hire(company, state)}"""
+
+      val h = """"hire""""+ ":" + hire(company, state)
+
+      s"""${companyStr},${h},${stateStr}"""
+    }
+
+}

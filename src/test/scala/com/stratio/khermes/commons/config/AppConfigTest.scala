@@ -15,6 +15,138 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
+object AppConfigTest {
+
+  val fileConfig = {
+    """file {
+        path = ""
+      }"""
+  }
+
+  val khermesConfig =
+    """
+      |khermes {
+      |  templates-path = "/some/test/path"
+      |  template-name = "someTemplate"
+      |  topic = "someTopic"
+      |  i18n = "EN"
+      |}
+    """.stripMargin
+
+  val jsonKafkaConfig =
+    """
+      |kafka {
+      |  bootstrap.servers = "localhost:9092"
+      |  acks = "-1"
+      |  key.serializer = "org.apache.kafka.common.serialization.StringSerializer"
+      |  value.serializer = "org.apache.kafka.common.serialization.StringSerializer"
+      |}
+    """.stripMargin
+
+  val avroKafkaConfig =
+    """
+      |kafka {
+      |  bootstrap.servers = "localhost:9092"
+      |  acks = "-1"
+      |  key.serializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
+      |  value.serializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
+      |  schema.registry.url = "http://localhost:16803"
+      |}
+    """.stripMargin
+
+  val wrongKhermesConfig =
+    """
+      |khermes {
+      |  templates-path = "/some/test/path"
+      |  template-name = "someTemplate"
+      |  i18n = "EN"
+      |}
+    """.stripMargin
+
+  val wrongKafkaConfig =
+    """
+      |kafka {
+      |  bootstrap.servers = "localhost:9092"
+      |  acks = "-1"
+      |  key.serializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
+      |  value.serializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
+      |}
+    """.stripMargin
+
+  val template =
+    """
+      |@import com.stratio.khermes.helpers.generator.Khermes
+      |
+      |@(khermes: Khermes)
+      |{
+      |  "name" : "@(khermes.Name.firstName)"
+      |}
+    """.stripMargin
+
+  val avroSchema =
+    """
+      |{
+      |  "type": "record",
+      |  "name": "myrecord",
+      |  "fields":
+      |    [
+      |      {"name": "name", "type":"int"}
+      |    ]
+      |}
+    """.stripMargin
+
+  val khermesConfigWithoutTimeOutRules =
+    """
+      |khermes {
+      |  templates-path = "/some/test/path"
+      |  template-name = "someTemplate"
+      |  topic = "someTopic"
+      |  i18n = "EN"
+      |}
+    """.stripMargin
+
+  val khermesConfigWithNumberOfEvents =
+    """
+      |khermes {
+      |  templates-path = "/some/test/path"
+      |  template-name = "someTemplate"
+      |  topic = "someTopic"
+      |  i18n = "EN"
+      |  timeout-rules {
+      |    number-of-events: 1000
+      |  }
+      |}
+    """.stripMargin
+
+  val khermesConfigWithDuration =
+    """
+      |khermes {
+      |  templates-path = "/some/test/path"
+      |  template-name = "someTemplate"
+      |  topic = "someTopic"
+      |  i18n = "EN"
+      |  timeout-rules {
+      |    duration: 2 seconds
+      |  }
+      |}
+    """.stripMargin
+
+  val khermesConfigWithStopRules =
+    """
+      |khermes {
+      |  templates-path = "/some/test/path"
+      |  template-name = "someTemplate"
+      |  topic = "someTopic"
+      |  i18n = "EN"
+      |  stop-rules {
+      |    number-of-events: 500
+      |  }
+      |}
+    """.stripMargin
+
+  val testConfig = AppConfig(khermesConfig, None, Some(fileConfig), template)
+}
+
 @RunWith(classOf[JUnitRunner])
 class AppConfigTest extends FlatSpec
   with Matchers
@@ -22,141 +154,8 @@ class AppConfigTest extends FlatSpec
   with LazyLogging {
 
     // TODO: add this test
-    val fileConfig = {
-      """file {
-        path = ""
-      }"""
-    }
+  import AppConfigTest._
 
-    val khermesConfig =
-      """
-        |khermes {
-        |  templates-path = "/some/test/path"
-        |  template-name = "someTemplate"
-        |  topic = "someTopic"
-        |  i18n = "EN"
-        |}
-      """.stripMargin
-
-    val jsonKafkaConfig =
-      """
-        |kafka {
-        |  bootstrap.servers = "localhost:9092"
-        |  acks = "-1"
-        |  key.serializer = "org.apache.kafka.common.serialization.StringSerializer"
-        |  value.serializer = "org.apache.kafka.common.serialization.StringSerializer"
-        |}
-      """.stripMargin
-
-    val avroKafkaConfig =
-      """
-        |kafka {
-        |  bootstrap.servers = "localhost:9092"
-        |  acks = "-1"
-        |  key.serializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
-        |  value.serializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
-        |  schema.registry.url = "http://localhost:16803"
-        |}
-      """.stripMargin
-
-    val wrongKhermesConfig =
-      """
-        |khermes {
-        |  templates-path = "/some/test/path"
-        |  template-name = "someTemplate"
-        |  i18n = "EN"
-        |}
-      """.stripMargin
-
-    val wrongKafkaConfig =
-      """
-        |kafka {
-        |  bootstrap.servers = "localhost:9092"
-        |  acks = "-1"
-        |  key.serializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
-        |  value.serializer = "io.confluent.kafka.serializers.KafkaAvroSerializer"
-        |}
-      """.stripMargin
-
-    val template =
-      """
-        |@import com.stratio.khermes.helpers.generator.Khermes
-        |
-        |@(khermes: Khermes)
-        |{
-        |  "name" : "@(khermes.Name.firstName)"
-        |}
-      """.stripMargin
-
-    val avroSchema =
-      """
-        |{
-        |  "type": "record",
-        |  "name": "myrecord",
-        |  "fields":
-        |    [
-        |      {"name": "name", "type":"int"}
-        |    ]
-        |}
-      """.stripMargin
-
-    val khermesConfigWithoutTimeOutRules =
-      """
-        |khermes {
-        |  templates-path = "/some/test/path"
-        |  template-name = "someTemplate"
-        |  topic = "someTopic"
-        |  i18n = "EN"
-        |}
-      """.stripMargin
-
-    val khermesConfigWithNumberOfEvents =
-      """
-        |khermes {
-        |  templates-path = "/some/test/path"
-        |  template-name = "someTemplate"
-        |  topic = "someTopic"
-        |  i18n = "EN"
-        |  timeout-rules {
-        |    number-of-events: 1000
-        |  }
-        |}
-      """.stripMargin
-
-    val khermesConfigWithDuration =
-      """
-        |khermes {
-        |  templates-path = "/some/test/path"
-        |  template-name = "someTemplate"
-        |  topic = "someTopic"
-        |  i18n = "EN"
-        |  timeout-rules {
-        |    duration: 2 seconds
-        |  }
-        |}
-      """.stripMargin
-
-    val khermesConfigWithStopRules =
-      """
-        |khermes {
-        |  templates-path = "/some/test/path"
-        |  template-name = "someTemplate"
-        |  topic = "someTopic"
-        |  i18n = "EN"
-        |  stop-rules {
-        |    number-of-events: 500
-        |  }
-        |}
-      """.stripMargin
-
-
-  /*
-  case class AppConfig(khermesConfigContent: String,
-                     kafkaConfigContent: Option[String] = None,
-                     localFileConfigContent: Option[String] = None,
-                     template: String,
-                     avroSchema: Option[String] = None)
-   */
   "An KhermesConfig" should "parse a correct config when serializer is Json" in {
       val hc = AppConfig(khermesConfig, Some(jsonKafkaConfig), None, template)
       checkCommonFields(hc)

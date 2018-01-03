@@ -167,7 +167,7 @@ function common(sinkType, sinkConfig, term) {
             prompt: 'khermes> start > Please introduce the generator-config name> \n',
             name: 'startGeneratorConfig'});
     }, {
-        prompt: 'khermes> start > Please introduce the twirl-template name> ',
+        prompt: 'khermes> start > Please introduce the twirl-template name> \n',
         name: 'startTwirlTemplate'});
 }
 
@@ -180,7 +180,7 @@ function start(term) {
           file = fileStart(term);
         }
     }, {
-        prompt: 'khermes> start > Please introduce the sink type(f: File, k: Kafka)> \n',
+        prompt: 'khermes> start > Please introduce the sink type(f:File or k:Kafka)> \n',
         name: 'sinkType'});
 }
 

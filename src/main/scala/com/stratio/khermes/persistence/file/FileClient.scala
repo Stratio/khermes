@@ -11,12 +11,12 @@ import scala.util.Success
 class FileClient[K](path: String)
     extends LazyLogging {
 
-  def send(message: String): Unit = {
-    import java.io.BufferedWriter
-    import java.io.FileWriter
-    import java.io.IOException
-    var bw: BufferedWriter = null
+  import java.io.BufferedWriter
+  import java.io.FileWriter
+  import java.io.IOException
+  var bw: BufferedWriter = null
 
+  def send(message: String): Unit = {
     try {
       bw = new BufferedWriter(new FileWriter(s"$path", true))
       if(!message.isEmpty) {

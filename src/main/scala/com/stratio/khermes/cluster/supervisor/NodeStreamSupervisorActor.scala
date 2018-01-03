@@ -28,7 +28,7 @@ import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import akka.util.Timeout
 import com.stratio.khermes.cluster.supervisor.StreamFileOperations.FileOperations
 import com.stratio.khermes.cluster.supervisor.StreamKafkaOperations.KafkaOperations
-import com.stratio.khermes.cluster.supervisor.StreamGenericOperations.{executeBatchIO, startStream}
+import com.stratio.khermes.cluster.supervisor.StreamGenericOperations.{createSource, executeBatchIO, startStream}
 import com.stratio.khermes.cluster.supervisor.NodeSupervisorActor.Result
 import com.stratio.khermes.commons.config.AppConfig
 import com.stratio.khermes.commons.exceptions.KhermesException
@@ -46,7 +46,7 @@ import scala.util.{Success, Try}
 import scala.concurrent.duration._
 import scala.io.Codec
 import cats.data.State
-import com.stratio.khermes.helpers.twirl.TwirlActorCache.{FakeEvent, NextEvent}
+import com.stratio.khermes.helpers.twirl.TwirlActorCache.{FakeEvent, NextEvent, Stop}
 import org.reactivestreams.Publisher
 
 object StreamKafkaOperations {
@@ -55,7 +55,7 @@ object StreamKafkaOperations {
   def executeIOKafka(k: KafkaClient[String])(implicit ec: ExecutionContext) =
     (event: String) =>
       (st: KafkaOperations) => {
-        st.copy(suspend = Future { k.send(st.topic, event).get } :: st.suspend, counter = st.counter + 1)
+        st.copy(counter = st.counter + 1)
       }
 
   def kafkaFlow[A](config: AppConfig)(implicit codec: Codec, client: KafkaClient[String], ec: ExecutionContext) = {
@@ -70,8 +70,6 @@ object StreamFileOperations {
   def executeIOFile(fc: FileClient[String])(implicit ec: ExecutionContext) =
     (event: String) =>
       (st: FileOperations) => {
-        // Sending event
-        fc.send(event)
         st.copy(counter = st.counter + 1)
     }
   def fileFlow(config: AppConfig)(implicit codec: Codec, client: FileClient[String], ec: ExecutionContext) = {
@@ -93,12 +91,12 @@ object StreamGenericOperations {
       case FakeEvent(ev) =>
         if (isActive && !isCompleted && totalDemand > 0) {
           count = count + 1
-          if(count < hc.stopNumberOfEventsOption.get) {
+          if(count <= hc.stopNumberOfEventsOption.get) {
             //carry return explicitly dropped
             onNext(ev.replace("\n", ""))
           }
           else
-            context.stop(self)
+            twirlActorCache ! Stop
         }
 
       case Request(cnt) =>
@@ -125,13 +123,13 @@ object StreamGenericOperations {
     * @return
     */
   def executeBatchIO[S](in: List[String])(ioFunction: String => S => S) = {
-    in.foldLeft(init[S, String](""))((state, event) => {
-      val result = for {
-        _ <-  modify[S]{s => ioFunction(event)(s)}
+    in.foldLeft(init[S, List[String]](List()))((state, event) => {
+     for {
+        xs <- state
+        _ <-  modify[S]{ s => ioFunction(event)(s) }
         s1 <- get[S]
-        s2 <- set(s1)
-      } yield event
-      result
+        _  <- set(s1)
+      } yield event :: xs
     })
   } //scalastyle:on
 
@@ -175,7 +173,8 @@ object StreamGenericOperations {
         case None => FiniteDuration(1, TimeUnit.SECONDS)
       }
     }
-    Source.fromPublisher(ref).groupedWithin(hc.timeoutNumberOfEventsOption.get, 5 seconds).map(_.toList)
+    // TODO: One alternative for groupwithing alternative. It gives problems
+    Source.fromPublisher(ref).take(hc.stopNumberOfEventsOption.get).groupedWithin(hc.timeoutNumberOfEventsOption.get, 5 seconds).map(_.toList)
   }
 
   /**
@@ -195,15 +194,31 @@ object StreamGenericOperations {
   /**
     * Implicit class to extend Akka sources to provide this method to start "in line"
     */
-  implicit class SourceOps[A, B](in: Source[(A, B), NotUsed])(implicit am: ActorMaterializer) {
+  implicit class SourceOps[A](in: Source[A, NotUsed])(implicit am: ActorMaterializer) {
     def start: (UniqueKillSwitch, Future[Done]) =
       startStream(in)
   }
 
-  implicit class commonStartStream[A, B](source: Source[(A, B), NotUsed])(implicit am: ActorMaterializer) {
+  implicit class commonStartStream[A](source: Source[A, NotUsed])(implicit am: ActorMaterializer) {
     def commonStart(hc: AppConfig) = source.take(hc.stopNumberOfEventsOption.get).start
   }
 }
+
+case class SourceImplementations(hc: AppConfig, publisher: ActorRef)(implicit am: ActorMaterializer, config: Config, ec: ExecutionContext) {
+  def createKafkaSource(implicit client: KafkaClient[String]) = {
+    createSource(hc, ActorPublisher(publisher))
+      .via(StreamKafkaOperations.kafkaFlow(hc))
+      .map(_.run(KafkaOperations(hc.topic, 0, Nil)).value)
+      .map{ case (ops, events) => events.foreach(str => client.send(hc.topic, str)); ops}
+  }
+
+  def createFileSource(implicit file: FileClient[String]) =
+    createSource(hc, ActorPublisher(publisher))
+      .via(StreamFileOperations.fileFlow(hc))
+      .map(_.run(FileOperations(0)).value)
+      .map{ case (ops, events) => events.foreach(str => file.send(str)); ops}
+}
+
 
 final class NodeStreamSupervisorActor(implicit config: Config) extends Actor with ActorLogging with KhermesMetrics {
 
@@ -264,11 +279,7 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
           implicit val client = new KafkaClient[String](kafka)
           log.info(s"Starting stream . . .")
 
-          val (streamHandler, streamStatus) = createSource(hc, ActorPublisher(dataPublisherRef.get))
-            .via(StreamKafkaOperations.kafkaFlow(hc))
-            .map(_.run(KafkaOperations(hc.topic, 0, Nil)).value)
-            .commonStart(hc)
-
+          val (streamHandler, streamStatus) = SourceImplementations(hc, dataPublisherRef.get).createKafkaSource.commonStart(hc)
           this.streamHandler = Some(streamHandler)
 
           streamStatus andThen { case _ => {
@@ -278,11 +289,7 @@ final class NodeStreamSupervisorActor(implicit config: Config) extends Actor wit
         // Local file config is included
         case (None, Some(file)) =>
           implicit val client = new FileClient[String](hc.filePath)
-          val (streamHandler, streamStatus) = createSource(hc, ActorPublisher(dataPublisherRef.get))
-            .via(StreamFileOperations.fileFlow(hc))
-            .map(_.run(FileOperations(0)).value)
-            .commonStart(hc)
-
+          val (streamHandler, streamStatus) = SourceImplementations(hc, dataPublisherRef.get).createFileSource.commonStart(hc)
           this.streamHandler = Some(streamHandler)
 
           streamStatus andThen { case _ => {

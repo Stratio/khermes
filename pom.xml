@@ -45,6 +45,8 @@
         <dropwizard.metrics.version>3.2.2</dropwizard.metrics.version>
         <breeze.version>0.13.2</breeze.version>
         <scalaz.version>7.2.16</scalaz.version>
+        <cats.version>0.9.0</cats.version>
+        <akka-stream-kafka.version>0.18</akka-stream-kafka.version>
     </properties>
 
     <developers>
@@ -158,7 +160,7 @@
         <dependency>
             <groupId>org.typelevel</groupId>
             <artifactId>cats-core_${scala.binary.version}</artifactId>
-            <version>0.9.0</version>
+            <version>${cats.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
@@ -284,6 +286,12 @@
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-test</artifactId>
             <version>${curator-framework.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-stream-kafka_${scala.binary.version}</artifactId>
+            <version>${akka-stream-kafka.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
