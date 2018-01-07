@@ -1,3 +1,13 @@
+/**
+  * © 2017 Stratio Big Data Inc., Sucursal en España.
+  *
+  * This software is licensed under the Apache 2.0.
+  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  * See the terms of the License for more details.
+  *
+  * SPDX-License-Identifier:  Apache-2.0.
+  */
 package com.stratio.khermes.helpers.faker.generators
 
 import com.stratio.khermes.commons.exceptions.KhermesException
@@ -5,9 +15,6 @@ import com.stratio.khermes.commons.exceptions.KhermesException
 import scala.math.BigDecimal.RoundingMode
 import scala.util.Random
 
-/**
-  * Created by Emiliano Martínez on 14/10/17.
-  */
 case class CategoryFormat(value: String, weight: String)
 
 case class CategoryGenerator() {
@@ -26,36 +33,9 @@ case class CategoryGenerator() {
        */
       buffer(Random.nextInt(buffer.size - 1))
     } else {
-      throw new KhermesException(s"Bad weight input values for sum ${BigDecimal(in.map(el => el.weight.toFloat).sum).setScale(2, RoundingMode.HALF_UP).toInt} and values ${in.map(el => el.value)}")
+      val e1 = BigDecimal(in.map(el => el.weight.toFloat).sum).setScale(2, RoundingMode.HALF_UP).toInt
+      val e2 = in.map(el => el.value)
+      throw new KhermesException(s"Bad weight input values for sum ${e1} and values ${e2}")
     }
   }
-}
-
-
-case class StringFake() {
-
-  def run(): String = {
-
-    val company = CategoryGenerator().runNext(List(CategoryFormat("TELCEL", "0.82"), CategoryFormat("MOVISTAR", "0.08"), CategoryFormat("IUSACELL", "0.07"), CategoryFormat("NEXTEL", "0.01"), CategoryFormat("0", "0.01"), CategoryFormat("UNEFON", "0.01")))
-    val state = CategoryGenerator().runNext(List(CategoryFormat("ZAPOPAN JAL", "0.7"), CategoryFormat("HUIXQUILUCAN", "0.05"), CategoryFormat("GUADALAJARA", "0.05"), CategoryFormat("CHIHUAHUA", "0.1"), CategoryFormat("OTROS", "0.1")))
-
-    def hire(company: String, state: String): Boolean = {
-      val b = if (company == "TELCEL" && state == "ZAPOPAN JAL") true
-      else if (company == "MOVISTAR" && state == "GUADALAJARA") true
-      else if (company == "IUSACELL" && (state == "GUADALAJARA" || state == "HUIXQUILUCAN")) true
-      else false
-      b
-    }
-
-    val companyStr =
-      s""""customerPhoneCompany":"${company}"""".stripMargin
-
-      val stateStr = s""""transactionState": "${state}""""
-      val hireStr = s""""hire":${hire(company, state)}"""
-
-      val h = """"hire""""+ ":" + hire(company, state)
-
-      s"""${companyStr},${h},${stateStr}"""
-    }
-
 }

@@ -11,7 +11,6 @@
 package com.stratio.khermes.helpers.twirl
 
 import com.stratio.khermes.Khermes
-import com.stratio.khermes.clients.http.protocols.WsProtocolCommand
 import com.stratio.khermes.commons.exceptions.KhermesException
 import com.stratio.khermes.helpers.faker.Faker
 import com.stratio.khermes.helpers.twirl.TwirlHelper.CompilationError
@@ -63,12 +62,10 @@ class TwirlHelperTest
 
   it should "throw an error when the template is wrong" in {
     val template = "Hello @(error)"
-    //scalastyle:off
-    the[CompilationError] thrownBy (TwirlHelper
+    the[CompilationError] thrownBy TwirlHelper
       .template[() => Txt](template, "templateTest")
       .static()
-      .toString()) should have('line (1), 'column (8))
-    //scalastyle:on
+      .toString() should have('line (1), 'column (8))
   }
 
   /**

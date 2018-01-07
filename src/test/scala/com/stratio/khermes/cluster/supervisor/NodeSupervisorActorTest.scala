@@ -14,8 +14,6 @@ import akka.actor.Props
 import com.stratio.khermes.cluster.BaseActorTest
 import com.stratio.khermes.cluster.supervisor.NodeSupervisorActor.{Start, WorkerStatus}
 import com.stratio.khermes.commons.config.AppConfig
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 
 import scala.concurrent.duration._
 

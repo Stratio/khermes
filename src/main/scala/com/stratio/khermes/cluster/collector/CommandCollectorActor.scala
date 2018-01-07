@@ -110,11 +110,12 @@ class CommandCollectorActor extends ActorPublisher[CommandCollectorActor.Result]
       throw new IllegalArgumentException("a twirl-template must be supplied when you send a Start signal"))
 
     // TODO: check if kafka or file is set
-    val argsKafkaConfig = args.get(WsProtocolCommand.ArgsKafkaConfig)/*.getOrElse(
-      throw new IllegalArgumentException("a kafka-config must be supplied when you send a Start signal"))
-    */
+    val argsKafkaConfig = args.get(WsProtocolCommand.ArgsKafkaConfig)
 
     val argsFileConfig = args.get(WsProtocolCommand.ArgsFileConfig)
+
+    if(!argsKafkaConfig.isDefined && !argsFileConfig.isDefined)
+      throw new IllegalArgumentException("a valid sink (kafka or file) configuration must be supplied when you send a Start signal")
 
     val argsGeneratorConfig = args.get(WsProtocolCommand.ArgsGeneratorConfig).getOrElse(
       throw new IllegalArgumentException("a generator-config must be supplied when you send a Start signal"))
@@ -125,9 +126,8 @@ class CommandCollectorActor extends ActorPublisher[CommandCollectorActor.Result]
 
     val twirlTemplate = configDAO.read(s"${AppConstants.TwirlTemplatePath}/$argsTwirlTemplate")
 
-
     val kafkaConfig = argsKafkaConfig.map(argsKafkaConfig => configDAO.read(s"${AppConstants.KafkaConfigPath}/$argsKafkaConfig"))
-    val fileConfig = argsFileConfig.map(argsFileConfig => configDAO.read(s"${AppConstants.FileConfigPath}/$argsFileConfig"))
+    val fileConfig  = argsFileConfig.map(argsFileConfig => configDAO.read(s"${AppConstants.FileConfigPath}/$argsFileConfig"))
 
     val generatorConfig = configDAO.read(s"${AppConstants.GeneratorConfigPath}/$argsGeneratorConfig")
     val avroConfig = argsAvroConfigOption.map(

@@ -31,9 +31,10 @@ To start fast generating your files data, check the scripts/quickstart directory
 - Create the file configuration with the command create **file-config**:
     ```    
     file {
-       path = "file.csv"
+       path = "/tmp/file.csv"
     }
     ```
+    It is neccessary to put the file inside the /tmp directory. The docker compose mounts this container´s directory.
 - Crate the template with the command **create twirl-template**:
     ```
     @import com.stratio.khermes.helpers.faker.generators._

@@ -31,7 +31,9 @@ import kafka.consumer.ConsumerConfig
 import kafka.server.KafkaServer
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.{Deserializer, StringDeserializer}
+import org.junit.runner.RunWith
 import org.scalatest.AsyncFlatSpec
+import org.scalatest.junit.JUnitRunner
 
 import scala.language.implicitConversions
 import scala.concurrent.duration._
@@ -42,7 +44,11 @@ import scala.concurrent.Await
 
 object kafkaOps {
 
-  def consumerConfig[Key, Msg](kafkaBrokerUri: String, zkUri: String, consumerGroup: String, keyDeserializer: Deserializer[Key], valueDeserializer: Deserializer[Msg]): Map[String, String] = {
+  def consumerConfig[Key, Msg](kafkaBrokerUri: String,
+                               zkUri: String,
+                               consumerGroup: String,
+                               keyDeserializer: Deserializer[Key],
+                               valueDeserializer: Deserializer[Msg]): Map[String, String] = {
     val props = new Properties()
     props.put("bootstrap.servers", kafkaBrokerUri)
     props.put("key.deserializer", keyDeserializer.getClass.getName)
@@ -97,6 +103,7 @@ object CommonsConfig {
     """.stripMargin
 }
 
+@RunWith(classOf[JUnitRunner])
 class NodeStreamSupervisorActorTest extends BaseActorTest with EmbeddedServersUtils {
 
   import CommonsConfig._
@@ -145,6 +152,7 @@ class NodeStreamSupervisorActorTest extends BaseActorTest with EmbeddedServersUt
   }
 }
 
+@RunWith(classOf[JUnitRunner])
 class KafkaSource extends BaseActorTest with EmbeddedServersUtils {
 
   import CommonsConfig._
@@ -192,6 +200,7 @@ class KafkaSource extends BaseActorTest with EmbeddedServersUtils {
   }
 }
 
+@RunWith(classOf[JUnitRunner])
 class FileSource extends BaseActorTest with EmbeddedServersUtils {
 
   import StreamGenericOperations._
@@ -202,7 +211,8 @@ class FileSource extends BaseActorTest with EmbeddedServersUtils {
 
       var result : List[String] = List()
 
-      val hc = AppConfigTest.testConfig.copy(kafkaConfigContent = None, localFileConfigContent = Some(fileConfigContent), khermesConfigContent = khermesConfigContent, template = templateContent)
+      val hc = AppConfigTest.testConfig.copy(kafkaConfigContent = None,
+        localFileConfigContent = Some(fileConfigContent), khermesConfigContent = khermesConfigContent, template = templateContent)
 
       val twirlActorCacheProps = Props(new TwirlActorCache(hc))
       val twitlActorCacheRef = system.actorOf(twirlActorCacheProps)
