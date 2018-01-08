@@ -8,7 +8,7 @@
   *
   * SPDX-License-Identifier:  Apache-2.0.
   */
-package com.stratio.khermes.cluster.supervisor
+package com.stratio.khermes.cluster.supervisor.stream
 
 import akka.actor.Props
 import akka.stream.ActorMaterializer
@@ -19,7 +19,6 @@ import com.stratio.khermes.cluster.BaseActorTest
 import com.stratio.khermes.cluster.supervisor.StreamGenericOperations.EventPublisher
 import com.stratio.khermes.commons.config.AppConfigTest
 import com.stratio.khermes.helpers.twirl.TwirlActorCache
-import com.stratio.khermes.helpers.twirl.TwirlActorCache.FakeEvent
 
 import scala.concurrent.duration._
 

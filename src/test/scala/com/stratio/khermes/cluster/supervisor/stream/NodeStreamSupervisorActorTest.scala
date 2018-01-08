@@ -8,32 +8,23 @@
   *
   * SPDX-License-Identifier:  Apache-2.0.
   */
-package com.stratio.khermes.cluster.supervisor
+package com.stratio.khermes.cluster.supervisor.stream
 
-import java.io.File
 import java.util.Properties
 
-import akka.actor.{Props}
+import akka.actor.Props
 import com.stratio.khermes.cluster.BaseActorTest
 import com.stratio.khermes.cluster.supervisor.NodeSupervisorActor.{Result, Start}
-import com.stratio.khermes.cluster.supervisor.StreamGenericOperations.EventPublisher
-import com.stratio.khermes.commons.config.{AppConfig, AppConfigTest}
-import com.stratio.khermes.helpers.twirl.TwirlActorCache
-import com.stratio.khermes.persistence.file.FileClient
-import com.stratio.khermes.persistence.kafka.KafkaClient
+import com.stratio.khermes.cluster.supervisor.{NodeStreamSupervisorActor, NodeSupervisorActor}
+import com.stratio.khermes.commons.config.AppConfig
 import com.stratio.khermes.utils.EmbeddedServersUtils
-import kafka.consumer.ConsumerConfig
-import kafka.server.KafkaServer
-import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.common.serialization.{Deserializer, StringDeserializer}
+import org.apache.kafka.common.serialization.Deserializer
 import org.junit.runner.RunWith
-import org.scalatest.AsyncFlatSpec
 import org.scalatest.junit.JUnitRunner
 
-import scala.language.implicitConversions
+import scala.collection.JavaConversions._
 import scala.concurrent.duration._
 import scala.language.implicitConversions
-import scala.collection.JavaConversions._
 
 object kafkaOps {
 

@@ -8,7 +8,7 @@
   *
   * SPDX-License-Identifier:  Apache-2.0.
   */
-package com.stratio.khermes.cluster.supervisor
+package com.stratio.khermes.cluster.supervisor.stream
 
 import akka.actor.Props
 import com.stratio.khermes.cluster.BaseActorTest

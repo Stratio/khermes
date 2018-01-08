@@ -17,7 +17,7 @@ import akka.actor.Props
 import akka.stream.{ActorMaterializer, KillSwitches}
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import com.stratio.khermes.cluster.BaseActorTest
-import com.stratio.khermes.cluster.supervisor.{CommonsConfig, SourceImplementations, StreamFileOperations, StreamGenericOperations}
+import com.stratio.khermes.cluster.supervisor.{SourceImplementations, StreamFileOperations, StreamGenericOperations}
 import com.stratio.khermes.commons.config.{AppConfig, AppConfigTest}
 import com.stratio.khermes.helpers.twirl.TwirlActorCache
 import com.stratio.khermes.persistence.file.FileClient
