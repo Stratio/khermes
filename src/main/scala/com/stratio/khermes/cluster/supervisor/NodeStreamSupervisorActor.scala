@@ -83,20 +83,24 @@ object StreamFileOperations {
 object StreamGenericOperations {
 
   import State._
-
   final class EventPublisher(hc: AppConfig, twirlActorCache: ActorRef)(implicit val config: Config) extends ActorPublisher[String] with ActorLogging {
-
     private[this] var count = 0
-
+    // This causes cyclomatic complexity ...
+    // scalastyle:off
     override def receive : Receive = {
       case FakeEvent(ev) =>
         if (isActive && !isCompleted && totalDemand > 0) {
           count = count + 1
-          if(count <= hc.stopNumberOfEventsOption.get) {
-            onNext(ev.replace("\n", ""))
+          if(hc.stopNumberOfEventsOption.isDefined) {
+            if (count <= hc.stopNumberOfEventsOption.get) {
+              onNext(ev.replace("\n", ""))
+            }
+            else {
+              twirlActorCache ! Stop
+            }
           }
           else {
-            twirlActorCache ! Stop
+            onNext(ev.replace("\n", ""))
           }
         }
       case Request(cnt) =>
@@ -107,6 +111,7 @@ object StreamGenericOperations {
         context.stop(self)
       case _ => // Do nothing!!
     }
+    //scalastyle:on
   }
 
   // Function to put a runtime value inside the Monad.
@@ -158,24 +163,44 @@ object StreamGenericOperations {
       }
     }
 
-  /**
-    * Create an Akka Stream Source. This source does not materialize, it executes indefinitely
-    * @param config generator configuration
-    * @return Akka Streams Source which emits a collection of events
-    */
+  def createSourceLimited(ref: Publisher[String], limit: Option[Int]): Source[String, NotUsed] = {
+    if(limit.isDefined) {
+      Source.fromPublisher(ref).take(limit.get)
+    }
+    else {
+      Source.fromPublisher(ref)
+    }
+  }
+
   def createSource(hc: AppConfig, ref: Publisher[String])(implicit config: Config): Source[List[String], NotUsed] = {
-    val timeout = {
-      hc.timeoutNumberOfEventsDurationOption match {
-        case Some(duration) =>
-          new FiniteDuration(duration.getSeconds, TimeUnit.SECONDS)
-        case None => FiniteDuration(1, TimeUnit.SECONDS)
+    (hc.timeoutNumberOfEventsDurationOption, hc.timeoutNumberOfEventsOption) match {
+      // Emit a bulk of events each n seconds
+      case (Some(time), Some(number)) => {
+        val s = Source.tick(0 milliseconds, FiniteDuration(time.toNanos, TimeUnit.NANOSECONDS), ())
+        createSourceLimited(ref, hc.stopNumberOfEventsOption).groupedWithin(number, 10 second)
+          .zip(s)
+          .map(_._1)
+          .map(_.toList)
+      }
+      // Emit one event each n seconds
+      case (Some(time), None) => {
+        val s = Source.tick(0 milliseconds, FiniteDuration(time.toNanos, TimeUnit.NANOSECONDS), ())
+        createSourceLimited(ref, hc.stopNumberOfEventsOption).groupedWithin(1, 10 second)
+          .zip(s)
+          .map(_._1)
+          .map(_.toList)
+      }
+      // Events are emitted in sets of n
+      case (None, Some(number)) => {
+        createSourceLimited(ref, hc.stopNumberOfEventsOption).groupedWithin(number, 10 second)
+          .map(_.toList)
+      }
+      // Events are emitted one at time
+      case _ => {
+        createSourceLimited(ref, hc.stopNumberOfEventsOption).groupedWithin(1, 10 second)
+          .map(_.toList)
       }
     }
-    /**
-      * GroupWithin accumulates events depending on the timeOutNumberOfEvents property or emit if this limit has not been
-      * reached in one second.
-      */
-    Source.fromPublisher(ref).take(hc.stopNumberOfEventsOption.get).groupedWithin(hc.timeoutNumberOfEventsOption.get, 1 seconds).map(_.toList)
   }
 
   /**
@@ -209,7 +234,7 @@ object StreamGenericOperations {
   }
 
   implicit class commonStartStream[A](source: Source[A, NotUsed])(implicit am: ActorMaterializer) {
-    def commonStart(hc: AppConfig) = source.take(hc.stopNumberOfEventsOption.get).start
+    def commonStart(hc: AppConfig) = source.start
   }
 }
 
