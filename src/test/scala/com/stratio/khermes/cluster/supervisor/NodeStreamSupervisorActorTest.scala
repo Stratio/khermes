@@ -13,13 +13,8 @@ package com.stratio.khermes.cluster.supervisor
 import java.io.File
 import java.util.Properties
 
-import akka.actor.{ActorRef, Props}
-import akka.kafka.{ConsumerSettings, Subscriptions}
-import akka.kafka.scaladsl.Consumer
-import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
+import akka.actor.{Props}
 import com.stratio.khermes.cluster.BaseActorTest
-import com.stratio.khermes.cluster.supervisor.CommonsConfig.{fileConfigContent, templateContent}
 import com.stratio.khermes.cluster.supervisor.NodeSupervisorActor.{Result, Start}
 import com.stratio.khermes.cluster.supervisor.StreamGenericOperations.EventPublisher
 import com.stratio.khermes.commons.config.{AppConfig, AppConfigTest}
@@ -37,10 +32,8 @@ import org.scalatest.junit.JUnitRunner
 
 import scala.language.implicitConversions
 import scala.concurrent.duration._
-import scalaz.concurrent.Task
 import scala.language.implicitConversions
 import scala.collection.JavaConversions._
-import scala.concurrent.Await
 
 object kafkaOps {
 
@@ -147,91 +140,6 @@ class NodeStreamSupervisorActorTest extends BaseActorTest with EmbeddedServersUt
             status.split(" | ")(2) shouldBe "Stopped"
         }
       }
-    }
-
-  }
-}
-
-@RunWith(classOf[JUnitRunner])
-class KafkaSource extends BaseActorTest with EmbeddedServersUtils {
-
-  import CommonsConfig._
-
-  "A Kafka Source implementation" should {
-    "Create a which publishes to kafka n generated events" in {
-
-      import StreamGenericOperations._
-
-      withEmbeddedKafkaServer(List("khermes")) { server: KafkaServer =>
-        val kafkaConfig = s"""
-                                |kafka {
-                                |  bootstrap.servers = "localhost:${server.config.port}"
-                                |  acks = "-1"
-                                |  key.serializer = "org.apache.kafka.common.serialization.StringSerializer"
-                                |  value.serializer = "org.apache.kafka.common.serialization.StringSerializer"
-                                |}
-                              """.stripMargin
-
-        val hc = AppConfigTest.testConfig.copy(kafkaConfigContent = Some(kafkaConfig), localFileConfigContent = None, khermesConfigContent = khermesConfigContent, template = templateContent)
-
-        val twirlActorCacheProps  = Props(new TwirlActorCache(hc))
-        val twitlActorCacheRef    = system.actorOf(twirlActorCacheProps)
-        val dataPublisherProps    = Props(new EventPublisher(hc, twitlActorCacheRef))
-        val dataPublisherRef      = system.actorOf(dataPublisherProps)
-
-        implicit val am = ActorMaterializer()
-        implicit val client = new KafkaClient[String](hc.kafkaConfig.get)
-
-        val source = SourceImplementations(hc, dataPublisherRef).createKafkaSource.commonStart(hc)
-
-        val consumerSettings = ConsumerSettings(system, new StringDeserializer, new StringDeserializer)
-          .withBootstrapServers(s"localhost:${server.config.port}")
-          .withGroupId("group1")
-
-        val future = Consumer.committableSource(consumerSettings, Subscriptions.topics("khermes"))
-          .map(_.record.value())
-          .takeWithin(10 seconds)
-          .toMat(Sink.fold(List[String]())((a, b) => { b :: a }))(Keep.right)
-
-        Await.result(future.run(), 60 seconds).length shouldBe 60
-
-      }
-    }
-  }
-}
-
-@RunWith(classOf[JUnitRunner])
-class FileSource extends BaseActorTest with EmbeddedServersUtils {
-
-  import StreamGenericOperations._
-  import CommonsConfig._
-
-  "A File Source implementation" should {
-    "Write n generated events to a file" in {
-
-      var result : List[String] = List()
-
-      val hc = AppConfigTest.testConfig.copy(kafkaConfigContent = None,
-        localFileConfigContent = Some(fileConfigContent), khermesConfigContent = khermesConfigContent, template = templateContent)
-
-      val twirlActorCacheProps = Props(new TwirlActorCache(hc))
-      val twitlActorCacheRef = system.actorOf(twirlActorCacheProps)
-      val dataPublisherProps = Props(new EventPublisher(hc, twitlActorCacheRef))
-      val dataPublisherRef = system.actorOf(dataPublisherProps)
-
-      implicit val am = ActorMaterializer()
-      implicit val client = new FileClient[String](hc.filePath)
-      val source = SourceImplementations(hc, dataPublisherRef).createFileSource.commonStart(hc)
-
-      Await.result(source._2, 10 seconds)
-
-      for (line <- scala.io.Source.fromFile(hc.filePath).getLines) {
-        result = line :: result
-      }
-
-      result.length shouldBe 60
-
-      new File(hc.filePath).delete()
     }
   }
 }
