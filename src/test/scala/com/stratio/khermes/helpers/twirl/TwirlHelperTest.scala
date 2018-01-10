@@ -19,7 +19,7 @@ import org.json4s.{DefaultFormats, Formats}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
-import play.twirl.api.Txt
+import play.twirl.api.{Html, Txt}
 import org.json4s.native.Serialization._
 
 @RunWith(classOf[JUnitRunner])
@@ -195,5 +195,47 @@ class TwirlHelperTest
 
     Math.abs(((result.toFloat - 5.0)/1.5)) should beWithinTolerance
   }
+
+  it should "generate a CSV valid file" in {
+
+   val template =
+     """
+       |@(faker: Faker)
+       |Element1,Element2
+       |@for(p <- 0 to 100) {@(faker.Gaussian.runNext(5.0, 1.5)),@(faker.Gaussian.runNext(5.0, 1.5))
+       |}
+       |""".stripMargin
+
+    val khermes = new Faker("EN")
+
+    val result =
+      TwirlHelper
+        .template[(Faker) => Txt](template, "templateTest")
+        .static(khermes)
+        .toString()
+
+    // Put the assertion
+  }
+
+  it should "generate a JSON valid file" in {
+
+    val template =
+      """
+        |@(faker: Faker)
+        |[@for(p <- 0 to 1) {{"Element1":@(faker.Gaussian.runNext(5.0, 1.5)),"Element2":@(faker.Gaussian.runNext(5.0, 1.5))}@(if(p < 1) "," else "")}]
+        |""".stripMargin
+
+    val khermes = new Faker("EN")
+
+    val result =
+      TwirlHelper
+        .template[(Faker) => Txt](template, "templateTest")
+        .static(khermes)
+        .toString()
+
+    // Put the assertion
+
+  }
+
 
 }

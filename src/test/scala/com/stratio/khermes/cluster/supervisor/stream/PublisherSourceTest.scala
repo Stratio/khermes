@@ -16,7 +16,7 @@ import akka.stream.actor.ActorPublisher
 import akka.stream.scaladsl.{Sink, Source}
 import akka.testkit.TestProbe
 import com.stratio.khermes.cluster.BaseActorTest
-import com.stratio.khermes.cluster.supervisor.StreamGenericOperations.EventPublisher
+import com.stratio.khermes.cluster.supervisor.stream.StreamGenericOperations.EventPublisher
 import com.stratio.khermes.commons.config.AppConfigTest
 import com.stratio.khermes.helpers.twirl.TwirlActorCache
 

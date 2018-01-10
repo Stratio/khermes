@@ -17,8 +17,7 @@ import akka.kafka.scaladsl.Consumer
 import akka.stream.{ActorMaterializer, UniqueKillSwitch}
 import akka.stream.scaladsl.{Keep, Sink}
 import com.stratio.khermes.cluster.BaseActorTest
-import com.stratio.khermes.cluster.supervisor.StreamGenericOperations.EventPublisher
-import com.stratio.khermes.cluster.supervisor.{SourceImplementations, StreamGenericOperations}
+import com.stratio.khermes.cluster.supervisor.SourceImplementations
 import com.stratio.khermes.commons.config.{AppConfig, AppConfigTest}
 import com.stratio.khermes.helpers.twirl.TwirlActorCache
 import com.stratio.khermes.persistence.kafka.KafkaClient

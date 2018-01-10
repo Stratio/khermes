@@ -94,7 +94,26 @@ class NodeStreamSupervisorActorTest extends BaseActorTest with EmbeddedServersUt
 
   val nodeSupervisor = system.actorOf(Props(new NodeStreamSupervisorActor()), "node-supervisor")
 
-  "An NodeStreamSupervisorActor" should {
+  "A NodeStreamSupervisorActor" should {
+
+    "Return actor id when list is required" in {
+      nodeSupervisor ! NodeSupervisorActor.List(List.empty, "")
+      expectMsgPF(100 seconds) {
+        case Result(str, s) =>
+          str.split('|')(1).trim shouldBe "Stopped"
+      }
+    }
+
+    "Reject a Akka Stream start when actor id is incorrect" in {
+      within(100 seconds) {
+        nodeSupervisor ! Start(List("Bad"), AppConfig(khermesConfigContent, None, Some(fileConfigContent), templateContent))
+        expectMsgPF(100 seconds) {
+          case (id, status) =>
+            status shouldBe "Stopped"
+        }
+      }
+    }
+
     "Start a Akka Stream fo event generation" in {
       within(100 seconds) {
         nodeSupervisor ! Start(Seq.empty, AppConfig(khermesConfigContent, None, Some(fileConfigContent), templateContent))
@@ -106,31 +125,30 @@ class NodeStreamSupervisorActorTest extends BaseActorTest with EmbeddedServersUt
     }
   }
 
-  "An NodeStreamSupervisorActor" should {
-    "Stop the Stream when an 'Stop' message is received " in {
-      within(50 seconds) {
-        var streamId: Seq[String] = Nil
-        nodeSupervisor ! Start(Seq.empty, AppConfig(khermesConfigContent, None, Some(fileConfigContent), templateContent))
-        expectMsgPF(10 seconds) {
-          case (id: String, status) =>
-            status shouldBe "Running"
-            streamId = Seq(id)
-        }
+  "Stop the Stream when an 'Stop' message is received " in {
+    within(50 seconds) {
+      var streamId: Seq[String] = Nil
+      nodeSupervisor ! Start(Seq.empty, AppConfig(khermesConfigContent, None, Some(fileConfigContent), templateContent))
+      expectMsgPF(10 seconds) {
+        case (id: String, status) =>
+          status shouldBe "Running"
+          streamId = Seq(id)
+      }
 
-        Thread.sleep(5000)
+      Thread.sleep(5000)
 
-        nodeSupervisor ! NodeSupervisorActor.Stop(streamId)
-        expectMsgPF(10 seconds) {
-          case (id: String) =>
-            streamId = Seq(id)
-        }
+      nodeSupervisor ! NodeSupervisorActor.Stop(streamId)
+      expectMsgPF(10 seconds) {
+        case (id: String) =>
+          streamId = Seq(id)
+      }
 
-        nodeSupervisor ! NodeSupervisorActor.List(streamId, "")
-        expectMsgPF(10 seconds) {
-          case (Result(status, _)) =>
-            status.split(" | ")(2) shouldBe "Stopped"
-        }
+      nodeSupervisor ! NodeSupervisorActor.List(streamId, "")
+      expectMsgPF(10 seconds) {
+        case (Result(status, _)) =>
+          status.split(" | ")(2) shouldBe "Stopped"
       }
     }
   }
+
 }

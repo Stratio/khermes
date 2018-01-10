@@ -34,7 +34,7 @@ To start fast generating your files data, check the scripts/quickstart directory
        path = "/tmp/file.csv"
     }
     ```
-    It is neccessary to put the file inside the /tmp directory. The docker compose mounts this container´s directory.
+    It is neccessary to put the file inside the **/tmp** directory. The docker compose mounts this container´s directory.
 - Crate the template with the command **create twirl-template**:
     ```
     @import com.stratio.khermes.helpers.faker.generators._
@@ -68,6 +68,44 @@ To start fast generating your files data, check the scripts/quickstart directory
     ```
 - Check the the actor´s id with the command **ls** and start it. Then you will be asked for the names of the created configurations. Do not include **kafka** and **avro** names, press enter to skip these otherwise **khermes** will try to find them and will crash.
 - Events will be created as many as you put in the **number-of-events** property. Enjoy!
+
+## Tricks
+
+If you want to generate one CSV file, with its headers follow this:
+
+1. Create a generator config which indicates Khermes to emit one single event:
+
+    ```
+    khermes {
+      templates-path = "/tmp/khermes/templates"
+      topic = "khermes"
+      template-name = "khermestemplate"
+      i18n = "EN"
+      stop-rules {
+        number-of-events: 1
+      }
+    }
+    ```
+
+2. Create the following Twirl template:
+
+    
+    ```
+    @import com.stratio.khermes.helpers.faker.Faker
+    @(faker: Faker)
+    Element1,Element2
+    @for(p <- 0 to 100000) {@(faker.Gaussian.runNext(5.0, 1.5)),@(faker.Gaussian.runNext(5.0, 1.5))
+    }
+    ```
+    
+This will force khermes to generate the file in one step.
+
+If you want to create a JSON Array instead of JSObject lines the following template works:
+
+```
+@(faker: Faker)
+@for(p <- 0 to 1) {{"Element1":@(faker.Gaussian.runNext(5.0, 1.5)),"Element2":@(faker.Gaussian.runNext(5.0, 1.5))}@(if(p < 1) "," else "")}]
+```
  
 ## Licenses.
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)

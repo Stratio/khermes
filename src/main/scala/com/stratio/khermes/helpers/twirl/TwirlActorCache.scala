@@ -20,7 +20,7 @@ import play.twirl.api.Txt
 class TwirlActorCache(val hc: AppConfig)(implicit config: Config)  extends Actor {
 
   /**
-    * Init one actor per template. This will be copiled once one actor is up and running
+    * Init one actor per template. This will be compiled once one actor is up and running
     * @return
     */
   lazy val template = TwirlHelper.template[(Faker) => Txt](hc.templateContent, hc.templateName)
