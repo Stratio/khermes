@@ -10,11 +10,14 @@
  */
 package com.stratio.khermes.cluster
 
+import java.io.File
+
 import akka.actor.ActorSystem
 import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit}
 import com.stratio.khermes.commons.implicits.AppImplicits
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+
 import scala.concurrent.duration._
 import akka.util.Timeout
 
@@ -32,7 +35,24 @@ abstract class BaseActorTest extends TestKit(ActorSystem("ActorTest", ConfigFact
   lazy implicit val executionContext = AppImplicits.executionContext
   override implicit val timeout: Timeout = Timeout(10 seconds)
 
+  val dir = new File("./tmp/khermes/templates")
+
+  def deleteRecursively(file: File): Unit = {
+    if (file.isDirectory) {
+      file.listFiles.foreach(deleteRecursively)
+    }
+    if (file.exists && !file.delete) {
+      throw new Exception(s"Unable to delete ${file.getAbsolutePath}")
+    }
+  }
+
+  override def beforeAll(): Unit = {
+
+    dir.mkdirs
+  }
+
   override def afterAll {
+    deleteRecursively(dir)
     system.terminate()
   }
 }

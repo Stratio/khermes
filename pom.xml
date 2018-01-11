@@ -6,7 +6,7 @@
 
     <groupId>com.stratio</groupId>
     <artifactId>khermes</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Stratio Khermes</name>
@@ -180,11 +180,6 @@
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-cluster-tools_${scala.binary.version}</artifactId>
-            <version>${akka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-testkit_${scala.binary.version}</artifactId>
             <version>${akka.version}</version>
         </dependency>
         <dependency>

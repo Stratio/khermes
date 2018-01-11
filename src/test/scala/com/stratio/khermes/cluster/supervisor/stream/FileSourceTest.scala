@@ -98,8 +98,9 @@ class FileSourceTest extends BaseActorTest with EmbeddedServersUtils {
       val khermesConfigContent =
         """
           |khermes {
-          |  templates-path = "/tmp/khermes/templates"
+          |  templates-path = "./tmp/khermes/templates"
           |  topic = "khermes"
+          |
           |  template-name = "khermestemplate"
           |  i18n = "EN"
           |

@@ -92,8 +92,7 @@ If you want to generate one CSV file, with its headers follow this:
     
     ```
     @import com.stratio.khermes.helpers.faker.Faker
-    @(faker: Faker)
-    Element1,Element2
+    @(faker: Faker)Element1,Element2
     @for(p <- 0 to 100000) {@(faker.Gaussian.runNext(5.0, 1.5)),@(faker.Gaussian.runNext(5.0, 1.5))
     }
     ```
@@ -102,10 +101,9 @@ This will force khermes to generate the file in one step.
 
 If you want to create a JSON Array instead of JSObject lines the following template works:
 
-```
-@(faker: Faker)
-@for(p <- 0 to 1) {{"Element1":@(faker.Gaussian.runNext(5.0, 1.5)),"Element2":@(faker.Gaussian.runNext(5.0, 1.5))}@(if(p < 1) "," else "")}]
-```
+    ```
+    @(faker: Faker)@for(p <- 0 to 1) {{"Element1":@(faker.Gaussian.runNext(5.0, 1.5)),"Element2":@(faker.Gaussian.runNext(5.0, 1.5))}@(if(p < 1) "," else "")}]
+    ```
  
 ## Licenses.
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)

@@ -15,6 +15,7 @@ import com.stratio.khermes.commons.exceptions.KhermesException
 import com.stratio.khermes.helpers.faker.Faker
 import com.stratio.khermes.helpers.twirl.TwirlHelper.CompilationError
 import com.typesafe.scalalogging.LazyLogging
+import org.json4s.JsonAST.JValue
 import org.json4s.{DefaultFormats, Formats}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -200,9 +201,8 @@ class TwirlHelperTest
 
    val template =
      """
-       |@(faker: Faker)
-       |Element1,Element2
-       |@for(p <- 0 to 100) {@(faker.Gaussian.runNext(5.0, 1.5)),@(faker.Gaussian.runNext(5.0, 1.5))
+       |@(faker: Faker)Element1,Element2
+       |@for(p <- 0 to 2) {@(faker.Gaussian.runNext(5.0, 1.5)),@(faker.Gaussian.runNext(5.0, 1.5))
        |}
        |""".stripMargin
 
@@ -214,15 +214,18 @@ class TwirlHelperTest
         .static(khermes)
         .toString()
 
-    // Put the assertion
+    result.split("\n")(0).trim shouldBe "Element1,Element2"
+    result.split("\n")(1).trim.split(',').length shouldBe 2
   }
 
   it should "generate a JSON valid file" in {
 
+    import org.json4s._
+    import org.json4s.native.JsonMethods._
+
     val template =
       """
-        |@(faker: Faker)
-        |[@for(p <- 0 to 1) {{"Element1":@(faker.Gaussian.runNext(5.0, 1.5)),"Element2":@(faker.Gaussian.runNext(5.0, 1.5))}@(if(p < 1) "," else "")}]
+        |@(faker: Faker)[@for(p <- 0 to 1) {{"Element1":@(faker.Gaussian.runNext(5.0, 1.5)),"Element2":@(faker.Gaussian.runNext(5.0, 1.5))}@(if(p < 1) "," else "")}]
         |""".stripMargin
 
     val khermes = new Faker("EN")
@@ -233,8 +236,8 @@ class TwirlHelperTest
         .static(khermes)
         .toString()
 
-    // Put the assertion
-
+    val unmarshalled = parse(result)
+    unmarshalled shouldBe a [JValue]
   }
 
 
