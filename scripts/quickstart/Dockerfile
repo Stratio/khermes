@@ -1,6 +1,6 @@
 FROM openjdk:8-jre-alpine
 
-COPY khermes-0.2.0-SNAPSHOT-allinone.jar /khermes/khermes-0.2.0-SNAPSHOT-allinone.jar
+COPY khermes-0.3.0-SNAPSHOT-allinone.jar /khermes/khermes-0.3.0-SNAPSHOT-allinone.jar
 COPY seed.sh /khermes/seed.sh
 
 EXPOSE 8080
