@@ -2,7 +2,7 @@
 
 #Build khermes image
 
-if [ ! -e ../../target/khermes-0.2.0-SNAPSHOT-allinone.jar ]
+if [ ! -e ../../target/khermes-0.3.0-SNAPSHOT-allinone.jar ]
 then
     cd ../..
     mvn clean package
@@ -17,7 +17,7 @@ else
 fi
 
 echo "copying khermes jar..."
-cp ../../target/khermes-0.2.0-SNAPSHOT-allinone.jar .
+cp ../../target/khermes-0.3.0-SNAPSHOT-allinone.jar .
 
 echo "copying khermes startup script ..."
 cp ../seed ./seed.sh
@@ -40,7 +40,7 @@ else
 fi
 
 rm seed
-rm khermes-0.2.0-SNAPSHOT-allinone.jar
+rm khermes-0.3.0-SNAPSHOT-allinone.jar
 rm input
 rm seed.sh-e
 
