@@ -26,7 +26,7 @@ import com.stratio.khermes.metrics.MetricsReporter
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 
-import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -83,14 +83,14 @@ object Khermes extends App with LazyLogging {
 
   def workerSupervisor(implicit config: Config,
                        system: ActorSystem,
-                       executionContext: ExecutionContextExecutor): ActorRef =
+                       executionContext: ExecutionContext): ActorRef =
     //system.actorOf(Props(new NodeSupervisorActor()), "khermes-supervisor")
   //Start new Akk-Stream based executor
      system.actorOf((Props(new NodeStreamSupervisorActor())), "khermes-supervisor")
 
   def clientActor(khermesSupervisor: ActorRef)(implicit config: Config,
                                                system: ActorSystem,
-                                               executionContext: ExecutionContextExecutor): Unit = {
+                                               executionContext: ExecutionContext): Unit = {
 
     val clientActor = system.actorOf(Props(new KhermesClientActor()), "khermes-client")
     clientActor ! KhermesClientActor.Start
@@ -98,7 +98,7 @@ object Khermes extends App with LazyLogging {
 
   def wsHttp()(implicit config: Config,
                system: ActorSystem,
-               executionContext: ExecutionContextExecutor): Unit = {
+               executionContext: ExecutionContext): Unit = {
     val commandCollector = system.actorOf(CommandCollectorActor.props)
 
     val routes =

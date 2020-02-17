@@ -19,6 +19,7 @@ import org.scalacheck.Prop.forAll
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
+/*
 @RunWith(classOf[JUnitRunner])
 class NumberGeneratorTest extends FlatSpec
   with Matchers {
@@ -140,3 +141,4 @@ class NumberGeneratorTest extends FlatSpec
    */
   def numberOfDigitsFromANumber(n: BigDecimal): Int = n.abs.toString.length - 1
 }
+*/

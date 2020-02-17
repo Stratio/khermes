@@ -82,7 +82,7 @@ case class NameGenerator(locale: String, strategy: Option[String]) extends Faker
   randomElementFromAList[String](lastNames(nameModel)).getOrElse(throw new NoSuchElementException)
 
   def lastNames(resources: Seq[Either[String, NameModel]]): Seq[String] = {
-    getName(resources: Seq[Either[String, NameModel]]).flatMap(_.firstNames)
+    getName(resources: Seq[Either[String, NameModel]]).flatMap(_.lastNames)
   }
 
   private def getName(resources: Seq[Either[String, NameModel]]): Seq[NameModel] = {
