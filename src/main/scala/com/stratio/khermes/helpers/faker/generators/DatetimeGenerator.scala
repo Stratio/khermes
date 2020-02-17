@@ -11,17 +11,39 @@
 package com.stratio.khermes.helpers.faker.generators
 
 import java.security.InvalidParameterException
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 import com.stratio.khermes.commons.exceptions.KhermesException
 import com.stratio.khermes.commons.implicits.AppSerializer
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTime, LocalTime, Seconds}
 
+import scala.concurrent.forkjoin.ThreadLocalRandom
 import scala.util.{Random, Try}
 
 /**
  * Generates random dates.
  */
+
+object Months_ES {
+  val months = Map(
+    "ene" -> "Enero",
+    "feb" -> "Febrero",
+    "mar" -> "Marzo",
+    "abr" -> "Abril",
+    "may" -> "Mayo",
+    "jun" -> "Junio",
+    "jul" -> "Julio",
+    "ago" -> "Agosto",
+    "sep" -> "Septiembre",
+    "oct" -> "Octubre",
+    "nov" -> "Noviembre",
+    "dec" -> "Diciembre"
+  )
+}
+
 class DatetimeGenerator extends AppSerializer {
   /**
    * Example: "dateTime("1970-1-12" ,"2017-1-1") -> 2005-03-01T20:34:30.000+01:00".
@@ -37,6 +59,17 @@ class DatetimeGenerator extends AppSerializer {
         throw new KhermesException(s"Invalid DateTimeFormat"))
       case None => date.toString()
     }
+  }
+
+  def getMonthES : String = {
+    import java.time.LocalDate
+    val minDay = LocalDate.of(1970, 1, 1).toEpochDay
+    val maxDay = LocalDate.of(2020, 12, 31).toEpochDay
+    val randomDay = ThreadLocalRandom.current.nextLong(minDay, maxDay)
+    val randomDate = LocalDate.ofEpochDay(randomDay)
+    val spanishLocale = new Locale("es", "ES")
+    val month_es = LocalDate.now().format(DateTimeFormatter.ofPattern("MMM", spanishLocale))
+    Months_ES.months.getOrElse(month_es, month_es)
   }
 
   /**

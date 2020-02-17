@@ -11,7 +11,7 @@
 jQuery(document).ready(function($) {
     $('body').terminal(function(command, term) {
         if (command == 'help') {
-            term.echo("available commands are ls, create kafka-config, create twirl-template, create generator-config, create avro-config, start, stop, show kafka-config, show generator-config, show avro-config, show twirl-template");
+            term.echo("available commands are ls, create file-config, create kafka-config, create twirl-template, create generator-config, create avro-config, start, stop, show file-config, show kafka-config, show generator-config, show avro-config, show twirl-template");
         } else if (command == 'ls'){
             sendMessage('[command]\nls');
         } else if (command == 'create kafka-config') {
@@ -22,6 +22,8 @@ jQuery(document).ready(function($) {
             createConfig('generator-config',term)
         } else if (command == 'create avro-config') {
             createConfig('avro-config',term)
+        } else if (command == 'create file-config') {
+            createConfig('file-config',term)
         }else if (command.startsWith('start')) {
             start(term)
         }else if (command.startsWith('stop')) {
@@ -39,6 +41,9 @@ jQuery(document).ready(function($) {
         else if (command == 'show twirl-template') {
             sendMessage('[command]\nshow twirl-template')
         }
+        else if (command == 'show file-config') {
+            sendMessage('[command]\nshow file-config')
+        }
         else if (command.startsWith('show kafka-config ')) {
             sendMessage('[command]\nshow kafka-config\n[name]\n'+command.split(" ").pop(2)+'\n')
         }
@@ -50,6 +55,12 @@ jQuery(document).ready(function($) {
         }
         else if (command.startsWith('show twirl-template')) {
             sendMessage('[command]\nshow twirl-template\n[name]\n'+command.split(" ").pop(2)+'\n')
+        }
+        else if (command.startsWith('show file-template')) {
+            sendMessage('[command]\nshow file-template\n[name]\n'+command.split(" ").pop(2)+'\n')
+        }
+        else if (command.startsWith('show file-config')) {
+            sendMessage('[command]\nshow file-config\n[name]\n'+command.split(" ").pop(2)+'\n')
         }
         else {
             term.echo("unknown command " + command);
@@ -92,50 +103,85 @@ function createConfig(commandName, term){
         name: commandName+'-name'});
 }
 
-function start(term){
-      var twirl = '';
-      var kafka = '';
-      var generator = '';
-      var avro = '';
-      var nodes = '';
-    term.push(function(twirlTemplate, term) {
-        twirl = twirlTemplate;
-        term.push(function(kafkaConfig, term) {
-            kafka = kafkaConfig;
-             term.push(function(generatorConfig, term) {
-                  generator = generatorConfig;
-                      term.push(function(avroConfig, term) {
-                                 avro = avroConfig;
-                                term.push(function(nodeIds, term) {
-                                           nodes = nodeIds;
-                                           sendMessage('[command]\nstart\n[twirl-template]\n'+twirl+
-                                                               '\n[kafka-config]\n'+kafka+
-                                                               '\n[generator-config]\n'+generator+
-                                                               '\n[avro-config]\n'+avro+
-                                                               '\n[node-ids]\n'+nodes+'\n');
-                                           //Back the prompt to the original level.
-                                           term.pop();
-                                           term.pop();
-                                           term.pop();
-                                           term.pop();
-                                           term.pop();
-                                       }, {
-                                           prompt: 'khermes> start > Please introduce the node-ids> \n',
-                                           name: 'startNodeIds'});
-                             }, {
-                                 prompt: 'khermes> start > Please introduce the avro-config name> \n',
-                                 name: 'startAvroConfig'});
-                    }, {
-                        prompt: 'khermes> start > Please introduce the generator-config name> \n',
-                        name: 'startGeneratorConfig'});
+function kafkaStart(term, callback) {
+   var kafkaConf = {}
+   term.push(function(kafkaConfig, term) {
+       kafkaConf.kafka = kafkaConfig;
+       term.push(function(avroConfig, term) {
+            kafkaConf.avro = avroConfig;
+            common('k', kafkaConf, term)
+       }, {
+            prompt: 'khermes> start > Please introduce the avro-config name> \n',
+            name: 'startAvroConfig'});
+       }, {
+       prompt: 'khermes> start > Please introduce the kafka-config name> \n',
+       name: 'startKafkaConfig'});
+}
 
+function fileStart(term, callback) {
+    term.push(function(fileConfig, term) {
+        common('f', fileConfig, term)
+    }, {
+        prompt: 'khermes> start > Please introduce the file config name> \n',
+        name: 'startFileConfig'});
+}
+
+function common(sinkType, sinkConfig, term) {
+    var twirl = '';
+    var kafka = '';
+    var generator = '';
+    var avro = '';
+    var nodes = '';
+    var file = '';
+    var sink = '';
+
+    if(sinkType == 'f')
+        file = sinkConfig
+    else {
+        kafka = sinkConfig.kafka
+        avro = sinkConfig.avro
+    }
+
+    term.push(function(twirlTemplate, term) {
+     twirl = twirlTemplate;
+         term.push(function(generatorConfig, term) {
+             generator = generatorConfig;
+                 term.push(function(nodeIds, term) {
+                     nodes = nodeIds;
+                     sendMessage('[command]\nstart\n[twirl-template]\n'+twirl+
+                                                        '\n[kafka-config]\n'+kafka+
+                                                        '\n[file-config]\n'+file+
+                                                        '\n[generator-config]\n'+generator+
+                                                        '\n[avro-config]\n'+avro+
+                                                        '\n[node-ids]\n'+nodes+'\n');
+                     //Back the prompt to the original level.
+                     term.pop();
+                     term.pop();
+                     term.pop();
+                     term.pop();
+                     term.pop();
+            }, {
+                prompt: 'khermes> start > Please introduce the node-ids> \n',
+                name: 'startNodeIds'});
         }, {
-            prompt: 'khermes> start > Please introduce the kafka-config name> \n',
-            name: 'startKafkaConfig'});
-    },
-    {
-        prompt: 'khermes> start > Please introduce the twirl-template name> ',
+            prompt: 'khermes> start > Please introduce the generator-config name> \n',
+            name: 'startGeneratorConfig'});
+    }, {
+        prompt: 'khermes> start > Please introduce the twirl-template name> \n',
         name: 'startTwirlTemplate'});
+}
+
+function start(term) {
+    term.push(function(sinkTypeConfig, term) {
+        if(sinkTypeConfig == 'k') {
+          kafkaStart(term);
+        }
+        else if(sinkTypeConfig == 'f') {
+          file = fileStart(term);
+        }
+    }, {
+        prompt: 'khermes> start > Please introduce the sink type(f:File or k:Kafka)> \n',
+        name: 'sinkType'});
 }
 
 function stop(term){

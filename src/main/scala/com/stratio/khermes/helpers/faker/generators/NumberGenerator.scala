@@ -22,8 +22,14 @@ import scala.util.Random
 /**
  * Generates random numbers.
  */
+
 class NumberGenerator extends AppSerializer {
 
+
+  val locale = new java.util.Locale("es", "ES")
+  val formatter = java.text.NumberFormat.getNumberInstance(locale)
+
+  val roundingMode = BigDecimal.RoundingMode.HALF_EVEN
   /**
    * Example: "number(3) 123".
    * @param n integer size.
@@ -76,14 +82,14 @@ class NumberGenerator extends AppSerializer {
    * @param n decimal part size.
    * @return a random double with same integer and decimal part and random sign.
    */
-  def decimal(n: Int): BigDecimal = setScale(number(n).toString + "." + numberDec(n), n)
+  def decimal(n: Int): BigDecimal = setScale(number(n).toString + "," + numberDec(n), n)
 
   /**
    * Example: "decimal(3,Sign.-) -> -123.456".
    * @param n decimal part size.
    * @return a random double with same integer and decimal part with defined sign.
    */
-  def decimal(n: Int, sign: NumberSign): BigDecimal = setScale(number(n, sign).toString + "." + numberDec(n), n)
+  def decimal(n: Int, sign: NumberSign): BigDecimal = setScale(number(n, sign).toString + "," + numberDec(n), n)
 
   /**
    * Example: "decimal(3,1) -> 123.4".
@@ -91,7 +97,7 @@ class NumberGenerator extends AppSerializer {
    * @param n decimal part size.
    * @return a random double with random sign.
    */
-  def decimal(m: Int, n: Int): BigDecimal = setScale(number(m).toString + "." + numberDec(n), n)
+  def decimal(m: Int, n: Int): BigDecimal = setScale(number(m).toString + "," + numberDec(n), n)
 
   /**
    * Example: "decimal(3,2,Sign.-) -> -123.45".
@@ -100,7 +106,7 @@ class NumberGenerator extends AppSerializer {
    * @param sign sign positive or negative.
    * @return a random double with defined sign.
    */
-  def decimal(m: Int, n: Int, sign: NumberSign): BigDecimal = setScale(number(m, sign).toString + "." + numberDec(n), n)
+  def decimal(m: Int, n: Int, sign: NumberSign): BigDecimal = setScale(number(m, sign).toString + "," + numberDec(n), n)
 
   /**
    * Example: "numberInRange(3,5) 4".
@@ -118,8 +124,18 @@ class NumberGenerator extends AppSerializer {
    * @param n the other end of range.
    * @return a random BigDecimal.
    */
-  def decimalInRange(m: Int, n: Int): BigDecimal = {
-    BigDecimal(Random.nextDouble() * (Math.max(m, n) - Math.min(n, m)) + Math.min(n, m))
+  def decimalInRange(m: Int, n: Int): String = {
+    val result = BigDecimal(Random.nextDouble() * (Math.max(m, n) - Math.min(n, m)) + Math.min(n, m)).setScale(2, roundingMode)
+    val number = formatter.format(result)
+    if (number == "0") {
+      "0,00"
+    }
+    else if (number.length == 1) {
+      s"$number,00"
+    }
+    else {
+      number
+    }
   }
 
   def setScale(s: String, n: Int): BigDecimal = {

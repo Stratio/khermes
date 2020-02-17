@@ -14,8 +14,6 @@ import akka.actor.Props
 import com.stratio.khermes.cluster.BaseActorTest
 import com.stratio.khermes.cluster.supervisor.NodeSupervisorActor.{Start, WorkerStatus}
 import com.stratio.khermes.commons.config.AppConfig
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 
 import scala.concurrent.duration._
 
@@ -69,7 +67,7 @@ class NodeSupervisorActorTest extends BaseActorTest {
   "An WorkerSupervisorActor" should {
     "Start n threads of working kafka producers" in {
       within(10 seconds) {
-        nodeSupervisor ! Start(Seq.empty, AppConfig(khermesConfigContent, kafkaConfigContent, templateContent))
+        nodeSupervisor ! Start(Seq.empty, AppConfig(khermesConfigContent, Some(kafkaConfigContent), None, templateContent))
         expectMsg(WorkerStatus.Started)
       }
     }

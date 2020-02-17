@@ -37,6 +37,12 @@ case class Faker(locale: String = AppConstants.DefaultLocale, strategy: Option[S
 
   object Email extends EmailGenerator(locale)
 
+  object Categoric extends CategoryGenerator()
+
+  object Gaussian extends GaussianDistGenerator()
+
+  object Boolean extends BooleanGenerator()
+
 }
 
 trait FakerGenerator extends AppSerializer {
@@ -96,3 +102,4 @@ trait FakerGenerator extends AppSerializer {
     getClass.getResourceAsStream(s"/locales/$name/$file")).getOrElse(
     throw new KhermesException(s"Error loading invalid resource /locales/$name/$file"))
 }
+

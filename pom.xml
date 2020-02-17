@@ -6,7 +6,7 @@
 
     <groupId>com.stratio</groupId>
     <artifactId>khermes</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Stratio Khermes</name>
@@ -43,6 +43,10 @@
         <scala-maven.tests.plugin.version>2.19.1</scala-maven.tests.plugin.version>
         <scala-maven.plugin.version>3.2.2</scala-maven.plugin.version>
         <dropwizard.metrics.version>3.2.2</dropwizard.metrics.version>
+        <breeze.version>0.13.2</breeze.version>
+        <scalaz.version>7.2.16</scalaz.version>
+        <cats.version>0.9.0</cats.version>
+        <akka-stream-kafka.version>0.16</akka-stream-kafka.version>
     </properties>
 
     <developers>
@@ -144,6 +148,21 @@
             <version>${typesafe.config.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.scalaz</groupId>
+            <artifactId>scalaz-core_${scala.binary.version}</artifactId>
+            <version>${scalaz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalaz</groupId>
+            <artifactId>scalaz-concurrent_${scala.binary.version}</artifactId>
+            <version>${scalaz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.typelevel</groupId>
+            <artifactId>cats-core_${scala.binary.version}</artifactId>
+            <version>${cats.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-http-experimental_${scala.binary.version}</artifactId>
             <version>${akka.http.experimental.version}</version>
@@ -161,11 +180,6 @@
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-cluster-tools_${scala.binary.version}</artifactId>
-            <version>${akka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-testkit_${scala.binary.version}</artifactId>
             <version>${akka.version}</version>
         </dependency>
         <dependency>
@@ -239,10 +253,9 @@
             <version>${dropwizard.metrics.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_${scala.binary.version}</artifactId>
-            <version>${kafka.version}</version>
-            <scope>test</scope>
+            <groupId>org.scalanlp</groupId>
+            <artifactId>breeze_${scala.binary.version}</artifactId>
+            <version>${breeze.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
@@ -262,6 +275,12 @@
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-test</artifactId>
             <version>${curator-framework.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-stream-kafka_${scala.binary.version}</artifactId>
+            <version>${akka-stream-kafka.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -288,7 +307,6 @@
             <version>${scalacheck.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
